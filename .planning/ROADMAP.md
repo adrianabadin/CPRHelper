@@ -28,7 +28,7 @@ Plans:
 - [x] 01-01-PLAN.md — Project scaffold, models, service interfaces, DI setup
 - [x] 01-02-PLAN.md — Audio metronome engine (AudioService + MetronomeService + ViewModel)
 - [x] 01-03-PLAN.md — Multi-timer system (TimerService + TimerViewModel)
-- [ ] 01-04-PLAN.md — UI integration (MainPage, MetronomePulse, TimerCard controls)
+- [x] 01-04-PLAN.md — UI integration (MainPage, MetronomePulse, TimerCard controls)
 **UI hint**: yes
 
 ### Phase 2: Event Recording

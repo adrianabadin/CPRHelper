@@ -1,0 +1,12 @@
+C:\Users\aabadin\Documents\code\acls\AclsTracker\obj\Debug\net8.0-windows10.0.19041.0\AclsTracker.csproj.AssemblyReference.cache
+C:\Users\aabadin\Documents\code\acls\AclsTracker\obj\Debug\net8.0-windows10.0.19041.0\mauiimage.inputs
+C:\Users\aabadin\Documents\code\acls\AclsTracker\obj\Debug\net8.0-windows10.0.19041.0\mauifont.inputs
+C:\Users\aabadin\Documents\code\acls\AclsTracker\obj\Debug\net8.0-windows10.0.19041.0\mauisplash.inputs
+C:\Users\aabadin\Documents\code\acls\AclsTracker\obj\Debug\net8.0-windows10.0.19041.0\mauisplash.stamp
+C:\Users\aabadin\Documents\code\acls\AclsTracker\obj\Debug\net8.0-windows10.0.19041.0\mauifont.stamp
+C:\Users\aabadin\Documents\code\acls\AclsTracker\obj\Debug\net8.0-windows10.0.19041.0\mauiimage.stamp
+C:\Users\aabadin\Documents\code\acls\AclsTracker\obj\Debug\net8.0-windows10.0.19041.0\AclsTracker.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\aabadin\Documents\code\acls\AclsTracker\obj\Debug\net8.0-windows10.0.19041.0\AclsTracker.AssemblyInfoInputs.cache
+C:\Users\aabadin\Documents\code\acls\AclsTracker\obj\Debug\net8.0-windows10.0.19041.0\AclsTracker.AssemblyInfo.cs
+C:\Users\aabadin\Documents\code\acls\AclsTracker\obj\Debug\net8.0-windows10.0.19041.0\AclsTracker.csproj.CoreCompileInputs.cache
+C:\Users\aabadin\Documents\code\acls\AclsTracker\obj\Debug\net8.0-windows10.0.19041.0\AclsTracker.sourcelink.json
