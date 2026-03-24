@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AclsTracker.Controls.TimerCard"
+             x:Name="TimerCardControl">
+    <Frame Padding="12"
+           CornerRadius="12"
+           BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#1E1E1E}"
+           BorderColor="{AppThemeBinding Light=#E0E0E0, Dark=#333333}"
+           HasShadow="False"
+           Margin="4">
+        <Grid ColumnDefinitions="*, Auto"
+              RowDefinitions="Auto, Auto, Auto"
+              ColumnSpacing="8"
+              RowSpacing="4">
+            <!-- Timer name -->
+            <Label Grid.Row="0" Grid.Column="0"
+                   Text="{Binding Name}"
+                   FontSize="14"
+                   FontAttributes="Bold"
+                   TextColor="{AppThemeBinding Light=#333333, Dark=#CCCCCC}" />
+
+            <!-- Running indicator -->
+            <Label Grid.Row="0" Grid.Column="1"
+                   Text="●"
+                   FontSize="12"
+                   TextColor="{Binding IsRunning, Converter={StaticResource BoolToColorConverter}}"
+                   HorizontalOptions="End"
+                   VerticalOptions="Center"
+                   IsVisible="{Binding IsRunning}" />
+
+            <!-- Digital elapsed display (D-05: format 00:00) -->
+            <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                   Text="{Binding Elapsed, StringFormat='{0:mm\\:ss}'}"
+                   FontSize="32"
+                   FontAttributes="Bold"
+                   FontFamily="OpenSansRegular"
+                   HorizontalTextAlignment="Start"
+                   TextColor="{AppThemeBinding Light=#111111, Dark=#FFFFFF}" />
+
+            <!-- Progress bar (D-05: circle substitute — linear progress for simplicity, 
+                 can be upgraded to circular in future) -->
+            <ProgressBar Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                         Progress="{Binding ProgressPercentage}"
+                         ProgressColor="{StaticResource Primary}"
+                         HeightRequest="6"
+                         IsVisible="{Binding TargetDuration, Converter={StaticResource IsNotNullConverter}}" />
+        </Grid>
+    </Frame>
+</ContentView>

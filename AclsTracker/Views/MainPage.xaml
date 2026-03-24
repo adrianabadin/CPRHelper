@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:AclsTracker.Controls"
+             xmlns:vm="clr-namespace:AclsTracker.ViewModels"
+             xmlns:converters="clr-namespace:AclsTracker.Converters"
+             x:Class="AclsTracker.Views.MainPage"
+             Title="ACLS Tracker"
+             BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#121212}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
+            <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
+            <converters:InvertBoolConverter x:Key="InvertBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <Grid RowDefinitions="Auto, Auto, Auto, Auto, *"
+              Padding="16"
+              RowSpacing="16">
+
+            <!-- ═══ ROW 0: Session controls ═══ -->
+            <HorizontalStackLayout Grid.Row="0"
+                                   HorizontalOptions="Center"
+                                   Spacing="16">
+                <Button Text="INICIAR CÓDIGO"
+                        Command="{Binding Timer.StartSessionCommand}"
+                        BackgroundColor="#D32F2F"
+                        TextColor="White"
+                        FontSize="18"
+                        FontAttributes="Bold"
+                        HeightRequest="56"
+                        MinimumWidthRequest="160"
+                        CornerRadius="8"
+                        IsVisible="{Binding Timer.IsSessionActive, Converter={StaticResource InvertBoolConverter}}" />
+                <Button Text="FINALIZAR CÓDIGO"
+                        Command="{Binding Timer.StopSessionCommand}"
+                        BackgroundColor="#757575"
+                        TextColor="White"
+                        FontSize="18"
+                        FontAttributes="Bold"
+                        HeightRequest="56"
+                        MinimumWidthRequest="160"
+                        CornerRadius="8"
+                        IsVisible="{Binding Timer.IsSessionActive}" />
+            </HorizontalStackLayout>
+
+            <!-- ═══ ROW 1: Metronome section ═══ -->
+            <VerticalStackLayout Grid.Row="1"
+                                 Spacing="12"
+                                 HorizontalOptions="Center">
+
+                <!-- Pulse visualization (D-03) -->
+                <controls:MetronomePulse IsPulsing="{Binding Metronome.BeatPulse}"
+                                         BindingContext="{Binding Metronome}" />
+
+                <!-- Metronome controls: BPM -, toggle, BPM + -->
+                <HorizontalStackLayout HorizontalOptions="Center"
+                                       Spacing="12">
+                    <Button Text="−"
+                            Command="{Binding Metronome.DecreaseBpmCommand}"
+                            FontSize="24"
+                            WidthRequest="56"
+                            HeightRequest="56"
+                            CornerRadius="28"
+                            BackgroundColor="{AppThemeBinding Light=#E0E0E0, Dark=#333333}"
+                            TextColor="{AppThemeBinding Light=#333333, Dark=#FFFFFF}" />
+
+                    <Button Text="{Binding Metronome.IsPlaying, StringFormat='{0}'}"
+                            Command="{Binding Metronome.ToggleMetronomeCommand}"
+                            FontSize="18"
+                            FontAttributes="Bold"
+                            WidthRequest="140"
+                            HeightRequest="56"
+                            CornerRadius="8"
+                            BackgroundColor="{AppThemeBinding Light=#1976D2, Dark=#1565C0}"
+                            TextColor="White">
+                        <!-- Note: Text binding above is a placeholder.
+                             Code-behind will set text to "INICIAR" / "DETENER" based on IsPlaying -->
+                    </Button>
+
+                    <Button Text="+"
+                            Command="{Binding Metronome.IncreaseBpmCommand}"
+                            FontSize="24"
+                            WidthRequest="56"
+                            HeightRequest="56"
+                            CornerRadius="28"
+                            BackgroundColor="{AppThemeBinding Light=#E0E0E0, Dark=#333333}"
+                            TextColor="{AppThemeBinding Light=#333333, Dark=#FFFFFF}" />
+                </HorizontalStackLayout>
+
+                <!-- Beat count label -->
+                <Label Text="{Binding Metronome.BeatCount, StringFormat='Compresiones: {0}'}"
+                       FontSize="14"
+                       HorizontalTextAlignment="Center"
+                       TextColor="{AppThemeBinding Light=#666666, Dark=#999999}" />
+            </VerticalStackLayout>
+
+            <!-- ═══ ROW 2: Timer grid — all visible (D-04) ═══ -->
+            <Grid Grid.Row="2"
+                  ColumnDefinitions="*, *"
+                  RowDefinitions="Auto, Auto"
+                  ColumnSpacing="8"
+                  RowSpacing="8">
+
+                <!-- Timer cards bound to individual timers from ViewModel -->
+                <!-- Total Elapsed -->
+                <controls:TimerCard Grid.Row="0" Grid.Column="0"
+                                    BindingContext="{Binding Timer.Timers[0]}" />
+
+                <!-- CPR Cycle -->
+                <controls:TimerCard Grid.Row="0" Grid.Column="1"
+                                    BindingContext="{Binding Timer.Timers[1]}" />
+
+                <!-- Compressions -->
+                <controls:TimerCard Grid.Row="1" Grid.Column="0"
+                                    BindingContext="{Binding Timer.Timers[2]}" />
+
+                <!-- Epinephrine -->
+                <controls:TimerCard Grid.Row="1" Grid.Column="1"
+                                    BindingContext="{Binding Timer.Timers[3]}" />
+            </Grid>
+
+            <!-- ═══ ROW 3: Quick action buttons ═══ -->
+            <HorizontalStackLayout Grid.Row="3"
+                                   HorizontalOptions="Center"
+                                   Spacing="12">
+                <Button Text="NUEVO CICLO"
+                        Command="{Binding Timer.NewCprCycleCommand}"
+                        BackgroundColor="#FF9800"
+                        TextColor="White"
+                        FontSize="16"
+                        FontAttributes="Bold"
+                        HeightRequest="52"
+                        MinimumWidthRequest="140"
+                        CornerRadius="8" />
+
+                <Button Text="ADRENALINA"
+                        Command="{Binding Timer.MarkMedicationGivenCommand}"
+                        BackgroundColor="#7B1FA2"
+                        TextColor="White"
+                        FontSize="16"
+                        FontAttributes="Bold"
+                        HeightRequest="52"
+                        MinimumWidthRequest="140"
+                        CornerRadius="8" />
+            </HorizontalStackLayout>
+        </Grid>
+    </ScrollView>
+</ContentPage>

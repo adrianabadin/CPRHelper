@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AclsTracker.Controls.MetronomePulse"
+             x:Name="PulseControl">
+    <Grid HorizontalOptions="Center"
+          VerticalOptions="Center"
+          WidthRequest="180"
+          HeightRequest="180">
+        <!-- Outer ring (static border) -->
+        <Ellipse x:Name="OuterRing"
+                 WidthRequest="180"
+                 HeightRequest="180"
+                 Stroke="{StaticResource Primary}"
+                 StrokeThickness="3"
+                 Fill="Transparent"
+                 HorizontalOptions="Center"
+                 VerticalOptions="Center" />
+
+        <!-- Inner pulse circle (animates scale on each beat) -->
+        <Ellipse x:Name="PulseCircle"
+                 WidthRequest="140"
+                 HeightRequest="140"
+                 Fill="{StaticResource Primary}"
+                 Opacity="0.7"
+                 HorizontalOptions="Center"
+                 VerticalOptions="Center" />
+
+        <!-- BPM display centered on circle -->
+        <VerticalStackLayout HorizontalOptions="Center"
+                             VerticalOptions="Center"
+                             Spacing="0">
+            <Label x:Name="BpmLabel"
+                   Text="{Binding Bpm}"
+                   FontSize="42"
+                   FontAttributes="Bold"
+                   HorizontalTextAlignment="Center"
+                   TextColor="White" />
+            <Label Text="BPM"
+                   FontSize="14"
+                   HorizontalTextAlignment="Center"
+                   TextColor="White"
+                   Opacity="0.8" />
+        </VerticalStackLayout>
+    </Grid>
+</ContentView>
