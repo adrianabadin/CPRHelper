@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:AclsTracker.Models"
+             x:Class="AclsTracker.Controls.EventLogPanel">
+
+    <VerticalStackLayout Spacing="4" Margin="8">
+        <Label Text="REGISTRO DE EVENTOS"
+               FontSize="12"
+               FontAttributes="Bold"
+               TextColor="#999999"
+               HorizontalTextAlignment="Center"
+               LetterSpacing="1" />
+               
+        <CollectionView ItemsSource="{Binding Events}" MaximumHeightRequest="250">
+            <CollectionView.EmptyView>
+                <Label Text="No hay eventos registrados" 
+                       HorizontalOptions="Center" 
+                       VerticalOptions="Center" 
+                       FontAttributes="Italic" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:EventRecord">
+                    <Grid ColumnDefinitions="Auto, *">
+                        <Label Grid.Column="0" 
+                               Text="{Binding ElapsedSinceStart, StringFormat='{0:mm\\:ss\\.f}'}" 
+                               FontSize="12" 
+                               TextColor="#999999" 
+                               MinimumWidthRequest="60" 
+                               VerticalOptions="Center" />
+                        <Label Grid.Column="1" 
+                               Text="{Binding Description}" 
+                               FontSize="13" 
+                               VerticalOptions="Center">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding EventType}" Value="RhythmChange">
+                                    <Setter Property="TextColor" Value="#D32F2F" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Label" Binding="{Binding EventType}" Value="Medication">
+                                    <Setter Property="TextColor" Value="#7B1FA2" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Label" Binding="{Binding EventType}" Value="CprCycle">
+                                    <Setter Property="TextColor" Value="#FF9800" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Label" Binding="{Binding EventType}" Value="HsTs">
+                                    <Setter Property="TextColor" Value="#1565C0" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Label" Binding="{Binding EventType}" Value="Custom">
+                                    <Setter Property="TextColor" Value="#333333" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </VerticalStackLayout>
+</ContentView>

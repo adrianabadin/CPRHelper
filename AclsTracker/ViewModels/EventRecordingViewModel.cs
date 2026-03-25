@@ -15,12 +15,22 @@ public partial class EventRecordingViewModel : ObservableObject
     [ObservableProperty]
     private CardiacRhythm _currentRhythm = CardiacRhythm.Ninguno;
 
+    public string CurrentRhythmDisplay => GetRhythmDisplayName(CurrentRhythm);
+
+    partial void OnCurrentRhythmChanged(CardiacRhythm value)
+    {
+        OnPropertyChanged(nameof(CurrentRhythmDisplay));
+    }
+
     [ObservableProperty]
     private bool _isSessionActive;
 
     public ObservableCollection<EventRecord> Events => _eventLogService.Events;
 
     public ObservableCollection<HsAndTsItem> HsAndTsItems { get; } = new();
+
+    public IEnumerable<HsAndTsItem> HItems => HsAndTsItems.Where(i => i.Category == "H");
+    public IEnumerable<HsAndTsItem> TItems => HsAndTsItems.Where(i => i.Category == "T");
 
     public EventRecordingViewModel(IEventLogService eventLogService, ITimerService timerService)
     {

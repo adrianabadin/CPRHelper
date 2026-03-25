@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:AclsTracker.Models"
+             x:Class="AclsTracker.Controls.RhythmSelector">
+
+    <VerticalStackLayout Spacing="8">
+
+        <!-- Section header -->
+        <Label Text="RITMO CARDÍACO"
+               FontSize="12"
+               FontAttributes="Bold"
+               TextColor="#999999"
+               HorizontalTextAlignment="Center"
+               LetterSpacing="1" />
+
+        <!-- Current rhythm display -->
+        <Label Text="{Binding CurrentRhythmDisplay, StringFormat='Ritmo actual: {0}'}"
+               FontSize="14"
+               FontAttributes="Bold"
+               HorizontalTextAlignment="Center"
+               TextColor="#333333" />
+
+        <!-- Rhythm buttons — FlexLayout wraps on small screens -->
+        <FlexLayout Wrap="Wrap"
+                    JustifyContent="Center"
+                    AlignItems="Center">
+
+            <!-- FV/TV (Fibrilación Ventricular) — shockable, red -->
+            <Button Text="FV/TV"
+                    Command="{Binding SelectRhythmCommand}"
+                    CommandParameter="{x:Static models:CardiacRhythm.FibrilacionVentricular}"
+                    BackgroundColor="#D32F2F"
+                    TextColor="White"
+                    FontSize="14"
+                    FontAttributes="Bold"
+                    MinimumWidthRequest="90"
+                    HeightRequest="44"
+                    CornerRadius="8"
+                    Margin="4" />
+
+            <!-- TV sin pulso (Taquicardia Ventricular) — shockable, red -->
+            <Button Text="TV s/p"
+                    Command="{Binding SelectRhythmCommand}"
+                    CommandParameter="{x:Static models:CardiacRhythm.TaquicardiaVentricular}"
+                    BackgroundColor="#D32F2F"
+                    TextColor="White"
+                    FontSize="14"
+                    FontAttributes="Bold"
+                    MinimumWidthRequest="90"
+                    HeightRequest="44"
+                    CornerRadius="8"
+                    Margin="4" />
+
+            <!-- AEA (Actividad Eléctrica Sin Pulso) — non-shockable, orange -->
+            <Button Text="AEA"
+                    Command="{Binding SelectRhythmCommand}"
+                    CommandParameter="{x:Static models:CardiacRhythm.ActividadElectricaSinPulso}"
+                    BackgroundColor="#E65100"
+                    TextColor="White"
+                    FontSize="14"
+                    FontAttributes="Bold"
+                    MinimumWidthRequest="90"
+                    HeightRequest="44"
+                    CornerRadius="8"
+                    Margin="4" />
+
+            <!-- Asistolia — non-shockable, orange -->
+            <Button Text="Asistolia"
+                    Command="{Binding SelectRhythmCommand}"
+                    CommandParameter="{x:Static models:CardiacRhythm.Asistolia}"
+                    BackgroundColor="#E65100"
+                    TextColor="White"
+                    FontSize="14"
+                    FontAttributes="Bold"
+                    MinimumWidthRequest="90"
+                    HeightRequest="44"
+                    CornerRadius="8"
+                    Margin="4" />
+
+            <!-- Bradicardia — pulse-present, blue -->
+            <Button Text="Bradicardia"
+                    Command="{Binding SelectRhythmCommand}"
+                    CommandParameter="{x:Static models:CardiacRhythm.Bradicardia}"
+                    BackgroundColor="#1565C0"
+                    TextColor="White"
+                    FontSize="14"
+                    FontAttributes="Bold"
+                    MinimumWidthRequest="90"
+                    HeightRequest="44"
+                    CornerRadius="8"
+                    Margin="4" />
+
+            <!-- Taquicardia — pulse-present, blue -->
+            <Button Text="Taquicardia"
+                    Command="{Binding SelectRhythmCommand}"
+                    CommandParameter="{x:Static models:CardiacRhythm.Taquicardia}"
+                    BackgroundColor="#1565C0"
+                    TextColor="White"
+                    FontSize="14"
+                    FontAttributes="Bold"
+                    MinimumWidthRequest="90"
+                    HeightRequest="44"
+                    CornerRadius="8"
+                    Margin="4" />
+
+        </FlexLayout>
+    </VerticalStackLayout>
+
+</ContentView>

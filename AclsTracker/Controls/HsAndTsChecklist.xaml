@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:AclsTracker.Models"
+             x:Class="AclsTracker.Controls.HsAndTsChecklist"
+             x:Name="Root">
+
+    <VerticalStackLayout Spacing="8">
+
+        <!-- Section header -->
+        <Label Text="H's y T's — CAUSAS REVERSIBLES"
+               FontSize="12"
+               FontAttributes="Bold"
+               TextColor="#999999"
+               HorizontalTextAlignment="Center"
+               LetterSpacing="1" />
+
+        <!-- H's group -->
+        <Label Text="H's"
+               FontSize="14"
+               FontAttributes="Bold"
+               TextColor="#1565C0"
+               Margin="0,4,0,0" />
+
+        <CollectionView ItemsSource="{Binding HItems}"
+                        SelectionMode="None">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical"
+                                 Span="2"
+                                 HorizontalItemSpacing="4"
+                                 VerticalItemSpacing="4" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:HsAndTsItem">
+                    <Frame Padding="8"
+                           CornerRadius="8"
+                           Margin="2"
+                           HasShadow="False">
+                        <Frame.Triggers>
+                            <DataTrigger TargetType="Frame"
+                                         Binding="{Binding IsDismissed}"
+                                         Value="True">
+                                <Setter Property="BackgroundColor" Value="#FFEBEE" />
+                            </DataTrigger>
+                            <DataTrigger TargetType="Frame"
+                                         Binding="{Binding IsChecked}"
+                                         Value="True">
+                                <Setter Property="BackgroundColor" Value="#E8F5E9" />
+                            </DataTrigger>
+                        </Frame.Triggers>
+                        <Frame.BackgroundColor>
+                            <AppThemeBinding Light="#F5F5F5" Dark="#2A2A2A" />
+                        </Frame.BackgroundColor>
+
+                        <Grid ColumnDefinitions="*, Auto, Auto"
+                              RowDefinitions="Auto">
+
+                            <!-- Item name -->
+                            <Label Grid.Column="0"
+                                   Text="{Binding Name}"
+                                   FontSize="12"
+                                   VerticalOptions="Center"
+                                   LineBreakMode="WordWrap">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label"
+                                                 Binding="{Binding IsDismissed}"
+                                                 Value="True">
+                                        <Setter Property="TextDecorations" Value="Strikethrough" />
+                                        <Setter Property="Opacity" Value="0.5" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+
+                            <!-- Check button -->
+                            <Button Grid.Column="1"
+                                    Text="&#x2713;"
+                                    FontSize="14"
+                                    WidthRequest="36"
+                                    HeightRequest="36"
+                                    Padding="0"
+                                    CornerRadius="4"
+                                    BackgroundColor="#4CAF50"
+                                    TextColor="White"
+                                    Command="{Binding Source={x:Reference Root}, Path=BindingContext.ToggleHsAndTsItemCommand}"
+                                    CommandParameter="{Binding .}" />
+
+                            <!-- Dismiss button -->
+                            <Button Grid.Column="2"
+                                    Text="&#x2717;"
+                                    FontSize="14"
+                                    WidthRequest="36"
+                                    HeightRequest="36"
+                                    Padding="0"
+                                    CornerRadius="4"
+                                    BackgroundColor="#F44336"
+                                    TextColor="White"
+                                    Command="{Binding Source={x:Reference Root}, Path=BindingContext.DismissHsAndTsItemCommand}"
+                                    CommandParameter="{Binding .}" />
+
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- T's group -->
+        <Label Text="T's"
+               FontSize="14"
+               FontAttributes="Bold"
+               TextColor="#1565C0"
+               Margin="0,8,0,0" />
+
+        <CollectionView ItemsSource="{Binding TItems}"
+                        SelectionMode="None">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical"
+                                 Span="2"
+                                 HorizontalItemSpacing="4"
+                                 VerticalItemSpacing="4" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:HsAndTsItem">
+                    <Frame Padding="8"
+                           CornerRadius="8"
+                           Margin="2"
+                           HasShadow="False">
+                        <Frame.Triggers>
+                            <DataTrigger TargetType="Frame"
+                                         Binding="{Binding IsDismissed}"
+                                         Value="True">
+                                <Setter Property="BackgroundColor" Value="#FFEBEE" />
+                            </DataTrigger>
+                            <DataTrigger TargetType="Frame"
+                                         Binding="{Binding IsChecked}"
+                                         Value="True">
+                                <Setter Property="BackgroundColor" Value="#E8F5E9" />
+                            </DataTrigger>
+                        </Frame.Triggers>
+                        <Frame.BackgroundColor>
+                            <AppThemeBinding Light="#F5F5F5" Dark="#2A2A2A" />
+                        </Frame.BackgroundColor>
+
+                        <Grid ColumnDefinitions="*, Auto, Auto"
+                              RowDefinitions="Auto">
+
+                            <!-- Item name -->
+                            <Label Grid.Column="0"
+                                   Text="{Binding Name}"
+                                   FontSize="12"
+                                   VerticalOptions="Center"
+                                   LineBreakMode="WordWrap">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label"
+                                                 Binding="{Binding IsDismissed}"
+                                                 Value="True">
+                                        <Setter Property="TextDecorations" Value="Strikethrough" />
+                                        <Setter Property="Opacity" Value="0.5" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+
+                            <!-- Check button -->
+                            <Button Grid.Column="1"
+                                    Text="&#x2713;"
+                                    FontSize="14"
+                                    WidthRequest="36"
+                                    HeightRequest="36"
+                                    Padding="0"
+                                    CornerRadius="4"
+                                    BackgroundColor="#4CAF50"
+                                    TextColor="White"
+                                    Command="{Binding Source={x:Reference Root}, Path=BindingContext.ToggleHsAndTsItemCommand}"
+                                    CommandParameter="{Binding .}" />
+
+                            <!-- Dismiss button -->
+                            <Button Grid.Column="2"
+                                    Text="&#x2717;"
+                                    FontSize="14"
+                                    WidthRequest="36"
+                                    HeightRequest="36"
+                                    Padding="0"
+                                    CornerRadius="4"
+                                    BackgroundColor="#F44336"
+                                    TextColor="White"
+                                    Command="{Binding Source={x:Reference Root}, Path=BindingContext.DismissHsAndTsItemCommand}"
+                                    CommandParameter="{Binding .}" />
+
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </VerticalStackLayout>
+
+</ContentView>
