@@ -7,7 +7,7 @@
 ## Phases
 
 - [x] **Phase 1: Metronome & Timers** - Establish core timing engine with audio metronome and multi-timer system (completed 2026-03-24)
-- [ ] **Phase 2: Event Recording** - Capture rhythm selection, event logging with timestamps, and H's/T's tracking
+- [x] **Phase 2: Event Recording** - Capture rhythm selection, event logging with timestamps, and H's/T's tracking (completed 2026-03-25)
 - [ ] **Phase 3: Protocol Guidance** - Generate context-aware reminders based on AHA ACLS 2020 protocol
 - [ ] **Phase 4: Data Export** - Enable PDF and CSV export of session data
 
@@ -39,7 +39,7 @@ Plans:
   1. User can select current cardiac rhythm (FV/TV, AEA, Asistolia, Bradicardia, Taquicardia)
   2. System automatically logs all events with timestamps (including milliseconds)
   3. User can mark/dismiss items from H's and T's checklist
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 Plans:
 - [ ] 02-01-PLAN.md — Models, EventLogService, and EventRecordingViewModel
 - [ ] 02-02-PLAN.md — UI controls (RhythmSelector, HsAndTsChecklist, EventLogPanel) and MainPage integration
@@ -70,7 +70,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Metronome & Timers | 3/4 | Complete    | 2026-03-24 |
-| 2. Event Recording | 0/2 | Planning complete | - |
+| 2. Event Recording | 2/2 | Complete   | 2026-03-25 |
 | 3. Protocol Guidance | 0/0 | Not started | - |
 | 4. Data Export | 0/0 | Not started | - |
 
