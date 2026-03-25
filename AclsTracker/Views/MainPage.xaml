@@ -17,7 +17,7 @@
     </ContentPage.Resources>
 
     <ScrollView>
-        <Grid RowDefinitions="Auto, Auto, Auto, Auto, *"
+        <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, *"
               Padding="16"
               RowSpacing="16">
 
@@ -26,7 +26,7 @@
                                    HorizontalOptions="Center"
                                    Spacing="16">
                 <Button Text="INICIAR CÓDIGO"
-                        Command="{Binding Timer.StartSessionCommand}"
+                        Command="{Binding StartCodeCommand}"
                         BackgroundColor="#D32F2F"
                         TextColor="White"
                         FontSize="18"
@@ -36,7 +36,7 @@
                         CornerRadius="8"
                         IsVisible="{Binding Timer.IsSessionActive, Converter={StaticResource InvertBoolConverter}}" />
                 <Button Text="FINALIZAR CÓDIGO"
-                        Command="{Binding Timer.StopSessionCommand}"
+                        Command="{Binding StopCodeCommand}"
                         BackgroundColor="#757575"
                         TextColor="White"
                         FontSize="18"
@@ -147,6 +147,15 @@
                         MinimumWidthRequest="140"
                         CornerRadius="8" />
             </HorizontalStackLayout>
+
+            <!-- ═══ ROW 4: RhythmSelector ═══ -->
+            <controls:RhythmSelector Grid.Row="4" BindingContext="{Binding EventRecording}" />
+
+            <!-- ═══ ROW 5: EventLogPanel ═══ -->
+            <controls:EventLogPanel Grid.Row="5" BindingContext="{Binding EventRecording}" />
+
+            <!-- ═══ ROW 6: HsAndTsChecklist ═══ -->
+            <controls:HsAndTsChecklist Grid.Row="6" BindingContext="{Binding EventRecording}" />
         </Grid>
     </ScrollView>
 </ContentPage>
