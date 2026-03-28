@@ -34,11 +34,13 @@ public static class MauiProgram
         // ViewModels — registered in Plans 02 and 03
         builder.Services.AddTransient<MetronomeViewModel>();
         builder.Services.AddTransient<TimerViewModel>();
-        builder.Services.AddTransient<EventRecordingViewModel>();
+        builder.Services.AddSingleton<EventRecordingViewModel>();
 
         // Views — registered in Plan 04
         builder.Services.AddTransient<MainViewModel>();
         builder.Services.AddTransient<MainPage>();
+        builder.Services.AddTransient<HsAndTsPage>();
+        builder.Services.AddTransient<HistorialPage>();
 
         return builder.Build();
     }

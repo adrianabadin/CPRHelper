@@ -7,11 +7,14 @@
     Shell.FlyoutBehavior="Disabled">
 
     <TabBar>
-        <Tab>
-            <ShellContent
-                Title="ACLS Tracker"
-                ContentTemplate="{DataTemplate views:MainPage}"
-                Route="MainPage" />
+        <Tab Title="Principal">
+            <ShellContent ContentTemplate="{DataTemplate views:MainPage}" Route="MainPage" />
+        </Tab>
+        <Tab Title="H's y T's">
+            <ShellContent ContentTemplate="{DataTemplate views:HsAndTsPage}" Route="HsAndTsPage" />
+        </Tab>
+        <Tab Title="Historial">
+            <ShellContent ContentTemplate="{DataTemplate views:HistorialPage}" Route="HistorialPage" />
         </Tab>
     </TabBar>
 
