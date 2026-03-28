@@ -103,15 +103,16 @@ public partial class TimerViewModel : ObservableObject
     /// <summary>
     /// Reset and restart CPR cycle timer — convenience for the common
     /// "new cycle" action after rhythm check every 2 minutes.
-    /// Also resets compressions and pulse-check timers.
+    /// Resumes compressions timer (does NOT reset — accumulates for FCT).
+    /// Resets pulse-check timer.
     /// </summary>
     [RelayCommand]
     private void NewCprCycle()
     {
         _timerService.ResetTimer("cpr-cycle");
         _timerService.StartTimer("cpr-cycle");
-        _timerService.ResetTimer("compressions");
-        _timerService.StartTimer("compressions");
+        // Compressions timer intentionally NOT reset — accumulates total compression time for FCT
+        _timerService.StartTimer("compressions");  // Resume compressions (may have been paused during pulse-check)
         // Reset pulse-check timer
         _timerService.PauseTimer("pulse-check");
         _timerService.ResetTimer("pulse-check");
