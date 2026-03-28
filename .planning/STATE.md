@@ -61,6 +61,10 @@ Plan: 4 of 4
 | Phase 02-event-recording P01 | 6 min | 2 tasks | 7 files |
 | Phase 02-event-recording P02 | 25min | 3 tasks | 9 files |
 
+### Roadmap Evolution
+
+- Phase 02.1 inserted after Phase 2: modificar la estructura de la UI del proyecto (URGENT)
+
 ### Architecture Notes
 
 From research/SUMMARY.md:
