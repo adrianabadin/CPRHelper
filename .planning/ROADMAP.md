@@ -58,13 +58,15 @@ Plans:
 
 ### Phase 02.1.1: mejoras en defibrilacion y drogas: registro de decision, alertas rojas >4min, sugerencias de medicamentos (INSERTED)
 
-**Goal:** [Urgent work - to be planned]
-**Requirements**: TBD
+**Goal:** Mejorar funcionalidad existente de Phase 2.1 agregando registro de defibrilación manual, alertas visuales de tiempo crítico, y sugerencias de medicamentos en popup de check de pulso
+**Requirements**: TBD (extends REGI-02, improves existing functionality)
 **Depends on:** Phase 2.1
-**Plans:** 0 plans
+**Plans:** 3 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 02.1.1 to break down)
+- [ ] 02.1.1-01-PLAN.md — Defibrilation button and event registration (UI + MainViewModel)
+- [ ] 02.1.1-02-PLAN.md — Red alerts for timers exceeding thresholds (TimerModel + TimerViewModel + TimerCard)
+- [ ] 02.1.1-03-PLAN.md — Medication suggestions in pulse-check popup (MainViewModel)
 
 ### Phase 3: Protocol Guidance
 **Goal**: Users receive context-aware reminders based on AHA ACLS 2020 protocol during resuscitation
