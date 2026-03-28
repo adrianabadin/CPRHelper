@@ -3,44 +3,53 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="AclsTracker.Controls.MetronomePulse"
              x:Name="PulseControl">
-    <Grid HorizontalOptions="Center"
-          VerticalOptions="Center"
-          WidthRequest="180"
-          HeightRequest="180">
-        <!-- Outer ring (static border) -->
-        <Ellipse x:Name="OuterRing"
-                 WidthRequest="180"
-                 HeightRequest="180"
-                 Stroke="{StaticResource Primary}"
-                 StrokeThickness="3"
-                 Fill="Transparent"
-                 HorizontalOptions="Center"
-                 VerticalOptions="Center" />
-
-        <!-- Inner pulse circle (animates scale on each beat) -->
-        <Ellipse x:Name="PulseCircle"
-                 WidthRequest="140"
-                 HeightRequest="140"
-                 Fill="{StaticResource Primary}"
-                 Opacity="0.7"
-                 HorizontalOptions="Center"
-                 VerticalOptions="Center" />
-
-        <!-- BPM display centered on circle -->
-        <VerticalStackLayout HorizontalOptions="Center"
-                             VerticalOptions="Center"
-                             Spacing="0">
-            <Label x:Name="BpmLabel"
-                   Text="{Binding Bpm}"
-                   FontSize="42"
-                   FontAttributes="Bold"
-                   HorizontalTextAlignment="Center"
-                   TextColor="White" />
-            <Label Text="BPM"
-                   FontSize="14"
-                   HorizontalTextAlignment="Center"
-                   TextColor="White"
-                   Opacity="0.8" />
-        </VerticalStackLayout>
-    </Grid>
+    <HorizontalStackLayout Spacing="12" VerticalOptions="Center" HorizontalOptions="Center" Padding="8,4">
+        <!-- Compact pulse circle 50px -->
+        <Grid WidthRequest="50" HeightRequest="50">
+            <Ellipse x:Name="PulseCircle"
+                     WidthRequest="44" HeightRequest="44"
+                     Fill="{StaticResource Primary}"
+                     Opacity="0.8"
+                     HorizontalOptions="Center"
+                     VerticalOptions="Center" />
+        </Grid>
+        <!-- BPM large label -->
+        <Label Text="{Binding Bpm}"
+               FontSize="30"
+               FontAttributes="Bold"
+               VerticalOptions="Center"
+               TextColor="{AppThemeBinding Light=#333333, Dark=#FFFFFF}"
+               MinimumWidthRequest="40" />
+        <Label Text="BPM"
+               FontSize="12"
+               VerticalOptions="End"
+               TextColor="{AppThemeBinding Light=#666666, Dark=#999999}"
+               Margin="0,0,8,6" />
+        <!-- Controls: -, ON/STOP, + -->
+        <Button Text="&#x2212;"
+                Command="{Binding DecreaseBpmCommand}"
+                FontSize="20"
+                WidthRequest="44" HeightRequest="44"
+                CornerRadius="22"
+                BackgroundColor="{AppThemeBinding Light=#E0E0E0, Dark=#333333}"
+                TextColor="{AppThemeBinding Light=#333333, Dark=#FFFFFF}"
+                Padding="0" />
+        <Button x:Name="ToggleBtn"
+                Text="{Binding IsPlaying, StringFormat='{0}'}"
+                Command="{Binding ToggleMetronomeCommand}"
+                FontSize="14" FontAttributes="Bold"
+                WidthRequest="70" HeightRequest="44"
+                CornerRadius="8"
+                BackgroundColor="{AppThemeBinding Light=#1976D2, Dark=#1565C0}"
+                TextColor="White"
+                Padding="0" />
+        <Button Text="+"
+                Command="{Binding IncreaseBpmCommand}"
+                FontSize="20"
+                WidthRequest="44" HeightRequest="44"
+                CornerRadius="22"
+                BackgroundColor="{AppThemeBinding Light=#E0E0E0, Dark=#333333}"
+                TextColor="{AppThemeBinding Light=#333333, Dark=#FFFFFF}"
+                Padding="0" />
+    </HorizontalStackLayout>
 </ContentView>
