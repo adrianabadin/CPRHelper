@@ -12,7 +12,7 @@
                FontAttributes="Bold"
                TextColor="#999999"
                HorizontalTextAlignment="Center"
-               LetterSpacing="1" />
+               CharacterSpacing="1" />
 
         <!-- Current rhythm display -->
         <Label Text="{Binding CurrentRhythmDisplay, StringFormat='Ritmo actual: {0}'}"
@@ -26,10 +26,10 @@
                     JustifyContent="Center"
                     AlignItems="Center">
 
-            <!-- FV/TV (Fibrilación Ventricular) — shockable, red -->
-            <Button Text="FV/TV"
+            <!-- FV (Fibrilacion Ventricular) — shockable, red -->
+            <Button Text="FV"
                     Command="{Binding SelectRhythmCommand}"
-                    CommandParameter="{x:Static models:CardiacRhythm.FibrilacionVentricular}"
+                    CommandParameter="{x:Static models:CardiacRhythm.FV}"
                     BackgroundColor="#D32F2F"
                     TextColor="White"
                     FontSize="14"
@@ -39,10 +39,10 @@
                     CornerRadius="8"
                     Margin="4" />
 
-            <!-- TV sin pulso (Taquicardia Ventricular) — shockable, red -->
-            <Button Text="TV s/p"
+            <!-- TV (Taquicardia Ventricular sin pulso) — shockable, red -->
+            <Button Text="TV"
                     Command="{Binding SelectRhythmCommand}"
-                    CommandParameter="{x:Static models:CardiacRhythm.TaquicardiaVentricular}"
+                    CommandParameter="{x:Static models:CardiacRhythm.TV}"
                     BackgroundColor="#D32F2F"
                     TextColor="White"
                     FontSize="14"
@@ -52,10 +52,10 @@
                     CornerRadius="8"
                     Margin="4" />
 
-            <!-- AEA (Actividad Eléctrica Sin Pulso) — non-shockable, orange -->
-            <Button Text="AEA"
+            <!-- AESP (Actividad Electrica Sin Pulso) — non-shockable, orange -->
+            <Button Text="AESP"
                     Command="{Binding SelectRhythmCommand}"
-                    CommandParameter="{x:Static models:CardiacRhythm.ActividadElectricaSinPulso}"
+                    CommandParameter="{x:Static models:CardiacRhythm.AESP}"
                     BackgroundColor="#E65100"
                     TextColor="White"
                     FontSize="14"
@@ -78,24 +78,11 @@
                     CornerRadius="8"
                     Margin="4" />
 
-            <!-- Bradicardia — pulse-present, blue -->
-            <Button Text="Bradicardia"
+            <!-- RCE (Retorno de Circulacion Espontanea) — green -->
+            <Button Text="RCE"
                     Command="{Binding SelectRhythmCommand}"
-                    CommandParameter="{x:Static models:CardiacRhythm.Bradicardia}"
-                    BackgroundColor="#1565C0"
-                    TextColor="White"
-                    FontSize="14"
-                    FontAttributes="Bold"
-                    MinimumWidthRequest="90"
-                    HeightRequest="44"
-                    CornerRadius="8"
-                    Margin="4" />
-
-            <!-- Taquicardia — pulse-present, blue -->
-            <Button Text="Taquicardia"
-                    Command="{Binding SelectRhythmCommand}"
-                    CommandParameter="{x:Static models:CardiacRhythm.Taquicardia}"
-                    BackgroundColor="#1565C0"
+                    CommandParameter="{x:Static models:CardiacRhythm.RCE}"
+                    BackgroundColor="#2E7D32"
                     TextColor="White"
                     FontSize="14"
                     FontAttributes="Bold"

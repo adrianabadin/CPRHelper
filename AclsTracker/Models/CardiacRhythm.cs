@@ -2,11 +2,10 @@ namespace AclsTracker.Models;
 
 public enum CardiacRhythm
 {
-    Ninguno,                    // No rhythm selected (initial state)
-    FibrilacionVentricular,     // FV - Fibrilación Ventricular
-    TaquicardiaVentricular,     // TV - Taquicardia Ventricular sin pulso
-    ActividadElectricaSinPulso, // AEA - Actividad Eléctrica sin Pulso
-    Asistolia,                  // Asistolia
-    Bradicardia,                // Bradicardia
-    Taquicardia                 // Taquicardia (con pulso - supraventricular/ventricular)
+    Ninguno,    // No rhythm selected (initial state)
+    RCE,        // Retorno de Circulacion Espontanea - green
+    AESP,       // Actividad Electrica Sin Pulso - orange, non-shockable
+    Asistolia,  // Asistolia - orange, non-shockable
+    TV,         // Taquicardia Ventricular - red, shockable
+    FV          // Fibrilacion Ventricular - red, shockable
 }

@@ -29,8 +29,16 @@ public partial class TimerModel : ObservableObject
             ? Math.Min(Elapsed.TotalMilliseconds / TargetDuration.Value.TotalMilliseconds, 1.0)
             : 0.0;
 
+    /// <summary>
+    /// Returns true when this is a PulseCheck timer that has exceeded 10 seconds.
+    /// Used to trigger red color in TimerCard UI.
+    /// </summary>
+    public bool IsOverThreshold =>
+        Type == TimerType.PulseCheck && Elapsed.TotalSeconds > 10;
+
     partial void OnElapsedChanged(TimeSpan value)
     {
         OnPropertyChanged(nameof(ProgressPercentage));
+        OnPropertyChanged(nameof(IsOverThreshold));
     }
 }
