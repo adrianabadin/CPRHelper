@@ -27,11 +27,20 @@ public partial class MainViewModel : ObservableObject
         Timer = timer;
         EventRecording = eventRecording;
 
-        // Subscribe to rhythm changes to update Amiodarona enabled state
+        // Subscribe to rhythm changes to update Amiodarona enabled state and show defibrillation popup
         EventRecording.PropertyChanged += (_, e) =>
         {
             if (e.PropertyName == nameof(EventRecordingViewModel.CurrentRhythm))
+            {
                 IsAmiodaronaEnabled = EventRecording.CurrentRhythm is CardiacRhythm.TV or CardiacRhythm.FV;
+
+                if (EventRecording.CurrentRhythm is CardiacRhythm.TV or CardiacRhythm.FV)
+                {
+                    _ = Application.Current!.MainPage!
+                        .DisplayAlert("Ritmo Desfibrilable", "Defibrile y reanude compresiones.", "ACEPTAR");
+                    EventRecording.LogCustomEventCommand.Execute("Ritmo desfibrilable detectado");
+                }
+            }
         };
     }
 
@@ -81,7 +90,7 @@ public partial class MainViewModel : ObservableObject
     {
         _pulseCheckTimer?.Stop();
         await Application.Current!.MainPage!
-            .DisplayAlert("Check de Pulso", "Han pasado 2 minutos. Constate pulso y ritmo.", "ACEPTAR");
+            .DisplayAlert("Check de Pulso", "Han pasado 2 minutos.\nConstate pulso y ritmo.\nAdministre 2 ventilaciones.", "ACEPTAR");
         // After ACEPTAR: pause compressions, start pulse-check timer
         Timer.PauseCompressions();
         Timer.StartPulseCheckTimer();
