@@ -105,13 +105,12 @@ public partial class EventRecordingViewModel : ObservableObject
 
     private static string GetRhythmDisplayName(CardiacRhythm rhythm) => rhythm switch
     {
-        CardiacRhythm.Ninguno                    => "Ninguno",
-        CardiacRhythm.FibrilacionVentricular     => "FV/TV",
-        CardiacRhythm.TaquicardiaVentricular     => "FV/TV",
-        CardiacRhythm.ActividadElectricaSinPulso => "AEA",
-        CardiacRhythm.Asistolia                  => "Asistolia",
-        CardiacRhythm.Bradicardia                => "Bradicardia",
-        CardiacRhythm.Taquicardia                => "Taquicardia",
-        _                                        => rhythm.ToString()
+        CardiacRhythm.Ninguno   => "Ninguno",
+        CardiacRhythm.RCE       => "RCE",
+        CardiacRhythm.AESP      => "AESP",
+        CardiacRhythm.Asistolia => "Asistolia",
+        CardiacRhythm.TV        => "TV",
+        CardiacRhythm.FV        => "FV",
+        _                       => rhythm.ToString()
     };
 }

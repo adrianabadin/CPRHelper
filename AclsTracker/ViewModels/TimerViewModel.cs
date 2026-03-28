@@ -14,7 +14,9 @@ namespace AclsTracker.ViewModels;
 /// - Total Elapsed (code duration since start)
 /// - CPR Cycle (2-minute countdown cycles)
 /// - Compressions (current set duration)
-/// - Epinephrine (medication administration every 3-5 min)
+/// - Epinephrine/Adrenalina (medication administration every 3 min)
+/// - Amiodarona (medication timer every 5 min)
+/// - Pulse Check (time between pulse checks - turns red > 10s)
 /// </summary>
 public partial class TimerViewModel : ObservableObject
 {
@@ -36,41 +38,16 @@ public partial class TimerViewModel : ObservableObject
 
     /// <summary>
     /// Creates the standard timer set for ACLS resuscitation.
-    /// Called once on ViewModel creation.
+    /// Called once on ViewModel creation. Order matters for XAML binding (2x3 grid).
     /// </summary>
     private void InitializeDefaultTimers()
     {
-        // Total elapsed time — no target, counts up indefinitely
-        _timerService.AddTimer(
-            id: "total-elapsed",
-            name: "Tiempo Total",
-            type: TimerType.TotalElapsed,
-            targetDuration: null
-        );
-
-        // CPR cycle timer — 2-minute target with progress circle (D-05)
-        _timerService.AddTimer(
-            id: "cpr-cycle",
-            name: "Ciclo RCP",
-            type: TimerType.CprCycle,
-            targetDuration: TimeSpan.FromMinutes(2)
-        );
-
-        // Compression set timer — tracks current compression set duration
-        _timerService.AddTimer(
-            id: "compressions",
-            name: "Compresiones",
-            type: TimerType.Compressions,
-            targetDuration: null
-        );
-
-        // Epinephrine timer — 3-5 minute medication cycle
-        _timerService.AddTimer(
-            id: "epinephrine",
-            name: "Adrenalina",
-            type: TimerType.Medication,
-            targetDuration: TimeSpan.FromMinutes(3)
-        );
+        _timerService.AddTimer("total-elapsed",  "Tiempo Total",  TimerType.TotalElapsed,  null);
+        _timerService.AddTimer("cpr-cycle",      "Ciclo RCP",     TimerType.CprCycle,      TimeSpan.FromMinutes(2));
+        _timerService.AddTimer("compressions",   "Compresiones",  TimerType.Compressions,  null);
+        _timerService.AddTimer("epinephrine",    "Adrenalina",    TimerType.Medication,    TimeSpan.FromMinutes(3));
+        _timerService.AddTimer("amiodarona",     "Amiodarona",    TimerType.Amiodarona,    TimeSpan.FromMinutes(5));
+        _timerService.AddTimer("pulse-check",    "T. Pulsos",     TimerType.PulseCheck,    null);
     }
 
     /// <summary>
@@ -126,6 +103,7 @@ public partial class TimerViewModel : ObservableObject
     /// <summary>
     /// Reset and restart CPR cycle timer — convenience for the common
     /// "new cycle" action after rhythm check every 2 minutes.
+    /// Also resets compressions and pulse-check timers.
     /// </summary>
     [RelayCommand]
     private void NewCprCycle()
@@ -134,6 +112,9 @@ public partial class TimerViewModel : ObservableObject
         _timerService.StartTimer("cpr-cycle");
         _timerService.ResetTimer("compressions");
         _timerService.StartTimer("compressions");
+        // Reset pulse-check timer
+        _timerService.PauseTimer("pulse-check");
+        _timerService.ResetTimer("pulse-check");
     }
 
     /// <summary>
@@ -144,5 +125,50 @@ public partial class TimerViewModel : ObservableObject
     {
         _timerService.ResetTimer("epinephrine");
         _timerService.StartTimer("epinephrine");
+    }
+
+    /// <summary>
+    /// Mark amiodarona administered — reset amiodarona timer and restart.
+    /// </summary>
+    [RelayCommand]
+    private void MarkAmiodaronaGiven()
+    {
+        _timerService.ResetTimer("amiodarona");
+        _timerService.StartTimer("amiodarona");
+    }
+
+    /// <summary>
+    /// Pause the compressions timer (used when checking pulse).
+    /// </summary>
+    public void PauseCompressions()
+    {
+        _timerService.PauseTimer("compressions");
+    }
+
+    /// <summary>
+    /// Resume the compressions timer (used after pulse check).
+    /// </summary>
+    public void ResumeCompressions()
+    {
+        _timerService.StartTimer("compressions");
+    }
+
+    /// <summary>
+    /// Start the pulse-check timer from zero.
+    /// Call when compressions are paused to check for pulse.
+    /// </summary>
+    public void StartPulseCheckTimer()
+    {
+        _timerService.ResetTimer("pulse-check");
+        _timerService.StartTimer("pulse-check");
+    }
+
+    /// <summary>
+    /// Reset the pulse-check timer back to zero and stop it.
+    /// </summary>
+    public void ResetPulseCheckTimer()
+    {
+        _timerService.PauseTimer("pulse-check");
+        _timerService.ResetTimer("pulse-check");
     }
 }
