@@ -56,6 +56,16 @@ Plans:
 - [x] 02.1-03-PLAN.md — MainPage 6-block layout, MainViewModel action commands and pulse-check popup
 - [ ] 02.1-04-PLAN.md — Gap closure: ventilation text in popup, defibrillation popup, compressions timer FCT fix
 
+### Phase 02.1.1: mejoras en defibrilacion y drogas: registro de decision, alertas rojas >4min, sugerencias de medicamentos (INSERTED)
+
+**Goal:** [Urgent work - to be planned]
+**Requirements**: TBD
+**Depends on:** Phase 2.1
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 02.1.1 to break down)
+
 ### Phase 3: Protocol Guidance
 **Goal**: Users receive context-aware reminders based on AHA ACLS 2020 protocol during resuscitation
 **Depends on**: Phase 2
@@ -82,7 +92,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Metronome & Timers | 4/4 | Complete    | 2026-03-24 |
 | 2. Event Recording | 2/2 | Complete   | 2026-03-25 |
-| 02.1. UI Restructure | 4/4 | Complete   | 2026-03-28 |
+| 02.1. UI Restructure | 4/4 | Complete    | 2026-03-28 |
 | 3. Protocol Guidance | 0/0 | Not started | - |
 | 4. Data Export | 0/0 | Not started | - |
 

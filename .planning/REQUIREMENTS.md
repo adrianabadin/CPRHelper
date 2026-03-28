@@ -10,13 +10,13 @@ Requirements para el lanzamiento inicial. Cada uno mapea a una fase del roadmap.
 ### Audio y Metrónomo
 
 - [x] **AUDI-01**: El metrónomo audible puede reproducir audio a 100-120 BPM (configurable)
-- [ ] **AUDI-02**: La visualización del metrónomo está sincronizada con el audio (animada, 60fps)
+- [x] **AUDI-02**: La visualización del metrónomo está sincronizada con el audio (animada, 60fps)
 
 ### Gestión de Tiempo
 
 - [x] **TIME-01**: El sistema puede gestionar múltiples timers concurrentes (ciclos de 2 minutos + medicamentos)
 - [x] **TIME-02**: Los timers pueden ser iniciados, pausados y reiniciados independientemente
-- [ ] **TIME-03**: Los timers muestran tiempo transcurrido en tiempo real
+- [x] **TIME-03**: Los timers muestran tiempo transcurrido en tiempo real
 
 ### Registro de Eventos
 
@@ -73,10 +73,10 @@ Qué fases cubren qué requisitos. Actualizado durante la creación del roadmap.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | AUDI-01 | Phase 1 | Complete |
-| AUDI-02 | Phase 1 | Pending |
+| AUDI-02 | Phase 1 | Complete |
 | TIME-01 | Phase 1 | Complete |
 | TIME-02 | Phase 1 | Complete |
-| TIME-03 | Phase 1 | Pending |
+| TIME-03 | Phase 1 | Complete |
 | REGI-01 | Phase 2 | Complete |
 | REGI-02 | Phase 2 | Complete |
 | REGI-03 | Phase 2 | Complete |

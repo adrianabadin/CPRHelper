@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: verifying
-last_updated: "2026-03-28T09:37:47.800Z"
+last_updated: "2026-03-28T10:12:55.604Z"
 progress:
-  total_phases: 5
+  total_phases: 6
   completed_phases: 3
   total_plans: 10
   completed_plans: 10
@@ -80,6 +80,7 @@ Plan: 4 of 4
 
 ### Roadmap Evolution
 
+- Phase 02.1.1 inserted after Phase 2.1: mejoras en defibrilacion y drogas: registro de decision, alertas rojas >4min, sugerencias de medicamentos (URGENT)
 - Phase 02.1 inserted after Phase 2: modificar la estructura de la UI del proyecto (URGENT)
 
 ### Architecture Notes
