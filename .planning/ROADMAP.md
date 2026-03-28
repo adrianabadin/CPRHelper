@@ -6,8 +6,8 @@
 
 ## Phases
 
-- [x] **Phase 1: Metronome & Timers** - Establish core timing engine with audio metronome and multi-timer system (completed 2026-03-24)
-- [x] **Phase 2: Event Recording** - Capture rhythm selection, event logging with timestamps, and H's/T's tracking (completed 2026-03-25)
+- [x] **Phase 1: Metronome & Timers** - Establish core timing engine with audio metronome and multi-timer system (completed 2026-03-24)
+- [x] **Phase 2: Event Recording** - Capture rhythm selection, event logging with timestamps, and H's/T's tracking (completed 2026-03-25)
 - [ ] **Phase 3: Protocol Guidance** - Generate context-aware reminders based on AHA ACLS 2020 protocol
 - [ ] **Phase 4: Data Export** - Enable PDF and CSV export of session data
 
@@ -45,7 +45,16 @@ Plans:
 - [ ] 02-02-PLAN.md — UI controls (RhythmSelector, HsAndTsChecklist, EventLogPanel) and MainPage integration
 **UI hint**: yes
 
-### Phase 02.1: modificar la estructura de la UI del proyecto (INSERTED)**Goal:** Reorganize app UI structure for emergency use: 3-tab Shell navigation, compact above-the-fold layout with all critical controls, 6 timers, new action buttons, and 2-minute pulse-check popup**Requirements**: REGI-01, REGI-02, REGI-03, AUDI-02, TIME-01, TIME-02, TIME-03**Depends on:** Phase 2**Plans:** 3/3 plans complete
+### Phase 02.1: modificar la estructura de la UI del proyecto (INSERTED)
+**Goal:** Reorganize app UI structure for emergency use: 3-tab Shell navigation, compact above-the-fold layout with all critical controls, 6 timers, new action buttons, and 2-minute pulse-check popup
+**Requirements**: REGI-01, REGI-02, REGI-03, AUDI-02, TIME-01, TIME-02, TIME-03
+**Depends on:** Phase 2
+**Plans:** 4 plans (3 complete + 1 gap closure)
+Plans:
+- [x] 02.1-01-PLAN.md — Enums, TimerModel, TimerViewModel 6-timer init, compact TimerCard
+- [x] 02.1-02-PLAN.md — Compact MetronomePulse, RhythmSelector, HsAndTsPage, HistorialPage, 3-tab AppShell
+- [x] 02.1-03-PLAN.md — MainPage 6-block layout, MainViewModel action commands and pulse-check popup
+- [ ] 02.1-04-PLAN.md — Gap closure: ventilation text in popup, defibrillation popup, compressions timer FCT fix
 
 ### Phase 3: Protocol Guidance
 **Goal**: Users receive context-aware reminders based on AHA ACLS 2020 protocol during resuscitation
@@ -71,8 +80,9 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Metronome & Timers | 3/4 | Complete    | 2026-03-24 |
+| 1. Metronome & Timers | 4/4 | Complete    | 2026-03-24 |
 | 2. Event Recording | 2/2 | Complete   | 2026-03-25 |
+| 02.1. UI Restructure | 3/4 | Gap closure | - |
 | 3. Protocol Guidance | 0/0 | Not started | - |
 | 4. Data Export | 0/0 | Not started | - |
 
