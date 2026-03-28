@@ -15,7 +15,7 @@ Requirements para el lanzamiento inicial. Cada uno mapea a una fase del roadmap.
 ### Gestión de Tiempo
 
 - [x] **TIME-01**: El sistema puede gestionar múltiples timers concurrentes (ciclos de 2 minutos + medicamentos)
-- [ ] **TIME-02**: Los timers pueden ser iniciados, pausados y reiniciados independientemente
+- [x] **TIME-02**: Los timers pueden ser iniciados, pausados y reiniciados independientemente
 - [ ] **TIME-03**: Los timers muestran tiempo transcurrido en tiempo real
 
 ### Registro de Eventos
@@ -75,7 +75,7 @@ Qué fases cubren qué requisitos. Actualizado durante la creación del roadmap.
 | AUDI-01 | Phase 1 | Complete |
 | AUDI-02 | Phase 1 | Pending |
 | TIME-01 | Phase 1 | Complete |
-| TIME-02 | Phase 1 | Pending |
+| TIME-02 | Phase 1 | Complete |
 | TIME-03 | Phase 1 | Pending |
 | REGI-01 | Phase 2 | Complete |
 | REGI-02 | Phase 2 | Complete |
