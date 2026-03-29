@@ -89,11 +89,21 @@ public partial class MainViewModel : ObservableObject
     private async void OnPulseCheckDue(object? sender, EventArgs e)
     {
         _pulseCheckTimer?.Stop();
-        await Application.Current!.MainPage!
-            .DisplayAlert("Check de Pulso", "Han pasado 2 minutos.\nConstate pulso y ritmo.\nAdministre 2 ventilaciones.", "ACEPTAR");
-        // After ACEPTAR: pause compressions, start pulse-check timer
-        Timer.PauseCompressions();
-        Timer.StartPulseCheckTimer();
+        bool defibrilar = await Application.Current!.MainPage!
+            .DisplayAlert("Check de Pulso",
+                "Han pasado 2 minutos.\nConstate pulso y ritmo.\nAdministre 2 ventilaciones.",
+                "DEFIBRILAR", "CONTINUAR");
+
+        if (defibrilar) // DEFIBRILAR pressed (first button returns true)
+        {
+            EventRecording.LogCustomEventCommand.Execute("Defibrilación realizada");
+        }
+        else // CONTINUAR pressed (or dismissed)
+        {
+            // After CONTINUAR: pause compressions, start pulse-check timer
+            Timer.PauseCompressions();
+            Timer.StartPulseCheckTimer();
+        }
     }
 
     [RelayCommand]
