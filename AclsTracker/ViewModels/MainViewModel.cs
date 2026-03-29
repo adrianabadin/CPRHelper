@@ -109,4 +109,10 @@ public partial class MainViewModel : ObservableObject
         Timer.MarkAmiodaronaGivenCommand.Execute(null);
         EventRecording.LogCustomEventCommand.Execute("Amiodarona administrada");
     }
+
+    [RelayCommand]
+    private void Defibrilar()
+    {
+        EventRecording.LogCustomEventCommand.Execute("Defibrilación realizada");
+    }
 }
