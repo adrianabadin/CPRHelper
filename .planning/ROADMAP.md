@@ -61,7 +61,7 @@ Plans:
 **Goal:** Mejorar funcionalidad existente de Phase 2.1 agregando registro de defibrilación manual, alertas visuales de tiempo crítico, y sugerencias de medicamentos en popup de check de pulso
 **Requirements**: TBD (extends REGI-02, improves existing functionality)
 **Depends on:** Phase 2.1
-**Plans:** 1/3 plans executed
+**Plans:** 2/3 plans executed
 
 Plans:
 - [ ] 02.1.1-01-PLAN.md — Defibrilation button and event registration (UI + MainViewModel)
