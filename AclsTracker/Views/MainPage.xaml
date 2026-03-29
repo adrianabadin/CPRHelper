@@ -84,7 +84,17 @@
                     CornerRadius="8"
                     HorizontalOptions="Fill" />
 
-            <!-- Row 2: ADRENALINA + AMIODARONA side by side -->
+            <!-- Row 2: DEFIBRILAR full width -->
+            <Button Text="DEFIBRILAR"
+                    Command="{Binding DefibrilarCommand}"
+                    BackgroundColor="#C62828"
+                    TextColor="White"
+                    FontSize="15" FontAttributes="Bold"
+                    HeightRequest="44"
+                    CornerRadius="8"
+                    HorizontalOptions="Fill" />
+
+            <!-- Row 3: ADRENALINA + AMIODARONA side by side -->
             <Grid ColumnDefinitions="*, *" ColumnSpacing="8">
                 <Button Grid.Column="0"
                         Text="ADRENALINA"
