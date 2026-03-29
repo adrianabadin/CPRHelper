@@ -12,7 +12,11 @@ El líder del código puede guiar y registrar todo el evento de reanimación con
 
 ### Validated
 
-(Ninguno aún — se validan al enviar)
+- [x] **AUDI-01**: El metrónomo audible puede reproducir audio a 100-120 BPM (configurable) — Validado en Phase 1
+- [x] **AUDI-02**: La visualización del metrónomo está sincronizada con el audio (animada, 60fps) — Validado en Phase 1
+- [x] **TIME-01**: El sistema puede gestionar múltiples timers concurrentes (ciclos de 2 minutos + medicamentos) — Validado en Phase 1
+- [x] **TIME-02**: Los timers pueden ser iniciados, pausados y reiniciados independientemente — Validado en Phase 1
+- [x] **TIME-03**: Los timers muestran tiempo transcurrido en tiempo real — Validado en Phase 1
 
 ### Active
 
@@ -76,4 +80,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 24/03/2026 after initialization*
+*Last updated: 24/03/2026 after Phase 1 completion*

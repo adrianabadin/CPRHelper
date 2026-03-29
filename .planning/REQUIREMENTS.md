@@ -81,8 +81,8 @@ Qué fases cubren qué requisitos. Actualizado durante la creación del roadmap.
 | REGI-02 | Phase 2 | Complete |
 | REGI-03 | Phase 2 | Complete |
 | REGI-04 | Phase 3 | Complete |
-| EXPO-01 | Phase 4 | Pending |
-| EXPO-02 | Phase 4 | Pending |
+| EXPO-01 | Phase 5 | Pending |
+| EXPO-02 | Phase 5 | Pending |
 
 **Coverage:**
 - v1 requirements: 11 total

@@ -105,6 +105,16 @@ Plans:
 **Plans**: TBD
 **UI hint**: yes
 
+### Phase 04.1: fix ui stuff (INSERTED)
+
+**Goal:** [Urgent work - to be planned]
+**Requirements**: TBD
+**Depends on:** Phase 4
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 04.1 to break down)
+
 ### Phase 5: Data Export
 **Goal**: Users can export recorded session data for documentation and review
 **Depends on**: Phase 3
@@ -125,6 +135,16 @@ Plans:
 | 3. Protocol Guidance | 0/0 | Not started | - |
 | 3.1. Fix design issues | 2/2 | Complete   | 2026-03-29 |
 | 4. Data Export | 0/0 | Not started | - |
+
+### Phase 6: 3.2
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 5
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 6 to break down)
 
 ---
 

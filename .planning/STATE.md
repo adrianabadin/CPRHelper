@@ -3,6 +3,19 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: verifying
+last_updated: "2026-03-29T22:18:05.802Z"
+progress:
+  total_phases: 10
+  completed_phases: 6
+  total_plans: 16
+  completed_plans: 16
+---
+
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+status: verifying
 last_updated: "2026-03-29T21:22:13.489Z"
 progress:
   total_phases: 8
@@ -88,6 +101,8 @@ Plan: 4 of 4
 - Phase 02.1.1 inserted after Phase 2.1: mejoras en defibrilacion y drogas: registro de decision, alertas rojas >4min, sugerencias de medicamentos (URGENT)
 - Phase 02.1 inserted after Phase 2: modificar la estructura de la UI del proyecto (URGENT)
 - Phase 3.1 added: Fix defibrillator notification at min 40, remove defibrillar button from rhythm/pulse popup, defibrillation popup OK-only, drug suggestions in rhythm constatation popup
+- Phase 6 added: 3.2
+- Phase 4.1 inserted after Phase 4: fix ui stuff (URGENT)
 
 ### Architecture Notes
 
