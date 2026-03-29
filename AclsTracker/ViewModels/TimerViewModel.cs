@@ -14,8 +14,8 @@ namespace AclsTracker.ViewModels;
 /// - Total Elapsed (code duration since start)
 /// - CPR Cycle (2-minute countdown cycles)
 /// - Compressions (current set duration)
-/// - Epinephrine/Adrenalina (medication administration every 3 min)
-/// - Amiodarona (medication timer every 5 min)
+ /// - Epinephrine/Adrenalina (medication administration every 4 min, AHA ACLS 2020)
+ /// - Amiodarona (medication timer every 4 min, AHA ACLS 2020)
 /// - Pulse Check (time between pulse checks - turns red > 10s)
 /// </summary>
 public partial class TimerViewModel : ObservableObject
@@ -45,8 +45,8 @@ public partial class TimerViewModel : ObservableObject
         _timerService.AddTimer("total-elapsed",  "Tiempo Total",  TimerType.TotalElapsed,  null);
         _timerService.AddTimer("cpr-cycle",      "Ciclo RCP",     TimerType.CprCycle,      TimeSpan.FromMinutes(2));
         _timerService.AddTimer("compressions",   "Compresiones",  TimerType.Compressions,  null);
-        _timerService.AddTimer("epinephrine",    "Adrenalina",    TimerType.Medication,    TimeSpan.FromMinutes(3));
-        _timerService.AddTimer("amiodarona",     "Amiodarona",    TimerType.Amiodarona,    TimeSpan.FromMinutes(5));
+        _timerService.AddTimer("epinephrine",    "Adrenalina",    TimerType.Medication,    TimeSpan.FromMinutes(4));
+        _timerService.AddTimer("amiodarona",     "Amiodarona",    TimerType.Amiodarona,    TimeSpan.FromMinutes(4));
         _timerService.AddTimer("pulse-check",    "T. Pulsos",     TimerType.PulseCheck,    null);
     }
 
