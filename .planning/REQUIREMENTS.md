@@ -23,7 +23,7 @@ Requirements para el lanzamiento inicial. Cada uno mapea a una fase del roadmap.
 - [x] **REGI-01**: El usuario puede seleccionar el ritmo actual (FV/TV, AEA, Asistolia, Bradicardia, Taquicardia)
 - [x] **REGI-02**: El sistema registra eventos automáticamente con timestamps (incluyendo milisegundos)
 - [x] **REGI-03**: El usuario puede marcar/descartar items de la lista de H's y T's
-- [ ] **REGI-04**: El sistema genera recordatorios contextuales basados en el protocolo ACLS 2020
+- [x] **REGI-04**: El sistema genera recordatorios contextuales basados en el protocolo ACLS 2020
 
 ### Exportación
 
@@ -80,7 +80,7 @@ Qué fases cubren qué requisitos. Actualizado durante la creación del roadmap.
 | REGI-01 | Phase 2 | Complete |
 | REGI-02 | Phase 2 | Complete |
 | REGI-03 | Phase 2 | Complete |
-| REGI-04 | Phase 3 | Pending |
+| REGI-04 | Phase 3 | Complete |
 | EXPO-01 | Phase 4 | Pending |
 | EXPO-02 | Phase 4 | Pending |
 
