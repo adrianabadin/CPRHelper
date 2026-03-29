@@ -100,12 +100,24 @@ public partial class MainViewModel : ObservableObject
 
             if (popup is not null)
             {
-                bool accepted = await Application.Current!.MainPage!
-                    .DisplayAlert(popup.Value.title, popup.Value.message, "ACEPTAR", "RECHAZAR");
+                bool isShockableInfo = newRhythm is CardiacRhythm.TV or CardiacRhythm.FV;
 
-                string decision = accepted ? "aceptada" : "rechazada";
-                string summary = popup.Value.message.Split('\n')[0]; // First line as summary
-                EventRecording.LogCustomEventCommand.Execute($"Recomendación {decision}: {summary}");
+                if (isShockableInfo)
+                {
+                    // TV/FV: informational popup — single OK button, no decision logging
+                    await Application.Current!.MainPage!
+                        .DisplayAlert(popup.Value.title, popup.Value.message, "OK");
+                    EventRecording.LogCustomEventCommand.Execute($"Ritmo desfibrilable detectado: {newRhythm}");
+                }
+                else
+                {
+                    // AESP/Asistolia/RCE: recommendation — ACEPTAR/RECHAZAR with decision logging
+                    bool accepted = await Application.Current!.MainPage!
+                        .DisplayAlert(popup.Value.title, popup.Value.message, "ACEPTAR", "RECHAZAR");
+                    string decision = accepted ? "aceptada" : "rechazada";
+                    string summary = popup.Value.message.Split('\n')[0];
+                    EventRecording.LogCustomEventCommand.Execute($"Recomendación {decision}: {summary}");
+                }
             }
         }
         finally
@@ -140,9 +152,14 @@ public partial class MainViewModel : ObservableObject
 
     private void ShowNotification(string message, int autoDismissSeconds = 5)
     {
-        if (Application.Current?.MainPage is Views.MainPage page)
+        // App uses Shell navigation, so MainPage is AppShell — navigate through Shell
+        if (Shell.Current?.CurrentPage is Views.MainPage page)
         {
             page.ShowNotification(message, autoDismissSeconds);
+        }
+        else if (Application.Current?.MainPage is Views.MainPage directPage)
+        {
+            directPage.ShowNotification(message, autoDismissSeconds);
         }
     }
 
@@ -210,19 +227,12 @@ public partial class MainViewModel : ObservableObject
             message += "\n\n" + string.Join("\n", suggestions);
         }
 
-        bool defibrilar = await Application.Current!.MainPage!
-            .DisplayAlert("Check de Pulso", message, "DEFIBRILAR", "CONTINUAR");
+        await Application.Current!.MainPage!
+            .DisplayAlert("Check de Pulso", message, "CONTINUAR");
 
-        if (defibrilar) // DEFIBRILAR pressed (first button returns true)
-        {
-            EventRecording.LogCustomEventCommand.Execute("Defibrilación realizada");
-        }
-        else // CONTINUAR pressed (or dismissed)
-        {
-            // After CONTINUAR: pause compressions, start pulse-check timer
-            Timer.PauseCompressions();
-            Timer.StartPulseCheckTimer();
-        }
+        // After CONTINUAR: pause compressions, start pulse-check timer
+        Timer.PauseCompressions();
+        Timer.StartPulseCheckTimer();
     }
 
     [RelayCommand]
