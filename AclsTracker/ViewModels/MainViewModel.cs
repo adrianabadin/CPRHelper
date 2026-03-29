@@ -17,6 +17,7 @@ public partial class MainViewModel : ObservableObject
     public EventRecordingViewModel EventRecording { get; }
 
     private IDispatcherTimer? _pulseCheckTimer;
+    private IDispatcherTimer? _chargingWarningTimer;
 
     [ObservableProperty]
     private bool _isAmiodaronaEnabled;
@@ -60,6 +61,14 @@ public partial class MainViewModel : ObservableObject
         _pulseCheckTimer.IsRepeating = false;
         _pulseCheckTimer.Tick += OnPulseCheckDue;
         _pulseCheckTimer.Start();
+
+        // Charging warning 20s before pulse check (at 1:40)
+        _chargingWarningTimer?.Stop();
+        _chargingWarningTimer = Application.Current!.Dispatcher.CreateTimer();
+        _chargingWarningTimer.Interval = TimeSpan.FromSeconds(100);
+        _chargingWarningTimer.IsRepeating = false;
+        _chargingWarningTimer.Tick += OnChargingWarning;
+        _chargingWarningTimer.Start();
     }
 
     [RelayCommand]
@@ -67,6 +76,8 @@ public partial class MainViewModel : ObservableObject
     {
         _pulseCheckTimer?.Stop();
         _pulseCheckTimer = null;
+        _chargingWarningTimer?.Stop();
+        _chargingWarningTimer = null;
         Timer.StopSessionCommand.Execute(null);
         EventRecording.StopRecordingCommand.Execute(null);
     }
@@ -84,6 +95,23 @@ public partial class MainViewModel : ObservableObject
         _pulseCheckTimer.IsRepeating = false;
         _pulseCheckTimer.Tick += OnPulseCheckDue;
         _pulseCheckTimer.Start();
+
+        // Reset charging warning
+        _chargingWarningTimer?.Stop();
+        _chargingWarningTimer = Application.Current!.Dispatcher.CreateTimer();
+        _chargingWarningTimer.Interval = TimeSpan.FromSeconds(100);
+        _chargingWarningTimer.IsRepeating = false;
+        _chargingWarningTimer.Tick += OnChargingWarning;
+        _chargingWarningTimer.Start();
+    }
+
+    private async void OnChargingWarning(object? sender, EventArgs e)
+    {
+        _chargingWarningTimer?.Stop();
+        var toast = CommunityToolkit.Maui.Alerts.Toast.Make(
+            "⚡ Prepare desfibrilador — Check de pulso en 20s",
+            CommunityToolkit.Maui.Core.ToastDuration.Long);
+        await toast.Show();
     }
 
     private async void OnPulseCheckDue(object? sender, EventArgs e)
