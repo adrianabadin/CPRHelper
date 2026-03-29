@@ -10,7 +10,7 @@
 - [x] **Phase 2: Event Recording** - Capture rhythm selection, event logging with timestamps, and H's/T's tracking (completed 2026-03-25)
 - [ ] **Phase 3: Protocol Guidance** - Generate context-aware reminders based on AHA ACLS 2020 protocol
 - [ ] **Phase 4: Data Persistance** - Allow User to persist sessions in local Database
-- [ ] **Phase 3.1: Fix design issues** - Fix defibrillator notification, rhythm popup UX, and drug suggestions
+- [x] **Phase 3.1: Fix design issues** - Fix defibrillator notification, rhythm popup UX, and drug suggestions (completed 2026-03-29)
 - [ ] **Phase 5: Data Export** - Enable PDF and CSV export of session data
 
 ## Phase Details
@@ -90,7 +90,7 @@ Plans:
 **Goal:** Corregir 5 problemas de diseño: 1) notificación de preparar desfibrilador no aparece (bug: Shell navigation), 2) remover botón DEFIBRILAR del popup de check de pulso, 3) popup TV/FV → solo OK (no ACEPTAR/RECHAZAR), 4) sugerencias de medicación basadas en protocolo ACLS (ciclo+ritmo) con botones destacados en UI, 5) reset de timers al finalizar/iniciar código
 **Requirements**: REGI-04
 **Depends on:** Phase 3
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 - [ ] 03.1-01-PLAN.md — Fix ShowNotification Shell bug, simplify pulse check popup, TV/FV single OK, timer reset on StopCode/StartCode
@@ -123,7 +123,7 @@ Plans:
 | 2. Event Recording | 2/2 | Complete   | 2026-03-25 |
 | 02.1. UI Restructure | 4/4 | Complete    | 2026-03-28 |
 | 3. Protocol Guidance | 0/0 | Not started | - |
-| 3.1. Fix design issues | 1/2 | In Progress|  |
+| 3.1. Fix design issues | 2/2 | Complete   | 2026-03-29 |
 | 4. Data Export | 0/0 | Not started | - |
 
 ---
