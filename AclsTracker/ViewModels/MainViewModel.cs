@@ -141,18 +141,10 @@ public partial class MainViewModel : ObservableObject
     private async void OnChargingWarning(object? sender, EventArgs e)
     {
         _chargingWarningTimer?.Stop();
-        try
-        {
-            var toast = CommunityToolkit.Maui.Alerts.Toast.Make(
-                "⚡ Prepare desfibrilador — Check de pulso en 20s",
-                CommunityToolkit.Maui.Core.ToastDuration.Long);
-            await toast.Show();
-        }
-        catch (Exception)
-        {
-            // Toast requires AppNotificationManager registration on Windows (COMException 0x80070490).
-            // If notifications are unavailable, silently skip — the pulse-check popup itself still works.
-        }
+        var snackbar = CommunityToolkit.Maui.Alerts.Snackbar.Make(
+            "⚡ Prepare desfibrilador — Check de pulso en 20s",
+            duration: TimeSpan.FromSeconds(5));
+        await snackbar.Show();
     }
 
     private async void OnPulseCheckDue(object? sender, EventArgs e)
