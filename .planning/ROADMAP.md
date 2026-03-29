@@ -9,7 +9,8 @@
 - [x] **Phase 1: Metronome & Timers** - Establish core timing engine with audio metronome and multi-timer system (completed 2026-03-24)
 - [x] **Phase 2: Event Recording** - Capture rhythm selection, event logging with timestamps, and H's/T's tracking (completed 2026-03-25)
 - [ ] **Phase 3: Protocol Guidance** - Generate context-aware reminders based on AHA ACLS 2020 protocol
-- [ ] **Phase 4: Data Export** - Enable PDF and CSV export of session data
+- [ ] **Phase 4: Data Persistance** - Allow User to persist sessions in local Database
+- [ ] **Phase 5: Data Export** - Enable PDF and CSV export of session data
 
 ## Phase Details
 
@@ -69,16 +70,30 @@ Plans:
 - [ ] 02.1.1-03-PLAN.md — Medication suggestions in pulse-check popup (MainViewModel)
 
 ### Phase 3: Protocol Guidance
-**Goal**: Users receive context-aware reminders based on AHA ACLS 2020 protocol during resuscitation
+**Goal**: Users receive context-aware reminders based on AHA ACLS 2020 protocol during resuscitation — rhythm-specific popups with ACEPTAR/RECHAZAR decision logging, plus protocol checklist suggestions (IV/IO, compressor rotation, H's and T's) during 2-minute pulse checks
 **Depends on**: Phase 2
 **Requirements**: REGI-04
 **Success Criteria** (what must be TRUE):
-  1. System generates audio reminders based on elapsed time and current rhythm
-  2. User can acknowledge or dismiss protocol reminders during session
+  1. Changing rhythm to AESP/Asistolia shows reversible causes popup with ACEPTAR/RECHAZAR
+  2. Changing rhythm to TV/FV shows defibrillation + H's and T's popup (replaces old one-button popup)
+  3. Changing rhythm to RCE shows post-ROSC checklist popup
+  4. ACEPTAR/RECHAZAR decisions are logged to event log
+  5. Pulse check popup includes IV/IO (first cycle), Rotar compresor (every cycle), pending H's and T's
+**Plans:** 1 plan
+Plans:
+- [ ] 03-01-PLAN.md — Rhythm change popups + pulse check suggestions + cycle counter (MainViewModel.cs)
+**UI hint**: yes
+
+### Phase 4: Data Persistance
+**Goal**: Users can persist session data in local database
+**Depends on**: Phase 3
+**Requirements**: EXPO-01, EXPO-02
+**Success Criteria** (what must be TRUE):
+  1. User can persist data in local database
 **Plans**: TBD
 **UI hint**: yes
 
-### Phase 4: Data Export
+### Phase 5: Data Export
 **Goal**: Users can export recorded session data for documentation and review
 **Depends on**: Phase 3
 **Requirements**: EXPO-01, EXPO-02
