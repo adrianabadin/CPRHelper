@@ -78,8 +78,15 @@ public partial class MainViewModel : ObservableObject
         _pulseCheckTimer = null;
         _chargingWarningTimer?.Stop();
         _chargingWarningTimer = null;
+
         Timer.StopSessionCommand.Execute(null);
+        Timer.ResetAllCommand.Execute(null);
         EventRecording.StopRecordingCommand.Execute(null);
+
+        // Reset session state
+        _cycleCount = 0;
+        _amiodaronaDoseCount = 0;
+        IsAmiodaronaEnabled = false;
     }
 
     private async Task HandleRhythmChangeAsync(CardiacRhythm newRhythm)

@@ -172,4 +172,13 @@ public partial class TimerViewModel : ObservableObject
         _timerService.PauseTimer("pulse-check");
         _timerService.ResetTimer("pulse-check");
     }
+
+    /// <summary>
+    /// Reset all timers to zero and stop them. Used when ending a code session.
+    /// </summary>
+    [RelayCommand]
+    private void ResetAll()
+    {
+        _timerService.ResetAll();
+    }
 }
