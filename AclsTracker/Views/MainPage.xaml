@@ -17,8 +17,16 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <ScrollView>
-        <VerticalStackLayout Padding="12" Spacing="8">
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- Notification banner (top, overlays content) -->
+        <controls:NotificationBanner x:Name="BannerControl"
+                                     Grid.Row="0"
+                                     VerticalOptions="End"
+                                     ZIndex="10" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="12" Spacing="8">
 
             <!-- BLOCK 1: INICIAR / FINALIZAR CODIGO -->
             <Grid HorizontalOptions="Fill">
@@ -120,5 +128,6 @@
             <controls:EventLogPanel BindingContext="{Binding EventRecording}" />
 
         </VerticalStackLayout>
-    </ScrollView>
+        </ScrollView>
+    </Grid>
 </ContentPage>

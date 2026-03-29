@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using AclsTracker.Models;
-using AclsTracker.ViewModels;
+using AclsTracker.Views;
 
 namespace AclsTracker.ViewModels;
 
@@ -138,11 +138,18 @@ public partial class MainViewModel : ObservableObject
         _chargingWarningTimer.Start();
     }
 
+    private void ShowNotification(string message, int autoDismissSeconds = 5)
+    {
+        if (Application.Current?.MainPage is Views.MainPage page)
+        {
+            page.ShowNotification(message, autoDismissSeconds);
+        }
+    }
+
     private async void OnChargingWarning(object? sender, EventArgs e)
     {
         _chargingWarningTimer?.Stop();
-        await Application.Current!.MainPage!.DisplayAlert(
-            "Prepare desfibrilador", "Check de pulso en 20 segundos.", "OK");
+        ShowNotification("⚡ Prepare desfibrilador — Check de pulso en 20s", 5);
     }
 
     private async void OnPulseCheckDue(object? sender, EventArgs e)

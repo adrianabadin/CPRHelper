@@ -36,7 +36,7 @@ public static class MauiProgram
         builder.Services.AddTransient<TimerViewModel>();
         builder.Services.AddSingleton<EventRecordingViewModel>();
 
-        // Views — registered in Plan 04
+        // Views
         builder.Services.AddTransient<MainViewModel>();
         builder.Services.AddTransient<MainPage>();
         builder.Services.AddTransient<HsAndTsPage>();
