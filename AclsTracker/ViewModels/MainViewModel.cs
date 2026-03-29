@@ -19,6 +19,8 @@ public partial class MainViewModel : ObservableObject
     private IDispatcherTimer? _pulseCheckTimer;
     private IDispatcherTimer? _chargingWarningTimer;
     private int _amiodaronaDoseCount;
+    private int _cycleCount;
+    private bool _isPopupShowing;
 
     [ObservableProperty]
     private bool _isAmiodaronaEnabled;
@@ -29,19 +31,14 @@ public partial class MainViewModel : ObservableObject
         Timer = timer;
         EventRecording = eventRecording;
 
-        // Subscribe to rhythm changes to update Amiodarona enabled state and show defibrillation popup
+        // Subscribe to rhythm changes to update Amiodarona enabled state and show protocol guidance popup
         EventRecording.PropertyChanged += (_, e) =>
         {
             if (e.PropertyName == nameof(EventRecordingViewModel.CurrentRhythm))
             {
-                IsAmiodaronaEnabled = EventRecording.CurrentRhythm is CardiacRhythm.TV or CardiacRhythm.FV;
-
-                if (EventRecording.CurrentRhythm is CardiacRhythm.TV or CardiacRhythm.FV)
-                {
-                    _ = Application.Current!.MainPage!
-                        .DisplayAlert("Ritmo Desfibrilable", "Defibrile y reanude compresiones.", "ACEPTAR");
-                    EventRecording.LogCustomEventCommand.Execute("Ritmo desfibrilable detectado");
-                }
+                var rhythm = EventRecording.CurrentRhythm;
+                IsAmiodaronaEnabled = rhythm is CardiacRhythm.TV or CardiacRhythm.FV;
+                _ = HandleRhythmChangeAsync(rhythm); // fire-and-forget
             }
         };
     }
@@ -50,6 +47,7 @@ public partial class MainViewModel : ObservableObject
     private void StartCode()
     {
         _amiodaronaDoseCount = 0;
+        _cycleCount = 0;
         Timer.StartSessionCommand.Execute(null);
         EventRecording.StartRecordingCommand.Execute(null);
 
@@ -84,9 +82,42 @@ public partial class MainViewModel : ObservableObject
         EventRecording.StopRecordingCommand.Execute(null);
     }
 
+    private async Task HandleRhythmChangeAsync(CardiacRhythm newRhythm)
+    {
+        if (_isPopupShowing) return; // Prevent popup stacking on rapid rhythm changes
+        _isPopupShowing = true;
+        try
+        {
+            (string title, string message)? popup = newRhythm switch
+            {
+                CardiacRhythm.AESP      => ("Protocolo ACLS", "Buscar causas reversibles\nConsidere revisar H's y T's"),
+                CardiacRhythm.Asistolia => ("Protocolo ACLS", "Buscar causas reversibles\nConsidere revisar H's y T's"),
+                CardiacRhythm.TV        => ("Ritmo Desfibrilable", "Ritmo desfibrilable. Preparar desfibrilador.\nConsidere causas reversibles (H's y T's)"),
+                CardiacRhythm.FV        => ("Ritmo Desfibrilable", "Ritmo desfibrilable. Preparar desfibrilador.\nConsidere causas reversibles (H's y T's)"),
+                CardiacRhythm.RCE       => ("RCE Alcanzado", "RCE alcanzado\n• Mantener vía aérea y ventilación\n• Monitorear ritmo y presión arterial\n• Obtener ECG 12 derivaciones\n• Considerar objetivo temp 32-36°C\n• Considerar causas reversibles"),
+                _ => null // Ninguno — no popup
+            };
+
+            if (popup is not null)
+            {
+                bool accepted = await Application.Current!.MainPage!
+                    .DisplayAlert(popup.Value.title, popup.Value.message, "ACEPTAR", "RECHAZAR");
+
+                string decision = accepted ? "aceptada" : "rechazada";
+                string summary = popup.Value.message.Split('\n')[0]; // First line as summary
+                EventRecording.LogCustomEventCommand.Execute($"Recomendación {decision}: {summary}");
+            }
+        }
+        finally
+        {
+            _isPopupShowing = false;
+        }
+    }
+
     [RelayCommand]
     private void NewCycle()
     {
+        _cycleCount++;
         Timer.NewCprCycleCommand.Execute(null);
         EventRecording.LogCustomEventCommand.Execute("Nuevo ciclo RCP");
 
