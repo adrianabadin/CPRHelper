@@ -141,10 +141,8 @@ public partial class MainViewModel : ObservableObject
     private async void OnChargingWarning(object? sender, EventArgs e)
     {
         _chargingWarningTimer?.Stop();
-        var snackbar = CommunityToolkit.Maui.Alerts.Snackbar.Make(
-            "⚡ Prepare desfibrilador — Check de pulso en 20s",
-            duration: TimeSpan.FromSeconds(5));
-        await snackbar.Show();
+        await Application.Current!.MainPage!.DisplayAlert(
+            "Prepare desfibrilador", "Check de pulso en 20 segundos.", "OK");
     }
 
     private async void OnPulseCheckDue(object? sender, EventArgs e)
