@@ -154,6 +154,27 @@ public partial class MainViewModel : ObservableObject
         // Build medication suggestion lines based on ACLS 2020 protocol
         var suggestions = new List<string>();
 
+        // === PROTOCOL GUIDANCE REMINDERS (AHA ACLS 2020) ===
+
+        // IV/IO access — first cycle only
+        if (_cycleCount == 0)
+        {
+            suggestions.Add("¿Colocó acceso IV/IO?");
+        }
+
+        // Compressor rotation — every pulse check
+        suggestions.Add("¿Rotar compresor?");
+
+        // H's and T's pending review
+        var pendingHsTs = EventRecording.HsAndTsItems
+            .Where(i => !i.IsChecked && !i.IsDismissed)
+            .Select(i => i.Name)
+            .ToList();
+        if (pendingHsTs.Count > 0)
+        {
+            suggestions.Add($"Revisar H's y T's pendientes: {string.Join(", ", pendingHsTs)}");
+        }
+
         // ADRENALINA — ACLS: 1mg IV/IO cada 3-5 minutos para todos los ritmos de paro
         // Timer[3] (Adrenalina) resets when user presses ADRENALINA, so IsOverThreshold
         // means >4 min since last dose — correct protocol timing check.
