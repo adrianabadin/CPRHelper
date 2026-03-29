@@ -87,10 +87,14 @@ Plans:
 
 ### Phase 3.1: Fix defibrillator notification, rhythm popup UX, and drug suggestions (INSERTED)
 
-**Goal:** Corregir 4 problemas de diseño: 1) notificación de preparar defibrilador al minuto 40 no aparece, 2) remover botón defibrilar del popup de constatación de ritmo/pulso, 3) popup de defibrilación por cambio de ritmo solo debe tener botón OK (defibrilar siempre desde UI), 4) sugerir fármaco a administrar en popup de constatación de ritmo con botón destacado en UI
-**Requirements**: TBD (extends REGI-04, improves existing UI/UX)
+**Goal:** Corregir 5 problemas de diseño: 1) notificación de preparar desfibrilador no aparece (bug: Shell navigation), 2) remover botón DEFIBRILAR del popup de check de pulso, 3) popup TV/FV → solo OK (no ACEPTAR/RECHAZAR), 4) sugerencias de medicación basadas en protocolo ACLS (ciclo+ritmo) con botones destacados en UI, 5) reset de timers al finalizar/iniciar código
+**Requirements**: REGI-04
 **Depends on:** Phase 3
-**Plans:** TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 03.1-01-PLAN.md — Fix ShowNotification Shell bug, simplify pulse check popup, TV/FV single OK, timer reset on StopCode/StartCode
+- [ ] 03.1-02-PLAN.md — ACLS-protocol medication suggestions, >4min banner, highlighted drug buttons in UI
 
 ### Phase 4: Data Persistance
 **Goal**: Users can persist session data in local database
@@ -119,7 +123,7 @@ Plans:
 | 2. Event Recording | 2/2 | Complete   | 2026-03-25 |
 | 02.1. UI Restructure | 4/4 | Complete    | 2026-03-28 |
 | 3. Protocol Guidance | 0/0 | Not started | - |
-| 3.1. Fix design issues | 0/0 | Not started | - |
+| 3.1. Fix design issues | 0/2 | Planned | - |
 | 4. Data Export | 0/0 | Not started | - |
 
 ---
