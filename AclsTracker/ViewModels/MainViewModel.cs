@@ -27,8 +27,8 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private bool _isAmiodaronaEnabled;
 
-    private bool _adrenalinaAdministered;
-    private bool _amiodaronaAdministered;
+    private DateTime? _lastAdrenalinaTime;
+    private DateTime? _lastAmiodaronaTime;
 
     [ObservableProperty]
     private bool _isAdrenalinaSuggested;
@@ -83,8 +83,8 @@ public partial class MainViewModel : ObservableObject
     {
         _amiodaronaDoseCount = 0;
         _cycleCount = 0;
-        _adrenalinaAdministered = false;
-        _amiodaronaAdministered = false;
+        _lastAdrenalinaTime = null;
+        _lastAmiodaronaTime = null;
         IsAdrenalinaSuggested = false;
         IsAmiodaronaSuggested = false;
         Timer.StartSessionCommand.Execute(null);
@@ -128,8 +128,8 @@ public partial class MainViewModel : ObservableObject
         IsAmiodaronaEnabled = false;
         _adrenalinaBannerFired = false;
         _amiodaronaBannerFired = false;
-        _adrenalinaAdministered = false;
-        _amiodaronaAdministered = false;
+        _lastAdrenalinaTime = null;
+        _lastAmiodaronaTime = null;
         IsAdrenalinaSuggested = false;
         IsAmiodaronaSuggested = false;
     }
@@ -152,24 +152,22 @@ public partial class MainViewModel : ObservableObject
 
             if (popup is not null)
             {
-                bool isShockableInfo = newRhythm is CardiacRhythm.TV or CardiacRhythm.FV;
+                var message = popup.Value.message;
 
-                if (isShockableInfo)
+                // Add drug suggestion if protocol indicates
+                var drugSuggestion = GetSuggestedDrug();
+                if (drugSuggestion is not null)
                 {
-                    // TV/FV: informational popup — single OK button, no decision logging
-                    await Application.Current!.MainPage!
-                        .DisplayAlert(popup.Value.title, popup.Value.message, "OK");
-                    EventRecording.LogCustomEventCommand.Execute($"Ritmo desfibrilable detectado: {newRhythm}");
+                    message += $"\n\n💊 Administrar {drugSuggestion.Drug} ({drugSuggestion.DoseHint})";
                 }
-                else
-                {
-                    // AESP/Asistolia/RCE: recommendation — ACEPTAR/RECHAZAR with decision logging
-                    bool accepted = await Application.Current!.MainPage!
-                        .DisplayAlert(popup.Value.title, popup.Value.message, "ACEPTAR", "RECHAZAR");
-                    string decision = accepted ? "aceptada" : "rechazada";
-                    string summary = popup.Value.message.Split('\n')[0];
-                    EventRecording.LogCustomEventCommand.Execute($"Recomendación {decision}: {summary}");
-                }
+
+                await Application.Current!.MainPage!
+                    .DisplayAlert(popup.Value.title, message, "CONTINUAR");
+
+                string logEntry = newRhythm is CardiacRhythm.TV or CardiacRhythm.FV
+                    ? $"Ritmo desfibrilable detectado: {newRhythm}"
+                    : $"Ritmo detectado: {newRhythm}";
+                EventRecording.LogCustomEventCommand.Execute(logEntry);
             }
         }
         finally
@@ -178,23 +176,79 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
+    private record DrugSuggestion(string Drug, string DoseHint);
+
     /// <summary>
-    /// Evaluates ACLS protocol to determine if Adrenalina/Amiodarona should be highlighted.
-    /// Called on rhythm change, new cycle, drug administration, and code start/stop.
+    /// Central ACLS 2020 drug suggestion logic. Returns which single drug to suggest (mutually exclusive).
+    /// Timer-based (≥3min since last dose) as source of truth. Only one drug highlighted at a time.
     /// </summary>
-    private void UpdateDrugSuggestions()
+    private DrugSuggestion? GetSuggestedDrug()
     {
         var rhythm = EventRecording.CurrentRhythm;
         bool isNonShockable = rhythm is CardiacRhythm.AESP or CardiacRhythm.Asistolia;
         bool isShockable = rhythm is CardiacRhythm.TV or CardiacRhythm.FV;
 
-        // Adrenalina: non-shockable from 1st check, shockable from 2nd check
-        bool adrenalineIndicated = (isNonShockable && _cycleCount >= 0) || (isShockable && _cycleCount >= 1);
-        IsAdrenalinaSuggested = adrenalineIndicated && !_adrenalinaAdministered;
+        // RCE / Ninguno → no drugs
+        if (!isNonShockable && !isShockable) return null;
 
-        // Amiodarona: TV/FV, after 2nd check, max 2 doses
-        bool amiodaronaIndicated = isShockable && _cycleCount >= 1 && _amiodaronaDoseCount < 2;
-        IsAmiodaronaSuggested = amiodaronaIndicated && !_amiodaronaAdministered;
+        // First cycle: Adrenalina for non-shockable (ASAP), nothing for shockable (drugs start at 2nd pulse check)
+        if (_cycleCount == 0)
+        {
+            return isNonShockable ? new DrugSuggestion("Adrenalina", "1mg") : null;
+        }
+
+        // AESP/Asistolia: only Adrenalina
+        if (isNonShockable)
+        {
+            bool adrIndicated = _lastAdrenalinaTime == null || (DateTime.Now - _lastAdrenalinaTime.Value).TotalMinutes >= 3;
+            return adrIndicated ? new DrugSuggestion("Adrenalina", "1mg") : null;
+        }
+
+        // TV/FV, cycleCount >= 1
+        bool adrenalinaDue = _lastAdrenalinaTime == null || (DateTime.Now - _lastAdrenalinaTime.Value).TotalMinutes >= 3;
+        bool amiodaronaDue = (_lastAmiodaronaTime == null || (DateTime.Now - _lastAmiodaronaTime.Value).TotalMinutes >= 3)
+                             && _amiodaronaDoseCount < 2;
+
+        // Both never given → Adrenalina first
+        if (_lastAdrenalinaTime == null && _lastAmiodaronaTime == null)
+        {
+            return adrenalinaDue ? new DrugSuggestion("Adrenalina", "1mg") : null;
+        }
+
+        // Evaluate which is more urgent by time since last dose
+        if (adrenalinaDue && amiodaronaDue)
+        {
+            // Both due: pick the one with more time elapsed (more urgent)
+            var adrElapsed = _lastAdrenalinaTime == null ? TimeSpan.MaxValue : DateTime.Now - _lastAdrenalinaTime.Value;
+            var amioElapsed = _lastAmiodaronaTime == null ? TimeSpan.MaxValue : DateTime.Now - _lastAmiodaronaTime.Value;
+
+            if (adrElapsed >= amioElapsed)
+                return new DrugSuggestion("Adrenalina", "1mg");
+
+            string amioHint = _amiodaronaDoseCount == 0 ? "300mg" : "150mg";
+            return new DrugSuggestion("Amiodarona", amioHint);
+        }
+
+        if (adrenalinaDue)
+            return new DrugSuggestion("Adrenalina", "1mg");
+
+        if (amiodaronaDue)
+        {
+            string amioHint = _amiodaronaDoseCount == 0 ? "300mg" : "150mg";
+            return new DrugSuggestion("Amiodarona", amioHint);
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Updates button highlights based on GetSuggestedDrug(). Mutually exclusive — only one red button.
+    /// </summary>
+    private void UpdateDrugSuggestions()
+    {
+        var suggestion = GetSuggestedDrug();
+        IsAdrenalinaSuggested = suggestion?.Drug == "Adrenalina";
+        IsAmiodaronaSuggested = suggestion?.Drug == "Amiodarona";
     }
 
     [RelayCommand]
@@ -204,8 +258,6 @@ public partial class MainViewModel : ObservableObject
         Timer.NewCprCycleCommand.Execute(null);
         EventRecording.LogCustomEventCommand.Execute("Nuevo ciclo RCP");
 
-        _adrenalinaAdministered = false;
-        _amiodaronaAdministered = false;
         UpdateDrugSuggestions();
 
         // Reset 2-minute countdown
@@ -248,10 +300,7 @@ public partial class MainViewModel : ObservableObject
     {
         _pulseCheckTimer?.Stop();
 
-        // Build medication suggestion lines based on ACLS 2020 protocol
         var suggestions = new List<string>();
-
-        // === PROTOCOL GUIDANCE REMINDERS (AHA ACLS 2020) ===
 
         // IV/IO access — first cycle only
         if (_cycleCount == 0)
@@ -272,28 +321,13 @@ public partial class MainViewModel : ObservableObject
             suggestions.Add($"Revisar H's y T's pendientes: {string.Join(", ", pendingHsTs)}");
         }
 
-        // ADRENALINA — ACLS 2020 protocol (cycle + ritmo based, NOT timer threshold)
-        // Non-shockable (AESP/Asistolia): suggest from FIRST pulse check
-        // Shockable (TV/FV): suggest from SECOND pulse check (post-2do shock)
-        var currentRhythm = EventRecording.CurrentRhythm;
-        bool isNonShockable = currentRhythm is CardiacRhythm.AESP or CardiacRhythm.Asistolia;
-        bool isShockable = currentRhythm is CardiacRhythm.TV or CardiacRhythm.FV;
-
-        if ((isNonShockable && _cycleCount >= 0) || (isShockable && _cycleCount >= 1))
+        // Drug suggestion — single drug from centralized ACLS protocol logic
+        var drugSuggestion = GetSuggestedDrug();
+        if (drugSuggestion is not null)
         {
-            suggestions.Add("💊 ¿Hora de Adrenalina?");
+            suggestions.Add($"💊 Administrar {drugSuggestion.Drug} ({drugSuggestion.DoseHint})");
         }
 
-        // AMIODARONA — ACLS 2020: solo TV/FV, después del 2do check de pulso, máx 2 dosis
-        if (isShockable && _cycleCount >= 1 && _amiodaronaDoseCount < 2)
-        {
-            string doseHint = _amiodaronaDoseCount == 0
-                ? "💊 ¿Hora de Amiodarona? (1ra dosis: 300mg)"
-                : "💊 ¿Hora de Amiodarona? (2da dosis: 150mg)";
-            suggestions.Add(doseHint);
-        }
-
-        // Build message with suggestions (if any)
         string message = "Han pasado 2 minutos.\nConstate pulso y ritmo.\nAdministre 2 ventilaciones.";
 
         if (suggestions.Count > 0)
@@ -312,10 +346,10 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     private void Adrenalina()
     {
+        _lastAdrenalinaTime = DateTime.Now;
         Timer.MarkMedicationGivenCommand.Execute(null);
         EventRecording.LogCustomEventCommand.Execute("Adrenalina administrada");
         _adrenalinaBannerFired = false;
-        _adrenalinaAdministered = true;
         UpdateDrugSuggestions();
     }
 
@@ -323,10 +357,10 @@ public partial class MainViewModel : ObservableObject
     private void Amiodarona()
     {
         _amiodaronaDoseCount++;
+        _lastAmiodaronaTime = DateTime.Now;
         Timer.MarkAmiodaronaGivenCommand.Execute(null);
         EventRecording.LogCustomEventCommand.Execute("Amiodarona administrada");
         _amiodaronaBannerFired = false;
-        _amiodaronaAdministered = true;
         UpdateDrugSuggestions();
     }
 
