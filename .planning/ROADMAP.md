@@ -85,6 +85,26 @@ Plans:
 - [ ] 03-01-PLAN.md — Rhythm change popups + pulse check suggestions + cycle counter (MainViewModel.cs)
 **UI hint**: yes
 
+### Phase 03.2: mejoras de UI - pulse checks, pausa compresiones, nuevo codigo, viñetas, causas reversibles, animacion defibrilacion, banner (INSERTED)
+
+**Goal:** [Urgent work - to be planned]
+**Requirements**: TBD
+**Depends on:** Phase 3
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 03.2 to break down)
+
+### Phase 03.2: UI fixes - pulse check bullets and buttons, compression pause, new code session option, rhythm change bullets, reversible causes label, defibrillation animation, banner improvements (INSERTED)
+
+**Goal:** [Urgent work - to be planned]
+**Requirements**: TBD
+**Depends on:** Phase 3
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 03.2 to break down)
+
 ### Phase 3.1: Fix defibrillator notification, rhythm popup UX, and drug suggestions (INSERTED)
 
 **Goal:** Corregir 5 problemas de diseño: 1) notificación de preparar desfibrilador no aparece (bug: Shell navigation), 2) remover botón DEFIBRILAR del popup de check de pulso, 3) popup TV/FV → solo OK (no ACEPTAR/RECHAZAR), 4) sugerencias de medicación basadas en protocolo ACLS (ciclo+ritmo) con botones destacados en UI, 5) reset de timers al finalizar/iniciar código
@@ -97,12 +117,20 @@ Plans:
 - [ ] 03.1-02-PLAN.md — ACLS-protocol medication suggestions, >4min banner, highlighted drug buttons in UI
 
 ### Phase 4: Data Persistance
-**Goal**: Users can persist session data in local database
+**Goal**: Users can persist session data in local database, search past sessions by patient data and date, and view session details
 **Depends on**: Phase 3
 **Requirements**: EXPO-01, EXPO-02
 **Success Criteria** (what must be TRUE):
-  1. User can persist data in local database
-**Plans**: TBD
+  1. User can finalize a code and save session with patient data (nombre, apellido, DNI) to SQLite
+  2. All events from session are persisted and associated via SessionId
+  3. User can search past sessions by patient data (partial match) and date range
+  4. User can view saved session detail with all events
+  5. Saved sessions are immutable (no edit/delete)
+**Plans:** 3 plans
+Plans:
+- [ ] 04-01-PLAN.md — SQLite database layer (models, repository, mapper, DI registration)
+- [ ] 04-02-PLAN.md — Save flow (PatientDataPopup + MainViewModel.StopCode integration)
+- [ ] 04-03-PLAN.md — HistorialPage evolution (search, session list, detail view)
 **UI hint**: yes
 
 ### Phase 04.1: fix ui stuff (INSERTED)
@@ -134,7 +162,9 @@ Plans:
 | 02.1. UI Restructure | 4/4 | Complete    | 2026-03-28 |
 | 3. Protocol Guidance | 0/0 | Not started | - |
 | 3.1. Fix design issues | 2/2 | Complete   | 2026-03-29 |
-| 4. Data Export | 0/0 | Not started | - |
+| 4. Data Persistance | 0/3 | Planning complete | - |
+| 4.1. Fix UI stuff | 0/0 | Not started | - |
+| 5. Data Export | 0/0 | Not started | - |
 
 ### Phase 6: 3.2
 
