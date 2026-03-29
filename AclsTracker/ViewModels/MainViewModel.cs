@@ -27,6 +27,15 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private bool _isAmiodaronaEnabled;
 
+    private bool _adrenalinaAdministered;
+    private bool _amiodaronaAdministered;
+
+    [ObservableProperty]
+    private bool _isAdrenalinaSuggested;
+
+    [ObservableProperty]
+    private bool _isAmiodaronaSuggested;
+
     public MainViewModel(MetronomeViewModel metronome, TimerViewModel timer, EventRecordingViewModel eventRecording)
     {
         Metronome = metronome;
@@ -41,6 +50,7 @@ public partial class MainViewModel : ObservableObject
                 var rhythm = EventRecording.CurrentRhythm;
                 IsAmiodaronaEnabled = rhythm is CardiacRhythm.TV or CardiacRhythm.FV;
                 _ = HandleRhythmChangeAsync(rhythm); // fire-and-forget
+                UpdateDrugSuggestions();
             }
         };
 
@@ -73,6 +83,10 @@ public partial class MainViewModel : ObservableObject
     {
         _amiodaronaDoseCount = 0;
         _cycleCount = 0;
+        _adrenalinaAdministered = false;
+        _amiodaronaAdministered = false;
+        IsAdrenalinaSuggested = false;
+        IsAmiodaronaSuggested = false;
         Timer.StartSessionCommand.Execute(null);
         EventRecording.StartRecordingCommand.Execute(null);
 
@@ -114,6 +128,10 @@ public partial class MainViewModel : ObservableObject
         IsAmiodaronaEnabled = false;
         _adrenalinaBannerFired = false;
         _amiodaronaBannerFired = false;
+        _adrenalinaAdministered = false;
+        _amiodaronaAdministered = false;
+        IsAdrenalinaSuggested = false;
+        IsAmiodaronaSuggested = false;
     }
 
     private async Task HandleRhythmChangeAsync(CardiacRhythm newRhythm)
@@ -160,12 +178,35 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
+    /// <summary>
+    /// Evaluates ACLS protocol to determine if Adrenalina/Amiodarona should be highlighted.
+    /// Called on rhythm change, new cycle, drug administration, and code start/stop.
+    /// </summary>
+    private void UpdateDrugSuggestions()
+    {
+        var rhythm = EventRecording.CurrentRhythm;
+        bool isNonShockable = rhythm is CardiacRhythm.AESP or CardiacRhythm.Asistolia;
+        bool isShockable = rhythm is CardiacRhythm.TV or CardiacRhythm.FV;
+
+        // Adrenalina: non-shockable from 1st check, shockable from 2nd check
+        bool adrenalineIndicated = (isNonShockable && _cycleCount >= 0) || (isShockable && _cycleCount >= 1);
+        IsAdrenalinaSuggested = adrenalineIndicated && !_adrenalinaAdministered;
+
+        // Amiodarona: TV/FV, after 2nd check, max 2 doses
+        bool amiodaronaIndicated = isShockable && _cycleCount >= 1 && _amiodaronaDoseCount < 2;
+        IsAmiodaronaSuggested = amiodaronaIndicated && !_amiodaronaAdministered;
+    }
+
     [RelayCommand]
     private void NewCycle()
     {
         _cycleCount++;
         Timer.NewCprCycleCommand.Execute(null);
         EventRecording.LogCustomEventCommand.Execute("Nuevo ciclo RCP");
+
+        _adrenalinaAdministered = false;
+        _amiodaronaAdministered = false;
+        UpdateDrugSuggestions();
 
         // Reset 2-minute countdown
         _pulseCheckTimer?.Stop();
@@ -274,6 +315,8 @@ public partial class MainViewModel : ObservableObject
         Timer.MarkMedicationGivenCommand.Execute(null);
         EventRecording.LogCustomEventCommand.Execute("Adrenalina administrada");
         _adrenalinaBannerFired = false;
+        _adrenalinaAdministered = true;
+        UpdateDrugSuggestions();
     }
 
     [RelayCommand]
@@ -283,6 +326,8 @@ public partial class MainViewModel : ObservableObject
         Timer.MarkAmiodaronaGivenCommand.Execute(null);
         EventRecording.LogCustomEventCommand.Execute("Amiodarona administrada");
         _amiodaronaBannerFired = false;
+        _amiodaronaAdministered = true;
+        UpdateDrugSuggestions();
     }
 
     [RelayCommand]
