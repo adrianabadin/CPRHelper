@@ -21,6 +21,8 @@ public partial class MainViewModel : ObservableObject
     private int _amiodaronaDoseCount;
     private int _cycleCount;
     private bool _isPopupShowing;
+    private bool _adrenalinaBannerFired;
+    private bool _amiodaronaBannerFired;
 
     [ObservableProperty]
     private bool _isAmiodaronaEnabled;
@@ -39,6 +41,29 @@ public partial class MainViewModel : ObservableObject
                 var rhythm = EventRecording.CurrentRhythm;
                 IsAmiodaronaEnabled = rhythm is CardiacRhythm.TV or CardiacRhythm.FV;
                 _ = HandleRhythmChangeAsync(rhythm); // fire-and-forget
+            }
+        };
+
+        // Monitor medication timer thresholds for >4min safety-net banner
+        Timer.Timers[3].PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(TimerModel.IsOverThreshold)
+                && Timer.Timers[3].IsOverThreshold && !_adrenalinaBannerFired)
+            {
+                _adrenalinaBannerFired = true;
+                ShowNotification("💊 Hora de Adrenalina", 5);
+            }
+        };
+
+        Timer.Timers[4].PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(TimerModel.IsOverThreshold)
+                && Timer.Timers[4].IsOverThreshold && !_amiodaronaBannerFired
+                && EventRecording.CurrentRhythm is CardiacRhythm.TV or CardiacRhythm.FV
+                && _amiodaronaDoseCount < 2)
+            {
+                _amiodaronaBannerFired = true;
+                ShowNotification("💊 Hora de Amiodarona", 5);
             }
         };
     }
@@ -87,6 +112,8 @@ public partial class MainViewModel : ObservableObject
         _cycleCount = 0;
         _amiodaronaDoseCount = 0;
         IsAmiodaronaEnabled = false;
+        _adrenalinaBannerFired = false;
+        _amiodaronaBannerFired = false;
     }
 
     private async Task HandleRhythmChangeAsync(CardiacRhythm newRhythm)
@@ -204,25 +231,24 @@ public partial class MainViewModel : ObservableObject
             suggestions.Add($"Revisar H's y T's pendientes: {string.Join(", ", pendingHsTs)}");
         }
 
-        // ADRENALINA — ACLS: 1mg IV/IO cada 3-5 minutos para todos los ritmos de paro
-        // Timer[3] (Adrenalina) resets when user presses ADRENALINA, so IsOverThreshold
-        // means >4 min since last dose — correct protocol timing check.
-        if (Timer.Timers[3].IsOverThreshold)
+        // ADRENALINA — ACLS 2020 protocol (cycle + ritmo based, NOT timer threshold)
+        // Non-shockable (AESP/Asistolia): suggest from FIRST pulse check
+        // Shockable (TV/FV): suggest from SECOND pulse check (post-2do shock)
+        var currentRhythm = EventRecording.CurrentRhythm;
+        bool isNonShockable = currentRhythm is CardiacRhythm.AESP or CardiacRhythm.Asistolia;
+        bool isShockable = currentRhythm is CardiacRhythm.TV or CardiacRhythm.FV;
+
+        if ((isNonShockable && _cycleCount >= 0) || (isShockable && _cycleCount >= 1))
         {
-            suggestions.Add("¿Hora de Adrenalina?");
+            suggestions.Add("💊 ¿Hora de Adrenalina?");
         }
 
-        // AMIODARONA — ACLS: para FV/TV refractaria, máx 2 dosis
-        // 1ra dosis: 300mg tras 2do shock
-        // 2da dosis: 150mg tras dosis adicional
-        // Suggest only if: timer >4 min AND rhythm is shockable AND max doses not reached
-        if (Timer.Timers[4].IsOverThreshold &&
-            EventRecording.CurrentRhythm is CardiacRhythm.TV or CardiacRhythm.FV &&
-            _amiodaronaDoseCount < 2)
+        // AMIODARONA — ACLS 2020: solo TV/FV, después del 2do check de pulso, máx 2 dosis
+        if (isShockable && _cycleCount >= 1 && _amiodaronaDoseCount < 2)
         {
             string doseHint = _amiodaronaDoseCount == 0
-                ? "¿Hora de Amiodarona? (1ra dosis: 300mg)"
-                : "¿Hora de Amiodarona? (2da dosis: 150mg)";
+                ? "💊 ¿Hora de Amiodarona? (1ra dosis: 300mg)"
+                : "💊 ¿Hora de Amiodarona? (2da dosis: 150mg)";
             suggestions.Add(doseHint);
         }
 
@@ -247,6 +273,7 @@ public partial class MainViewModel : ObservableObject
     {
         Timer.MarkMedicationGivenCommand.Execute(null);
         EventRecording.LogCustomEventCommand.Execute("Adrenalina administrada");
+        _adrenalinaBannerFired = false;
     }
 
     [RelayCommand]
@@ -255,6 +282,7 @@ public partial class MainViewModel : ObservableObject
         _amiodaronaDoseCount++;
         Timer.MarkAmiodaronaGivenCommand.Execute(null);
         EventRecording.LogCustomEventCommand.Execute("Amiodarona administrada");
+        _amiodaronaBannerFired = false;
     }
 
     [RelayCommand]
