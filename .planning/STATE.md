@@ -85,6 +85,7 @@ Plan: 4 of 4
 
 - Phase 02.1.1 inserted after Phase 2.1: mejoras en defibrilacion y drogas: registro de decision, alertas rojas >4min, sugerencias de medicamentos (URGENT)
 - Phase 02.1 inserted after Phase 2: modificar la estructura de la UI del proyecto (URGENT)
+- Phase 3.1 added: Fix defibrillator notification at min 40, remove defibrillar button from rhythm/pulse popup, defibrillation popup OK-only, drug suggestions in rhythm constatation popup
 
 ### Architecture Notes
 

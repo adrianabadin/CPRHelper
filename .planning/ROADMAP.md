@@ -10,6 +10,7 @@
 - [x] **Phase 2: Event Recording** - Capture rhythm selection, event logging with timestamps, and H's/T's tracking (completed 2026-03-25)
 - [ ] **Phase 3: Protocol Guidance** - Generate context-aware reminders based on AHA ACLS 2020 protocol
 - [ ] **Phase 4: Data Persistance** - Allow User to persist sessions in local Database
+- [ ] **Phase 3.1: Fix design issues** - Fix defibrillator notification, rhythm popup UX, and drug suggestions
 - [ ] **Phase 5: Data Export** - Enable PDF and CSV export of session data
 
 ## Phase Details
@@ -70,7 +71,7 @@ Plans:
 - [ ] 02.1.1-03-PLAN.md — Medication suggestions in pulse-check popup (MainViewModel)
 
 ### Phase 3: Protocol Guidance
-**Goal**: Users receive context-aware reminders based on AHA ACLS 2020 protocol during resuscitation — rhythm-specific popups with ACEPTAR/RECHAZAR decision logging, plus protocol checklist suggestions (IV/IO, compressor rotation, H's and T's) during 2-minute pulse checks
+**Goal**: Users receive context-aware reminders based on AHA ACLS 2020 protocol during resuscitation — rhythm change popups with ACEPTAR/RECHAZAR decision logging, plus protocol checklist suggestions (IV/IO, compressor rotation, H's and T's) during 2-minute pulse checks
 **Depends on**: Phase 2
 **Requirements**: REGI-04
 **Success Criteria** (what must be TRUE):
@@ -83,6 +84,13 @@ Plans:
 Plans:
 - [ ] 03-01-PLAN.md — Rhythm change popups + pulse check suggestions + cycle counter (MainViewModel.cs)
 **UI hint**: yes
+
+### Phase 3.1: Fix defibrillator notification, rhythm popup UX, and drug suggestions (INSERTED)
+
+**Goal:** Corregir 4 problemas de diseño: 1) notificación de preparar defibrilador al minuto 40 no aparece, 2) remover botón defibrilar del popup de constatación de ritmo/pulso, 3) popup de defibrilación por cambio de ritmo solo debe tener botón OK (defibrilar siempre desde UI), 4) sugerir fármaco a administrar en popup de constatación de ritmo con botón destacado en UI
+**Requirements**: TBD (extends REGI-04, improves existing UI/UX)
+**Depends on:** Phase 3
+**Plans:** TBD
 
 ### Phase 4: Data Persistance
 **Goal**: Users can persist session data in local database
@@ -111,6 +119,7 @@ Plans:
 | 2. Event Recording | 2/2 | Complete   | 2026-03-25 |
 | 02.1. UI Restructure | 4/4 | Complete    | 2026-03-28 |
 | 3. Protocol Guidance | 0/0 | Not started | - |
+| 3.1. Fix design issues | 0/0 | Not started | - |
 | 4. Data Export | 0/0 | Not started | - |
 
 ---
