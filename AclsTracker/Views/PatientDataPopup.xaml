@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    x:Class="AclsTracker.Views.PatientDataPopup"
+    Color="White"
+    CanBeDismissedByTappingOutsideOfPopup="False">
+
+    <VerticalStackLayout Padding="20" Spacing="16" MinimumWidthRequest="300">
+
+        <Label
+            Text="Datos del Paciente"
+            FontSize="18"
+            FontAttributes="Bold"
+            HorizontalOptions="Center" />
+
+        <Entry
+            x:Name="NombreEntry"
+            Placeholder="Nombre"
+            PlaceholderColor="#999999" />
+
+        <Entry
+            x:Name="ApellidoEntry"
+            Placeholder="Apellido"
+            PlaceholderColor="#999999" />
+
+        <Entry
+            x:Name="DniEntry"
+            Placeholder="DNI"
+            PlaceholderColor="#999999"
+            Keyboard="Numeric" />
+
+        <HorizontalStackLayout Spacing="12" HorizontalOptions="Center">
+
+            <Button
+                Text="GUARDAR"
+                BackgroundColor="#4CAF50"
+                TextColor="White"
+                MinimumWidthRequest="110"
+                Clicked="OnGuardarClicked" />
+
+            <Button
+                Text="OMITIR"
+                BackgroundColor="#9E9E9E"
+                TextColor="White"
+                MinimumWidthRequest="110"
+                Clicked="OnOmitirClicked" />
+
+        </HorizontalStackLayout>
+
+    </VerticalStackLayout>
+
+</toolkit:Popup>
