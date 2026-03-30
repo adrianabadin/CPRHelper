@@ -101,23 +101,20 @@ public class PdfExportService : IPdfExportService
         });
     }
 
-    private void ComposeSectionTitle(QContainer container, string title)
+    private void ComposeSectionTitle(ColumnDescriptor column, string title)
     {
-        container.Column(column =>
-        {
-            column.Item().Text(title)
-                .FontSize(12).Bold().FontColor(QColors.Blue.Darken2);
-            column.Item().PaddingVertical(2);
-            column.Item().LineHorizontal(1).LineColor(QColors.Grey.Lighten2);
-        });
+        column.Item().Text(title)
+            .FontSize(12).Bold().FontColor(QColors.Blue.Darken2);
+        column.Item().PaddingVertical(2);
+        column.Item().LineHorizontal(1).LineColor(QColors.Grey.Lighten2);
     }
 
     private void ComposeRhythmSection(QContainer container, List<EventRecord> rhythmEvents)
     {
-        ComposeSectionTitle(container, "Resumen de Ritmo");
-
         container.Column(column =>
         {
+            ComposeSectionTitle(column, "Resumen de Ritmo");
+
             if (rhythmEvents.Count == 0)
             {
                 column.Item().PaddingVertical(4)
@@ -132,10 +129,10 @@ public class PdfExportService : IPdfExportService
 
     private void ComposeMedicationsSection(QContainer container, List<EventRecord> medicationEvents)
     {
-        ComposeSectionTitle(container, "Medicamentos Administrados");
-
         container.Column(column =>
         {
+            ComposeSectionTitle(column, "Medicamentos Administrados");
+
             if (medicationEvents.Count == 0)
             {
                 column.Item().PaddingVertical(4)
@@ -150,10 +147,10 @@ public class PdfExportService : IPdfExportService
 
     private void ComposeHsTsSection(QContainer container, List<EventRecord> hsTsEvents)
     {
-        ComposeSectionTitle(container, "Causas Reversibles (H's y T's)");
-
         container.Column(column =>
         {
+            ComposeSectionTitle(column, "Causas Reversibles (H's y T's)");
+
             if (hsTsEvents.Count == 0)
             {
                 column.Item().PaddingVertical(4)
@@ -168,10 +165,10 @@ public class PdfExportService : IPdfExportService
 
     private void ComposeCprSection(QContainer container, List<EventRecord> cprCycleEvents, List<EventRecord> defibrillationEvents)
     {
-        ComposeSectionTitle(container, "Compresiones y Ciclos");
-
         container.Column(column =>
         {
+            ComposeSectionTitle(column, "Compresiones y Ciclos");
+
             if (cprCycleEvents.Count == 0 && defibrillationEvents.Count == 0)
             {
                 column.Item().PaddingVertical(4)
