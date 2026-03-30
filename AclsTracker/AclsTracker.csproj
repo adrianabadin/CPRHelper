@@ -30,6 +30,7 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
     <PackageReference Include="Plugin.Maui.Audio" Version="3.0.0" />
     <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
+    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3.android" Version="2.1.8" Condition="$(TargetFramework.Contains('-android'))" />
   </ItemGroup>
 
 </Project>
