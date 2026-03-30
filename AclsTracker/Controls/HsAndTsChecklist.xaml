@@ -7,14 +7,6 @@
 
     <VerticalStackLayout Spacing="8">
 
-        <!-- Section header -->
-        <Label Text="H's y T's — CAUSAS REVERSIBLES"
-               FontSize="12"
-               FontAttributes="Bold"
-               TextColor="#999999"
-               HorizontalTextAlignment="Center"
-               LetterSpacing="1" />
-
         <!-- H's group -->
         <Label Text="H's"
                FontSize="14"
@@ -26,16 +18,21 @@
                         SelectionMode="None">
             <CollectionView.ItemsLayout>
                 <GridItemsLayout Orientation="Vertical"
-                                 Span="2"
+                                 Span="1"
                                  HorizontalItemSpacing="4"
                                  VerticalItemSpacing="4" />
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:HsAndTsItem">
-                    <Frame Padding="8"
-                           CornerRadius="8"
-                           Margin="2"
+                    <Frame Padding="12"
+                           CornerRadius="18"
+                           Margin="4,6"
                            HasShadow="False">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding Source={x:Reference Root}, Path=BindingContext.ToggleHsAndTsItemCommand}"
+                                CommandParameter="{Binding .}" />
+                        </Frame.GestureRecognizers>
                         <Frame.Triggers>
                             <DataTrigger TargetType="Frame"
                                          Binding="{Binding IsDismissed}"
@@ -58,7 +55,7 @@
                             <!-- Item name -->
                             <Label Grid.Column="0"
                                    Text="{Binding Name}"
-                                   FontSize="12"
+                                   FontSize="16"
                                    VerticalOptions="Center"
                                    LineBreakMode="WordWrap">
                                 <Label.Triggers>
@@ -74,26 +71,28 @@
                             <!-- Check button -->
                             <Button Grid.Column="1"
                                     Text="&#x2713;"
-                                    FontSize="14"
-                                    WidthRequest="36"
-                                    HeightRequest="36"
+                                    FontSize="18"
+                                    WidthRequest="48"
+                                    HeightRequest="48"
                                     Padding="0"
-                                    CornerRadius="4"
+                                    CornerRadius="18"
                                     BackgroundColor="#4CAF50"
                                     TextColor="White"
+                                    InputTransparent="True"
                                     Command="{Binding Source={x:Reference Root}, Path=BindingContext.ToggleHsAndTsItemCommand}"
                                     CommandParameter="{Binding .}" />
 
                             <!-- Dismiss button -->
                             <Button Grid.Column="2"
                                     Text="&#x2717;"
-                                    FontSize="14"
-                                    WidthRequest="36"
-                                    HeightRequest="36"
+                                    FontSize="18"
+                                    WidthRequest="48"
+                                    HeightRequest="48"
                                     Padding="0"
-                                    CornerRadius="4"
+                                    CornerRadius="18"
                                     BackgroundColor="#F44336"
                                     TextColor="White"
+                                    InputTransparent="True"
                                     Command="{Binding Source={x:Reference Root}, Path=BindingContext.DismissHsAndTsItemCommand}"
                                     CommandParameter="{Binding .}" />
 
@@ -114,16 +113,21 @@
                         SelectionMode="None">
             <CollectionView.ItemsLayout>
                 <GridItemsLayout Orientation="Vertical"
-                                 Span="2"
+                                 Span="1"
                                  HorizontalItemSpacing="4"
                                  VerticalItemSpacing="4" />
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:HsAndTsItem">
-                    <Frame Padding="8"
-                           CornerRadius="8"
-                           Margin="2"
+                    <Frame Padding="12"
+                           CornerRadius="18"
+                           Margin="4,6"
                            HasShadow="False">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding Source={x:Reference Root}, Path=BindingContext.ToggleHsAndTsItemCommand}"
+                                CommandParameter="{Binding .}" />
+                        </Frame.GestureRecognizers>
                         <Frame.Triggers>
                             <DataTrigger TargetType="Frame"
                                          Binding="{Binding IsDismissed}"
@@ -146,7 +150,7 @@
                             <!-- Item name -->
                             <Label Grid.Column="0"
                                    Text="{Binding Name}"
-                                   FontSize="12"
+                                   FontSize="16"
                                    VerticalOptions="Center"
                                    LineBreakMode="WordWrap">
                                 <Label.Triggers>
@@ -162,26 +166,28 @@
                             <!-- Check button -->
                             <Button Grid.Column="1"
                                     Text="&#x2713;"
-                                    FontSize="14"
-                                    WidthRequest="36"
-                                    HeightRequest="36"
+                                    FontSize="18"
+                                    WidthRequest="48"
+                                    HeightRequest="48"
                                     Padding="0"
-                                    CornerRadius="4"
+                                    CornerRadius="18"
                                     BackgroundColor="#4CAF50"
                                     TextColor="White"
+                                    InputTransparent="True"
                                     Command="{Binding Source={x:Reference Root}, Path=BindingContext.ToggleHsAndTsItemCommand}"
                                     CommandParameter="{Binding .}" />
 
                             <!-- Dismiss button -->
                             <Button Grid.Column="2"
                                     Text="&#x2717;"
-                                    FontSize="14"
-                                    WidthRequest="36"
-                                    HeightRequest="36"
+                                    FontSize="18"
+                                    WidthRequest="48"
+                                    HeightRequest="48"
                                     Padding="0"
-                                    CornerRadius="4"
+                                    CornerRadius="18"
                                     BackgroundColor="#F44336"
                                     TextColor="White"
+                                    InputTransparent="True"
                                     Command="{Binding Source={x:Reference Root}, Path=BindingContext.DismissHsAndTsItemCommand}"
                                     CommandParameter="{Binding .}" />
 
