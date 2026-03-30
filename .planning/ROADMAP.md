@@ -127,11 +127,12 @@ Plans:
   3. User can search past sessions by patient data (partial match) and date range
   4. User can view saved session detail with all events
   5. Saved sessions are immutable (no edit/delete)
-**Plans:** 2/3 plans executed
+**Plans:** 4 plans
 Plans:
 - [ ] 04-01-PLAN.md — SQLite database layer (models, repository, mapper, DI registration)
 - [ ] 04-02-PLAN.md — Save flow (PatientDataPopup + MainViewModel.StopCode integration)
 - [ ] 04-03-PLAN.md — HistorialPage evolution (search, session list, detail view)
+- [ ] 04-04-PLAN.md — Gap closure: DatePicker binding fix + requirement traceability (PERS-01)
 **UI hint**: yes
 
 ### Phase 04.1: fix ui stuff (INSERTED)
