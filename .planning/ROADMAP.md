@@ -135,16 +135,6 @@ Plans:
 - [ ] 04-04-PLAN.md — Gap closure: DatePicker binding fix + requirement traceability (PERS-01)
 **UI hint**: yes
 
-### Phase 04.1: fix ui stuff (INSERTED)
-
-**Goal:** [Urgent work - to be planned]
-**Requirements**: TBD
-**Depends on:** Phase 4
-**Plans:** 4/4 plans complete
-
-Plans:
-- [ ] TBD (run /gsd:plan-phase 04.1 to break down)
-
 ### Phase 5: Data Export
 **Goal**: Users can export recorded session data for documentation and review
 **Depends on**: Phase 3
