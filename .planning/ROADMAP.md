@@ -136,13 +136,16 @@ Plans:
 **UI hint**: yes
 
 ### Phase 5: Data Export
-**Goal**: Users can export recorded session data for documentation and review
-**Depends on**: Phase 3
+**Goal**: Users can export session data as PDF (readable clinical report) and CSV (structured event log) from the saved session detail view, with share sheet and local file save
+**Depends on**: Phase 4
 **Requirements**: EXPO-01, EXPO-02
 **Success Criteria** (what must be TRUE):
-  1. User can export session data in PDF format (readable report)
-  2. User can export session data in CSV format (structured data)
-**Plans**: TBD
+  1. User can export session data in PDF format (readable report with 6 clinical sections)
+  2. User can export session data in CSV format (structured data with 6 columns, UTF-8 BOM)
+**Plans:** 2 plans
+Plans:
+- [ ] 05-01-PLAN.md — Export services: QuestPDF PDF generation + CSV generation + DI registration
+- [ ] 05-02-PLAN.md — ViewModel export commands + UI buttons + human verification
 **UI hint**: yes
 
 ## Progress
@@ -157,7 +160,17 @@ Plans:
 | 03.2. UI improvements | 0/2 | Complete    | 2026-03-30 |
 | 4. Data Persistance | 2/3 | In Progress|  |
 | 4.1. Fix UI stuff | 0/0 | Not started | - |
-| 5. Data Export | 0/0 | Not started | - |
+| 5. Data Export | 0/2 | Planned | - |
+
+### Phase 6: Cloud PostgreSQL sync - sync events to remote database on save with offline retry
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 5
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 6 to break down)
 
 ---
 
