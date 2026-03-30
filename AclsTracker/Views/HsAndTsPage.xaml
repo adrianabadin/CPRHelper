@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:AclsTracker.Controls"
              x:Class="AclsTracker.Views.HsAndTsPage"
-             Title="H's y T's">
+             Title="Causas Reversibles">
     <ScrollView>
         <controls:HsAndTsChecklist Margin="16" />
     </ScrollView>
