@@ -29,8 +29,9 @@
     <PackageReference Include="CommunityToolkit.Maui" Version="9.0.0" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
     <PackageReference Include="Plugin.Maui.Audio" Version="3.0.0" />
+    <PackageReference Include="QuestPDF" Version="2026.2.4" />
     <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
-    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3.android" Version="2.1.8" Condition="$(TargetFramework.Contains('-android'))" />
+    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3.android" Version="2.1.11" Condition="$(TargetFramework.Contains('-android'))" />
   </ItemGroup>
 
 </Project>
