@@ -3,10 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:AclsTracker.Views"
              x:Class="AclsTracker.Views.PulseCheckPage"
-             Shell.NavBarIsVisible="False"
-             BackgroundColor="#50000000">
+              Shell.NavBarIsVisible="False"
+              BackgroundColor="Transparent">
 
-    <Grid HorizontalOptions="Center" VerticalOptions="Center" Margin="20">
+    <Grid HorizontalOptions="Fill" VerticalOptions="Fill" Margin="0">
         <Frame BackgroundColor="White" CornerRadius="16" Padding="24" HasShadow="True"
                HorizontalOptions="Center" VerticalOptions="Center" WidthRequest="340">
             <StackLayout Spacing="12">

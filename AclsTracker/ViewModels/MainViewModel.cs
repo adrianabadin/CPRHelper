@@ -174,11 +174,11 @@ public partial class MainViewModel : ObservableObject
         {
             (string title, string message)? popup = newRhythm switch
             {
-                CardiacRhythm.AESP      => ("Protocolo ACLS", "• Buscar causas reversibles\n• Considere revisar H's y T's\n• Valorar Causas Reversibles"),
-                CardiacRhythm.Asistolia => ("Protocolo ACLS", "• Buscar causas reversibles\n• Considere revisar H's y T's\n• Valorar Causas Reversibles"),
-                CardiacRhythm.TV        => ("Ritmo Desfibrilable", "• Ritmo desfibrilable. Preparar desfibrilador.\n• Considere causas reversibles (H's y T's)"),
-                CardiacRhythm.FV        => ("Ritmo Desfibrilable", "• Ritmo desfibrilable. Preparar desfibrilador.\n• Considere causas reversibles (H's y T's)"),
-                CardiacRhythm.RCE       => ("RCE Alcanzado", "RCE alcanzado\n• Mantener vía aérea y ventilación\n• Monitorear ritmo y presión arterial\n• Obtener ECG 12 derivaciones\n• Considerar objetivo temp 32-36°C\n• Considerar causas reversibles"),
+                CardiacRhythm.AESP      => ("Protocolo ACLS", "• Buscar causas reversibles\n• Valorar Causas Reversibles"),
+                CardiacRhythm.Asistolia => ("Protocolo ACLS", "• Buscar causas reversibles\n• Valorar Causas Reversibles"),
+                CardiacRhythm.TV        => ("Ritmo Desfibrilable", "• Ritmo desfibrilable. Preparar desfibrilador.\n• Valorar Causas Reversibles"),
+                CardiacRhythm.FV        => ("Ritmo Desfibrilable", "• Ritmo desfibrilable. Preparar desfibrilador.\n• Valorar Causas Reversibles"),
+                CardiacRhythm.RCE       => ("RCE Alcanzado", "RCE alcanzado\n• Mantener vía aérea y ventilación\n• Monitorear ritmo y presión arterial\n• Obtener ECG 12 derivaciones\n• Considerar objetivo temp 32-36°C\n• Considerar Causas Reversibles"),
                 _ => null // Ninguno — no popup
             };
 
@@ -365,16 +365,6 @@ public partial class MainViewModel : ObservableObject
 
         // Compressor rotation — every pulse check
         suggestions.Add("¿Rotar compresor?");
-
-        // H's and T's pending review
-        var pendingHsTs = EventRecording.HsAndTsItems
-            .Where(i => !i.IsChecked && !i.IsDismissed)
-            .Select(i => i.Name)
-            .ToList();
-        if (pendingHsTs.Count > 0)
-        {
-            suggestions.Add($"Revisar H's y T's pendientes: {string.Join(", ", pendingHsTs)}");
-        }
 
         // Drug suggestion — single drug from centralized ACLS protocol logic
         var drugSuggestion = GetSuggestedDrug();

@@ -20,11 +20,7 @@ public partial class MainPage : ContentPage
     private async void OnPulseCheckRequired(List<string> suggestions)
     {
         var page = new PulseCheckPage(suggestions, () => _viewModel.PauseForPulseCheck());
-        await Navigation.PushModalAsync(new NavigationPage(page)
-        {
-            BarBackgroundColor = Colors.Transparent,
-            BarTextColor = Colors.Transparent
-        });
+        await Navigation.PushModalAsync(page);
     }
 
     private async void OnDefibrillationTriggered()
