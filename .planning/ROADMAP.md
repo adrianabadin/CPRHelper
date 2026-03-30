@@ -85,25 +85,16 @@ Plans:
 - [ ] 03-01-PLAN.md — Rhythm change popups + pulse check suggestions + cycle counter (MainViewModel.cs)
 **UI hint**: yes
 
-### Phase 03.2: mejoras de UI - pulse checks, pausa compresiones, nuevo codigo, viñetas, causas reversibles, animacion defibrilacion, banner (INSERTED)
+### Phase 03.2: UI improvements - pulse checks, compression pause, new code session, bullets, reversible causes, defibrillation animation, banner (INSERTED)
 
-**Goal:** [Urgent work - to be planned]
-**Requirements**: TBD
+**Goal:** Rediseno del popup de check de pulso como modal personalizado que permanece abierto, pausa automatica de compresiones y metronomo durante el check, opcion de continuar/reiniciar codigo, animacion de defibrilacion con haptic, vinetas en popups de ritmo con "Valorar Causas Reversibles", y banners de 8 segundos
+**Requirements**: AUDI-02, TIME-02, REGI-02, REGI-04
 **Depends on:** Phase 3
-**Plans:** 0 plans
+**Plans:** 2 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 03.2 to break down)
-
-### Phase 03.2: UI fixes - pulse check bullets and buttons, compression pause, new code session option, rhythm change bullets, reversible causes label, defibrillation animation, banner improvements (INSERTED)
-
-**Goal:** [Urgent work - to be planned]
-**Requirements**: TBD
-**Depends on:** Phase 3
-**Plans:** 0 plans
-
-Plans:
-- [ ] TBD (run /gsd:plan-phase 03.2 to break down)
+- [ ] 03.2-01-PLAN.md — Timer/metronome pause infrastructure, TimerCard EN PAUSA + pause button, banner 8s, rhythm popup bullets, defibrillation animation
+- [ ] 03.2-02-PLAN.md — Custom PulseCheckPage modal, OnPulseCheckDue rewrite, INICIAR CODIGO continue/new code flow
 
 ### Phase 3.1: Fix defibrillator notification, rhythm popup UX, and drug suggestions (INSERTED)
 
@@ -162,19 +153,10 @@ Plans:
 | 02.1. UI Restructure | 4/4 | Complete    | 2026-03-28 |
 | 3. Protocol Guidance | 0/0 | Not started | - |
 | 3.1. Fix design issues | 2/2 | Complete   | 2026-03-29 |
+| 03.2. UI improvements | 0/2 | Planning complete | - |
 | 4. Data Persistance | 0/3 | Planning complete | - |
 | 4.1. Fix UI stuff | 0/0 | Not started | - |
 | 5. Data Export | 0/0 | Not started | - |
-
-### Phase 6: 3.2
-
-**Goal:** [To be planned]
-**Requirements**: TBD
-**Depends on:** Phase 5
-**Plans:** 0 plans
-
-Plans:
-- [ ] TBD (run /gsd:plan-phase 6 to break down)
 
 ---
 
