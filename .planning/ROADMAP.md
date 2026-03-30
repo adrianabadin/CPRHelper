@@ -90,7 +90,7 @@ Plans:
 **Goal:** Improved mobile-first UI for HsAndTsChecklist control — single column, 48x48 round buttons, full-row tap, 16pt font, tab renamed to "Causas Reversibles"
 **Requirements**: REGI-03 (UI improvement, no new functionality)
 **Depends on:** Phase 3
-**Plans:** 1/1 plans
+**Plans:** 1/1 plans complete
 
 Plans:
 - [ ] 03.3-01-PLAN.md — Redesign HsAndTsChecklist mobile-first UI (single column, 48x48 buttons, TapGestureRecognizer, FontSize=16)
