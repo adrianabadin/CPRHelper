@@ -1,9 +1,11 @@
 using CommunityToolkit.Maui;
 using Plugin.Maui.Audio;
+using QuestPDF.Infrastructure;
 using AclsTracker.Services.Timer;
 using AclsTracker.Services.Audio;
 using AclsTracker.Services.EventLog;
 using AclsTracker.Services.Database;
+using AclsTracker.Services.Export;
 using AclsTracker.ViewModels;
 using AclsTracker.Views;
 
@@ -33,6 +35,10 @@ public static class MauiProgram
         builder.Services.AddSingleton<IEventLogService, EventLogService>();
         builder.Services.AddSingleton<ISessionRepository, SessionRepository>();
 
+        // Export services — PDF and CSV generation
+        builder.Services.AddSingleton<IPdfExportService, PdfExportService>();
+        builder.Services.AddSingleton<ICsvExportService, CsvExportService>();
+
         // ViewModels — registered in Plans 02 and 03
         builder.Services.AddTransient<MetronomeViewModel>();
         builder.Services.AddTransient<TimerViewModel>();
@@ -45,6 +51,9 @@ public static class MauiProgram
         builder.Services.AddTransient<HsAndTsPage>();
         builder.Services.AddTransient<HistorialPage>();
         builder.Services.AddTransient<PatientDataPopup>();
+
+        // QuestPDF community license (required before generating PDFs)
+        QuestPDF.Settings.License = LicenseType.Community;
 
         return builder.Build();
     }
