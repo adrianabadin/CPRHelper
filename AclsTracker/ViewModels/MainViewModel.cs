@@ -25,12 +25,19 @@ public partial class MainViewModel : ObservableObject
     private bool _isPopupShowing;
     private bool _adrenalinaBannerFired;
     private bool _amiodaronaBannerFired;
+    private bool _hasCompletedCode;
 
     /// <summary>
     /// Fired when the defibrillation command is executed.
     /// MainPage subscribes to trigger haptic feedback and visual animation.
     /// </summary>
     public event Action? DefibrillationTriggered;
+
+    /// <summary>
+    /// Fired when pulse check is due — signals MainPage to show the custom modal popup.
+    /// Provides the list of suggestions to display in the popup.
+    /// </summary>
+    public event Action<List<string>>? PulseCheckRequired;
 
     [ObservableProperty]
     private bool _isAmiodaronaEnabled;
@@ -87,14 +94,22 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void StartCode()
+    private async Task StartCode()
     {
-        _amiodaronaDoseCount = 0;
-        _cycleCount = 0;
-        _lastAdrenalinaTime = null;
-        _lastAmiodaronaTime = null;
-        IsAdrenalinaSuggested = false;
-        IsAmiodaronaSuggested = false;
+        // If a code was previously completed, ask user to continue or start fresh
+        if (_hasCompletedCode)
+        {
+            bool continuar = await Application.Current!.MainPage!
+                .DisplayAlert("Codigo anterior",
+                    "Desea continuar el codigo anterior o iniciar uno nuevo?",
+                    "CONTINUAR", "NUEVO CODIGO");
+            if (!continuar)
+            {
+                ResetCodeState();
+            }
+            _hasCompletedCode = false;
+        }
+
         Timer.StartSessionCommand.Execute(null);
         EventRecording.StartRecordingCommand.Execute(null);
 
@@ -118,6 +133,26 @@ public partial class MainViewModel : ObservableObject
         _chargingWarningTimer.Start();
     }
 
+    /// <summary>
+    /// Resets all code session state — used when user chooses "NUEVO CODIGO" from the prompt.
+    /// Clears cycle count, drug state, timers, and event log.
+    /// </summary>
+    private void ResetCodeState()
+    {
+        _cycleCount = 0;
+        _amiodaronaDoseCount = 0;
+        _lastAdrenalinaTime = null;
+        _lastAmiodaronaTime = null;
+        IsAdrenalinaSuggested = false;
+        IsAmiodaronaSuggested = false;
+        _adrenalinaBannerFired = false;
+        _amiodaronaBannerFired = false;
+        IsAmiodaronaEnabled = false;
+        Timer.ResetAllCommand.Execute(null);
+        EventRecording.StopRecordingCommand.Execute(null);
+        EventRecording.StartRecordingCommand.Execute(null); // fresh recording
+    }
+
     [RelayCommand]
     private void StopCode()
     {
@@ -127,19 +162,8 @@ public partial class MainViewModel : ObservableObject
         _chargingWarningTimer = null;
 
         Timer.StopSessionCommand.Execute(null);
-        Timer.ResetAllCommand.Execute(null);
-        EventRecording.StopRecordingCommand.Execute(null);
-
-        // Reset session state
-        _cycleCount = 0;
-        _amiodaronaDoseCount = 0;
-        IsAmiodaronaEnabled = false;
-        _adrenalinaBannerFired = false;
-        _amiodaronaBannerFired = false;
-        _lastAdrenalinaTime = null;
-        _lastAmiodaronaTime = null;
-        IsAdrenalinaSuggested = false;
-        IsAmiodaronaSuggested = false;
+        // Do NOT reset state here — user may choose CONTINUAR on next StartCode
+        _hasCompletedCode = true;
     }
 
     private async Task HandleRhythmChangeAsync(CardiacRhythm newRhythm)
@@ -265,6 +289,7 @@ public partial class MainViewModel : ObservableObject
         _cycleCount++;
         Timer.NewCprCycleCommand.Execute(null);
         EventRecording.LogCustomEventCommand.Execute("Nuevo ciclo RCP");
+        ResumeAfterPulseCheck(); // Resume metronome if paused during pulse check
 
         UpdateDrugSuggestions();
 
@@ -298,13 +323,35 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
+    /// <summary>
+    /// Pause compressions and metronome for a pulse check. Called when user
+    /// presses "CHEQUEANDO PULSO Y RITMO" in the pulse check modal.
+    /// </summary>
+    public void PauseForPulseCheck()
+    {
+        Timer.PauseCompressions();
+        Metronome.PauseForPulseCheck();
+        Timer.StartPulseCheckTimer();
+        EventRecording.LogCustomEventCommand.Execute("Check de pulso iniciado");
+    }
+
+    /// <summary>
+    /// Resume the metronome after a pulse check. Called when user presses
+    /// "NUEVO CICLO" to resume compressions.
+    /// </summary>
+    public void ResumeAfterPulseCheck()
+    {
+        Metronome.ResumeAfterPulseCheck();
+        // Compressions resume happens via NewCycle calling Timer.NewCprCycleCommand
+    }
+
     private async void OnChargingWarning(object? sender, EventArgs e)
     {
         _chargingWarningTimer?.Stop();
         ShowNotification("⚡ Prepare desfibrilador — Check de pulso en 20s", BannerDismissSeconds);
     }
 
-    private async void OnPulseCheckDue(object? sender, EventArgs e)
+    private void OnPulseCheckDue(object? sender, EventArgs e)
     {
         _pulseCheckTimer?.Stop();
 
@@ -336,19 +383,8 @@ public partial class MainViewModel : ObservableObject
             suggestions.Add($"💊 Administrar {drugSuggestion.Drug} ({drugSuggestion.DoseHint})");
         }
 
-        string message = "Han pasado 2 minutos.\nConstate pulso y ritmo.\nAdministre 2 ventilaciones.";
-
-        if (suggestions.Count > 0)
-        {
-            message += "\n\n" + string.Join("\n", suggestions);
-        }
-
-        await Application.Current!.MainPage!
-            .DisplayAlert("Check de Pulso", message, "CONTINUAR");
-
-        // After CONTINUAR: pause compressions, start pulse-check timer
-        Timer.PauseCompressions();
-        Timer.StartPulseCheckTimer();
+        // Fire event to show custom modal popup — MainPage subscribes and pushes PulseCheckPage
+        PulseCheckRequired?.Invoke(suggestions);
     }
 
     [RelayCommand]

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:AclsTracker.Views"
+             x:Class="AclsTracker.Views.PulseCheckPage"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="#50000000">
+
+    <Grid HorizontalOptions="Center" VerticalOptions="Center" Margin="20">
+        <Frame BackgroundColor="White" CornerRadius="16" Padding="24" HasShadow="True"
+               HorizontalOptions="Center" VerticalOptions="Center" WidthRequest="340">
+            <StackLayout Spacing="12">
+                <!-- Title -->
+                <Label Text="Check de Pulso" FontSize="22" FontAttributes="Bold"
+                       TextColor="#1976D2" HorizontalOptions="Center" />
+
+                <!-- Main message -->
+                <Label FontSize="15" TextColor="#333333" LineHeight="1.4">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <FormattedString.Spans>
+                                <Span Text="Han pasado 2 minutos." FontAttributes="Bold" />
+                                <Span Text="&#10;" />
+                                <Span Text="Constate pulso y ritmo." />
+                                <Span Text="&#10;" />
+                                <Span Text="Administre 2 ventilaciones." FontAttributes="Bold" />
+                            </FormattedString.Spans>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+
+                <!-- Suggestions list -->
+                <ScrollView HeightRequest="160" Margin="0,4,0,0">
+                    <StackLayout BindableLayout.ItemsSource="{Binding Suggestions}" Spacing="4">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Label FontSize="14" TextColor="#555555">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <FormattedString.Spans>
+                                                <Span Text="• " TextColor="#1976D2" />
+                                                <Span Text="{Binding .}" TextColor="#555555" />
+                                            </FormattedString.Spans>
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+                </ScrollView>
+
+                <!-- CHEQUEANDO button — does NOT close popup -->
+                <Button Text="CHEQUEANDO PULSO Y RITMO"
+                        BackgroundColor="#1976D2"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        FontSize="15"
+                        HeightRequest="56"
+                        Margin="0,16,0,0"
+                        CornerRadius="8"
+                        Clicked="OnChequeandoClicked" />
+
+                <!-- Cerrar button — closes popup without action -->
+                <Button Text="Cerrar"
+                        BackgroundColor="Transparent"
+                        TextColor="#888888"
+                        FontSize="14"
+                        Clicked="OnCerrarClicked" />
+            </StackLayout>
+        </Frame>
+    </Grid>
+
+</ContentPage>

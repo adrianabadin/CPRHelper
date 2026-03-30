@@ -14,6 +14,17 @@ public partial class MainPage : ContentPage
         BindingContext = viewModel;
 
         _viewModel.DefibrillationTriggered += OnDefibrillationTriggered;
+        _viewModel.PulseCheckRequired += OnPulseCheckRequired;
+    }
+
+    private async void OnPulseCheckRequired(List<string> suggestions)
+    {
+        var page = new PulseCheckPage(suggestions, () => _viewModel.PauseForPulseCheck());
+        await Navigation.PushModalAsync(new NavigationPage(page)
+        {
+            BarBackgroundColor = Colors.Transparent,
+            BarTextColor = Colors.Transparent
+        });
     }
 
     private async void OnDefibrillationTriggered()
