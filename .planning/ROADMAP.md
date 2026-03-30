@@ -164,13 +164,16 @@ Plans:
 
 ### Phase 05.1: Autenticacion opcional - Google Auth, Apple Sign-In, email+password con verificacion (INSERTED)
 
-**Goal:** [Urgent work - to be planned]
-**Requirements**: TBD
+**Goal:** Optional authentication with Google Auth, Apple Sign-In, and email+password to enable cloud backup (Phase 6). Login is optional — app works fully without it. Auth widget in top-right of app bar.
+**Requirements**: AUTH-INFRA, AUTH-EMAIL, AUTH-OAUTH, AUTH-SESSION, AUTH-PROFILE, AUTH-UI
 **Depends on:** Phase 5
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 05.1 to break down)
+- [ ] 05.1-01-PLAN.md — Supabase infrastructure: NuGet, IAuthService interface, session handler, platform configs
+- [ ] 05.1-02-PLAN.md — AuthService implementation + Supabase DI registration + session restore
+- [ ] 05.1-03-PLAN.md — AuthViewModel + LoginPage + RegisterPage + ProfilePage
+- [ ] 05.1-04-PLAN.md — AuthAvatarControl in AppShell + human verification
 
 ### Phase 6: Cloud PostgreSQL sync - sync events to remote database on save with offline retry
 
