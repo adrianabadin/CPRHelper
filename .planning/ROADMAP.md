@@ -162,6 +162,16 @@ Plans:
 | 4.1. Fix UI stuff | 0/0 | Not started | - |
 | 5. Data Export | 0/2 | Planned | - |
 
+### Phase 05.1: Autenticacion opcional - Google Auth, Apple Sign-In, email+password con verificacion (INSERTED)
+
+**Goal:** [Urgent work - to be planned]
+**Requirements**: TBD
+**Depends on:** Phase 5
+**Plans:** 1/2 plans executed
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 05.1 to break down)
+
 ### Phase 6: Cloud PostgreSQL sync - sync events to remote database on save with offline retry
 
 **Goal:** [To be planned]
