@@ -27,8 +27,8 @@ Requirements para el lanzamiento inicial. Cada uno mapea a una fase del roadmap.
 
 ### Exportación
 
-- [ ] **EXPO-01**: El usuario puede exportar datos de sesión en formato PDF (reporte legible)
-- [ ] **EXPO-02**: El usuario puede exportar datos de sesión en formato CSV (datos estructurados)
+- [x] **EXPO-01**: El usuario puede exportar datos de sesión en formato PDF (reporte legible)
+- [x] **EXPO-02**: El usuario puede exportar datos de sesión en formato CSV (datos estructurados)
 
 ## v2 Requirements
 
@@ -81,8 +81,8 @@ Qué fases cubren qué requisitos. Actualizado durante la creación del roadmap.
 | REGI-02 | Phase 2 | Complete |
 | REGI-03 | Phase 2 | Complete |
 | REGI-04 | Phase 3 | Complete |
-| EXPO-01 | Phase 5 | Pending |
-| EXPO-02 | Phase 5 | Pending |
+| EXPO-01 | Phase 5 | Complete |
+| EXPO-02 | Phase 5 | Complete |
 
 **Coverage:**
 - v1 requirements: 11 total
