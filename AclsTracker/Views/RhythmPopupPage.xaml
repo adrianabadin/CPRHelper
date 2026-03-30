@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AclsTracker.Views.RhythmPopupPage"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="Transparent">
+
+    <Grid HorizontalOptions="Fill" VerticalOptions="Fill" Margin="0">
+        <Frame BackgroundColor="White" CornerRadius="16" Padding="24" HasShadow="True"
+               HorizontalOptions="Center" VerticalOptions="Center" WidthRequest="340">
+            <StackLayout Spacing="12">
+                <!-- Title -->
+                <Label x:Name="TitleLabel" FontSize="20" FontAttributes="Bold"
+                       TextColor="#1976D2" HorizontalOptions="Center" />
+
+                <!-- Message with bullet format -->
+                <ScrollView HeightRequest="180" Margin="0,4,0,0">
+                    <Label x:Name="MessageLabel" FontSize="14" TextColor="#333333" LineHeight="1.5" />
+                </ScrollView>
+
+                <!-- CONTINUAR button — dismisses popup -->
+                <Button x:Name="ContinuarButton"
+                        Text="CONTINUAR"
+                        BackgroundColor="#1976D2"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        FontSize="15"
+                        HeightRequest="56"
+                        Margin="0,16,0,0"
+                        CornerRadius="8"
+                        Clicked="OnContinuarClicked" />
+            </StackLayout>
+        </Frame>
+    </Grid>
+
+</ContentPage>

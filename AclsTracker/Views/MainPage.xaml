@@ -71,7 +71,7 @@
                 <controls:TimerCard Grid.Row="1" Grid.Column="0"
                                     BindingContext="{Binding Timer.Timers[2]}"
                                     ShowPauseButton="True"
-                                    PauseCommand="{Binding Timer.ToggleCompressionsPauseToggleCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}" />
+                                    PauseCommand="{Binding Timer.ToggleCompressionsPauseToggleCommand}" />
                 <!-- [3] Adrenalina -->
                 <controls:TimerCard Grid.Row="1" Grid.Column="1"
                                     BindingContext="{Binding Timer.Timers[3]}" />

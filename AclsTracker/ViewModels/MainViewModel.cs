@@ -166,6 +166,9 @@ public partial class MainViewModel : ObservableObject
         _hasCompletedCode = true;
     }
 
+    /// <summary> Fired when rhythm changes — signals MainPage to show rhythm modal popup. </summary>
+    public event Action<string, string>? RhythmPopupRequired;
+
     private async Task HandleRhythmChangeAsync(CardiacRhythm newRhythm)
     {
         if (_isPopupShowing) return; // Prevent popup stacking on rapid rhythm changes
@@ -178,7 +181,7 @@ public partial class MainViewModel : ObservableObject
                 CardiacRhythm.Asistolia => ("Protocolo ACLS", "• Buscar causas reversibles\n• Valorar Causas Reversibles"),
                 CardiacRhythm.TV        => ("Ritmo Desfibrilable", "• Ritmo desfibrilable. Preparar desfibrilador.\n• Valorar Causas Reversibles"),
                 CardiacRhythm.FV        => ("Ritmo Desfibrilable", "• Ritmo desfibrilable. Preparar desfibrilador.\n• Valorar Causas Reversibles"),
-                CardiacRhythm.RCE       => ("RCE Alcanzado", "RCE alcanzado\n• Mantener vía aérea y ventilación\n• Monitorear ritmo y presión arterial\n• Obtener ECG 12 derivaciones\n• Considerar objetivo temp 32-36°C\n• Considerar Causas Reversibles"),
+                CardiacRhythm.RCE       => ("RCE Alcanzado", "RCE alcanzado\n• Mantener vía aérea y ventilación\n• Monitorear ritmo y presión arterial\n• Obtener ECG 12 derivaciones\n• Considerar objetivo temp 32-36°C\n• Valorar Causas Reversibles"),
                 _ => null // Ninguno — no popup
             };
 
@@ -193,8 +196,8 @@ public partial class MainViewModel : ObservableObject
                     message += $"\n• 💊 {drugSuggestion.Drug} ({drugSuggestion.DoseHint})";
                 }
 
-                await Application.Current!.MainPage!
-                    .DisplayAlert(popup.Value.title, message, "CONTINUAR");
+                // Use modal popup instead of DisplayAlert — MainPage subscribes and pushes modal
+                RhythmPopupRequired?.Invoke(popup.Value.title, message);
 
                 string logEntry = newRhythm is CardiacRhythm.TV or CardiacRhythm.FV
                     ? $"Ritmo desfibrilable detectado: {newRhythm}"
@@ -361,6 +364,13 @@ public partial class MainViewModel : ObservableObject
         if (_cycleCount == 0)
         {
             suggestions.Add("¿Colocó acceso IV/IO?");
+        }
+
+        // Causas reversibles — for non-shockable rhythms
+        var rhythm = EventRecording.CurrentRhythm;
+        if (rhythm is CardiacRhythm.AESP or CardiacRhythm.Asistolia)
+        {
+            suggestions.Add("Valorar Causas Reversibles");
         }
 
         // Compressor rotation — every pulse check

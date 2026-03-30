@@ -15,6 +15,13 @@ public partial class MainPage : ContentPage
 
         _viewModel.DefibrillationTriggered += OnDefibrillationTriggered;
         _viewModel.PulseCheckRequired += OnPulseCheckRequired;
+        _viewModel.RhythmPopupRequired += OnRhythmPopupRequired;
+    }
+
+    private async void OnRhythmPopupRequired(string title, string message)
+    {
+        var page = new RhythmPopupPage(title, message);
+        await Navigation.PushModalAsync(page);
     }
 
     private async void OnPulseCheckRequired(List<string> suggestions)
