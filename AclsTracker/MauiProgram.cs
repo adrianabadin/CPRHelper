@@ -37,6 +37,7 @@ public static class MauiProgram
         builder.Services.AddTransient<MetronomeViewModel>();
         builder.Services.AddTransient<TimerViewModel>();
         builder.Services.AddSingleton<EventRecordingViewModel>();
+        builder.Services.AddSingleton<HistorialViewModel>();
 
         // Views
         builder.Services.AddTransient<MainViewModel>();

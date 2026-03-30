@@ -16,6 +16,8 @@
             <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
             <converters:InvertBoolConverter x:Key="InvertBoolConverter" />
             <converters:PauseIconConverter x:Key="PauseIconConverter" />
+            <converters:BoolToActiveColorConverter x:Key="BoolToActiveColorConverter" />
+            <converters:BoolToActiveTextColorConverter x:Key="BoolToActiveTextColorConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>
