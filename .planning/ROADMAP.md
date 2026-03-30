@@ -85,6 +85,16 @@ Plans:
 - [ ] 03-01-PLAN.md — Rhythm change popups + pulse check suggestions + cycle counter (MainViewModel.cs)
 **UI hint**: yes
 
+### Phase 03.3: Mejorar UI Hs y Ts mobile first tab Causas Reversibles (INSERTED)
+
+**Goal:** Improved mobile-first UI for HsAndTsChecklist control — single column, 48x48 round buttons, full-row tap, 16pt font, tab renamed to "Causas Reversibles"
+**Requirements**: REGI-03 (UI improvement, no new functionality)
+**Depends on:** Phase 3
+**Plans:** 1/1 plans
+
+Plans:
+- [ ] 03.3-01-PLAN.md — Redesign HsAndTsChecklist mobile-first UI (single column, 48x48 buttons, TapGestureRecognizer, FontSize=16)
+
 ### Phase 03.2: UI improvements - pulse checks, compression pause, new code session, bullets, reversible causes, defibrillation animation, banner (INSERTED)
 
 **Goal:** Rediseno del popup de check de pulso como modal personalizado que permanece abierto, pausa automatica de compresiones y metronomo durante el check, opcion de continuar/reiniciar codigo, animacion de defibrilacion con haptic, vinetas en popups de ritmo con "Valorar Causas Reversibles", y banners de 8 segundos
