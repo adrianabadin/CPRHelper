@@ -15,9 +15,9 @@ public partial class MainPage : ContentPage
 
     public MainPage(MainViewModel viewModel)
     {
-        InitializeComponent();
         _viewModel = viewModel;
         BindingContext = viewModel;
+        InitializeComponent();
 
         _viewModel.DefibrillationTriggered += OnDefibrillationTriggered;
         _viewModel.PulseCheckRequired += OnPulseCheckRequired;
