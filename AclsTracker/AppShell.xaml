@@ -10,7 +10,7 @@
         <Tab Title="Principal">
             <ShellContent ContentTemplate="{DataTemplate views:MainPage}" Route="MainPage" />
         </Tab>
-        <Tab Title="H's y T's">
+        <Tab Title="Causas Reversibles">
             <ShellContent ContentTemplate="{DataTemplate views:HsAndTsPage}" Route="HsAndTsPage" />
         </Tab>
         <Tab Title="Historial">
