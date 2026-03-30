@@ -1,3 +1,4 @@
+using System.Windows.Input;
 using AclsTracker.Controls;
 using AclsTracker.ViewModels;
 
@@ -6,6 +7,11 @@ namespace AclsTracker.Views;
 public partial class MainPage : ContentPage
 {
     private MainViewModel _viewModel;
+
+    /// <summary>
+    /// Exposes TimerViewModel's toggle pause command for the TimerCard pause button.
+    /// </summary>
+    public ICommand TogglePauseCommand => _viewModel.Timer.ToggleCompressionsPauseToggleCommand;
 
     public MainPage(MainViewModel viewModel)
     {

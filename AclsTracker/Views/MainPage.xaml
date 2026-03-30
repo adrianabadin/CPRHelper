@@ -5,6 +5,7 @@
              xmlns:vm="clr-namespace:AclsTracker.ViewModels"
              xmlns:converters="clr-namespace:AclsTracker.Converters"
              x:Class="AclsTracker.Views.MainPage"
+             x:Name="MainPageControl"
              Title="Principal"
              BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#121212}">
 
@@ -71,7 +72,7 @@
                 <controls:TimerCard Grid.Row="1" Grid.Column="0"
                                     BindingContext="{Binding Timer.Timers[2]}"
                                     ShowPauseButton="True"
-                                    PauseCommand="{Binding Timer.ToggleCompressionsPauseToggleCommand}" />
+                                    PauseCommand="{Binding TogglePauseCommand, Source={x:Reference MainPageControl}}" />
                 <!-- [3] Adrenalina -->
                 <controls:TimerCard Grid.Row="1" Grid.Column="1"
                                     BindingContext="{Binding Timer.Timers[3]}" />
