@@ -95,7 +95,8 @@
                     HorizontalOptions="Fill" />
 
             <!-- Row 2: DEFIBRILAR full width -->
-            <Button Text="DEFIBRILAR"
+            <Button x:Name="DefibrilarButton"
+                    Text="DEFIBRILAR"
                     Command="{Binding DefibrilarCommand}"
                     BackgroundColor="#C62828"
                     TextColor="White"

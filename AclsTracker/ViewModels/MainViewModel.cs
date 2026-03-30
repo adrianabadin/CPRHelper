@@ -16,6 +16,8 @@ public partial class MainViewModel : ObservableObject
     public TimerViewModel Timer { get; }
     public EventRecordingViewModel EventRecording { get; }
 
+    private const int BannerDismissSeconds = 8;
+
     private IDispatcherTimer? _pulseCheckTimer;
     private IDispatcherTimer? _chargingWarningTimer;
     private int _amiodaronaDoseCount;
@@ -23,6 +25,12 @@ public partial class MainViewModel : ObservableObject
     private bool _isPopupShowing;
     private bool _adrenalinaBannerFired;
     private bool _amiodaronaBannerFired;
+
+    /// <summary>
+    /// Fired when the defibrillation command is executed.
+    /// MainPage subscribes to trigger haptic feedback and visual animation.
+    /// </summary>
+    public event Action? DefibrillationTriggered;
 
     [ObservableProperty]
     private bool _isAmiodaronaEnabled;
@@ -61,7 +69,7 @@ public partial class MainViewModel : ObservableObject
                 && Timer.Timers[3].IsOverThreshold && !_adrenalinaBannerFired)
             {
                 _adrenalinaBannerFired = true;
-                ShowNotification("💊 Hora de Adrenalina", 5);
+                ShowNotification("💊 Hora de Adrenalina", BannerDismissSeconds);
             }
         };
 
@@ -73,7 +81,7 @@ public partial class MainViewModel : ObservableObject
                 && _amiodaronaDoseCount < 2)
             {
                 _amiodaronaBannerFired = true;
-                ShowNotification("💊 Hora de Amiodarona", 5);
+                ShowNotification("💊 Hora de Amiodarona", BannerDismissSeconds);
             }
         };
     }
@@ -142,10 +150,10 @@ public partial class MainViewModel : ObservableObject
         {
             (string title, string message)? popup = newRhythm switch
             {
-                CardiacRhythm.AESP      => ("Protocolo ACLS", "Buscar causas reversibles\nConsidere revisar H's y T's"),
-                CardiacRhythm.Asistolia => ("Protocolo ACLS", "Buscar causas reversibles\nConsidere revisar H's y T's"),
-                CardiacRhythm.TV        => ("Ritmo Desfibrilable", "Ritmo desfibrilable. Preparar desfibrilador.\nConsidere causas reversibles (H's y T's)"),
-                CardiacRhythm.FV        => ("Ritmo Desfibrilable", "Ritmo desfibrilable. Preparar desfibrilador.\nConsidere causas reversibles (H's y T's)"),
+                CardiacRhythm.AESP      => ("Protocolo ACLS", "• Buscar causas reversibles\n• Considere revisar H's y T's\n• Valorar Causas Reversibles"),
+                CardiacRhythm.Asistolia => ("Protocolo ACLS", "• Buscar causas reversibles\n• Considere revisar H's y T's\n• Valorar Causas Reversibles"),
+                CardiacRhythm.TV        => ("Ritmo Desfibrilable", "• Ritmo desfibrilable. Preparar desfibrilador.\n• Considere causas reversibles (H's y T's)"),
+                CardiacRhythm.FV        => ("Ritmo Desfibrilable", "• Ritmo desfibrilable. Preparar desfibrilador.\n• Considere causas reversibles (H's y T's)"),
                 CardiacRhythm.RCE       => ("RCE Alcanzado", "RCE alcanzado\n• Mantener vía aérea y ventilación\n• Monitorear ritmo y presión arterial\n• Obtener ECG 12 derivaciones\n• Considerar objetivo temp 32-36°C\n• Considerar causas reversibles"),
                 _ => null // Ninguno — no popup
             };
@@ -158,7 +166,7 @@ public partial class MainViewModel : ObservableObject
                 var drugSuggestion = GetSuggestedDrug();
                 if (drugSuggestion is not null)
                 {
-                    message += $"\n\n💊 Administrar {drugSuggestion.Drug} ({drugSuggestion.DoseHint})";
+                    message += $"\n• 💊 {drugSuggestion.Drug} ({drugSuggestion.DoseHint})";
                 }
 
                 await Application.Current!.MainPage!
@@ -277,7 +285,7 @@ public partial class MainViewModel : ObservableObject
         _chargingWarningTimer.Start();
     }
 
-    private void ShowNotification(string message, int autoDismissSeconds = 5)
+    private void ShowNotification(string message, int autoDismissSeconds = BannerDismissSeconds)
     {
         // App uses Shell navigation, so MainPage is AppShell — navigate through Shell
         if (Shell.Current?.CurrentPage is Views.MainPage page)
@@ -293,7 +301,7 @@ public partial class MainViewModel : ObservableObject
     private async void OnChargingWarning(object? sender, EventArgs e)
     {
         _chargingWarningTimer?.Stop();
-        ShowNotification("⚡ Prepare desfibrilador — Check de pulso en 20s", 5);
+        ShowNotification("⚡ Prepare desfibrilador — Check de pulso en 20s", BannerDismissSeconds);
     }
 
     private async void OnPulseCheckDue(object? sender, EventArgs e)
@@ -367,6 +375,7 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     private void Defibrilar()
     {
+        DefibrillationTriggered?.Invoke();
         EventRecording.LogCustomEventCommand.Execute("Defibrilación realizada");
     }
 }
