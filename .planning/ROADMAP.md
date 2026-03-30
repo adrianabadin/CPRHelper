@@ -90,7 +90,7 @@ Plans:
 **Goal:** Rediseno del popup de check de pulso como modal personalizado que permanece abierto, pausa automatica de compresiones y metronomo durante el check, opcion de continuar/reiniciar codigo, animacion de defibrilacion con haptic, vinetas en popups de ritmo con "Valorar Causas Reversibles", y banners de 8 segundos
 **Requirements**: AUDI-02, TIME-02, REGI-02, REGI-04
 **Depends on:** Phase 3
-**Plans:** 2 plans
+**Plans:** 3/3 plans complete
 
 Plans:
 - [ ] 03.2-01-PLAN.md — Timer/metronome pause infrastructure, TimerCard EN PAUSA + pause button, banner 8s, rhythm popup bullets, defibrillation animation
@@ -153,7 +153,7 @@ Plans:
 | 02.1. UI Restructure | 4/4 | Complete    | 2026-03-28 |
 | 3. Protocol Guidance | 0/0 | Not started | - |
 | 3.1. Fix design issues | 2/2 | Complete   | 2026-03-29 |
-| 03.2. UI improvements | 0/2 | Planning complete | - |
+| 03.2. UI improvements | 0/2 | Complete    | 2026-03-30 |
 | 4. Data Persistance | 0/3 | Planning complete | - |
 | 4.1. Fix UI stuff | 0/0 | Not started | - |
 | 5. Data Export | 0/0 | Not started | - |
