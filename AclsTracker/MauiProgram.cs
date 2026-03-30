@@ -3,6 +3,7 @@ using Plugin.Maui.Audio;
 using AclsTracker.Services.Timer;
 using AclsTracker.Services.Audio;
 using AclsTracker.Services.EventLog;
+using AclsTracker.Services.Database;
 using AclsTracker.ViewModels;
 using AclsTracker.Views;
 
@@ -30,6 +31,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<IMetronomeService, MetronomeService>();
         builder.Services.AddSingleton<ITimerService, TimerService>();
         builder.Services.AddSingleton<IEventLogService, EventLogService>();
+        builder.Services.AddSingleton<ISessionRepository, SessionRepository>();
 
         // ViewModels — registered in Plans 02 and 03
         builder.Services.AddTransient<MetronomeViewModel>();
