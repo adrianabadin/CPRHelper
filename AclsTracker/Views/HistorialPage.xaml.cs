@@ -22,4 +22,21 @@ public partial class HistorialPage : ContentPage
             await _viewModel.LoadSavedSessions();
         }
     }
+
+    private async void OnBuscarClicked(object? sender, EventArgs e)
+    {
+        _viewModel.FromDate = FromDatePicker.Date;
+        _viewModel.ToDate = ToDatePicker.Date;
+        await _viewModel.LoadSavedSessions();
+    }
+
+    private async void OnLimpiarClicked(object? sender, EventArgs e)
+    {
+        FromDatePicker.Date = DateTime.Today;
+        ToDatePicker.Date = DateTime.Today;
+        _viewModel.SearchText = string.Empty;
+        _viewModel.FromDate = null;
+        _viewModel.ToDate = null;
+        await _viewModel.LoadSavedSessions();
+    }
 }

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:sys="clr-namespace:System;assembly=netstandard"
              xmlns:models="clr-namespace:AclsTracker.Models"
              xmlns:vm="clr-namespace:AclsTracker.ViewModels"
              x:Class="AclsTracker.Views.HistorialPage"
@@ -72,17 +71,17 @@
                            FontSize="14"
                            ReturnCommand="{Binding SearchSessionsCommand}" />
                     <Grid ColumnDefinitions="*, *, Auto, Auto" ColumnSpacing="8">
-                        <DatePicker Grid.Column="0"
+                        <DatePicker x:Name="FromDatePicker"
+                                    Grid.Column="0"
                                     Format="dd/MM/yyyy"
-                                    Date="{Binding FromDate, TargetNullValue={x:Static sys:DateTime.Today}}"
                                     FontSize="13" />
-                        <DatePicker Grid.Column="1"
+                        <DatePicker x:Name="ToDatePicker"
+                                    Grid.Column="1"
                                     Format="dd/MM/yyyy"
-                                    Date="{Binding ToDate, TargetNullValue={x:Static sys:DateTime.Today}}"
                                     FontSize="13" />
                         <Button Grid.Column="2"
                                 Text="Buscar"
-                                Command="{Binding SearchSessionsCommand}"
+                                Clicked="OnBuscarClicked"
                                 BackgroundColor="#1565C0"
                                 TextColor="White"
                                 FontSize="13"
@@ -90,7 +89,7 @@
                                 Padding="12,8" />
                         <Button Grid.Column="3"
                                 Text="Limpiar"
-                                Command="{Binding ClearSearchCommand}"
+                                Clicked="OnLimpiarClicked"
                                 BackgroundColor="#E0E0E0"
                                 TextColor="#666666"
                                 FontSize="13"
