@@ -116,6 +116,7 @@ Plan: 4 of 4
 - Phase 3.1 added: Fix defibrillator notification at min 40, remove defibrillar button from rhythm/pulse popup, defibrillation popup OK-only, drug suggestions in rhythm constatation popup
 - Phase 6 added: 3.2
 - Phase 3.2 inserted after Phase 3: mejoras de UI (pulse checks viñetas/botones, pausa compresiones, nuevo codigo session, viñetas ritmo, causas reversibles label, animacion defibrilacion, banner 8s) (URGENT)
+- Phase 03.3 inserted after Phase 3: Mejorar UI Hs y Ts mobile first tab Causas Reversibles (URGENT)
 
 ### Architecture Notes
 
