@@ -65,13 +65,13 @@
 
             <!-- Pause/Resume button — visible when ShowPauseButton=true on this control -->
             <Button Grid.Row="2" Grid.Column="1"
-                    Text="⏸"
                     WidthRequest="36"
                     HeightRequest="36"
                     FontSize="16"
                     Padding="0"
                     BackgroundColor="Transparent"
                     TextColor="#FF6F00"
+                    Text="{Binding IsPaused, Converter={StaticResource PauseIconConverter}}"
                     Command="{Binding PauseCommand, Source={x:Reference TimerCardControl}}"
                     IsVisible="{Binding ShowPauseButton, Source={x:Reference TimerCardControl}}" />
 

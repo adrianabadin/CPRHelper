@@ -28,6 +28,12 @@ public partial class MainViewModel : ObservableObject
     private bool _hasCompletedCode;
 
     /// <summary>
+    /// Tracks number of defibrillations in current code session.
+    /// Amiodarone is indicated only after 2+ shocks (refractory VF/pVT per AHA ACLS 2020).
+    /// </summary>
+    private int _defibrillationCount;
+
+    /// <summary>
     /// Fired when the defibrillation command is executed.
     /// MainPage subscribes to trigger haptic feedback and visual animation.
     /// </summary>
@@ -141,6 +147,7 @@ public partial class MainViewModel : ObservableObject
     {
         _cycleCount = 0;
         _amiodaronaDoseCount = 0;
+        _defibrillationCount = 0;
         _lastAdrenalinaTime = null;
         _lastAmiodaronaTime = null;
         IsAdrenalinaSuggested = false;
@@ -241,7 +248,9 @@ public partial class MainViewModel : ObservableObject
 
         // TV/FV, cycleCount >= 1
         bool adrenalinaDue = _lastAdrenalinaTime == null || (DateTime.Now - _lastAdrenalinaTime.Value).TotalMinutes >= 3;
-        bool amiodaronaDue = (_lastAmiodaronaTime == null || (DateTime.Now - _lastAmiodaronaTime.Value).TotalMinutes >= 3)
+        // Amiodarone only after 2+ defibrillations (refractory VF/pVT per AHA ACLS 2020)
+        bool amiodaronaDue = _defibrillationCount >= 2
+                             && (_lastAmiodaronaTime == null || (DateTime.Now - _lastAmiodaronaTime.Value).TotalMinutes >= 3)
                              && _amiodaronaDoseCount < 2;
 
         // Both never given → Adrenalina first
@@ -411,6 +420,7 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     private void Defibrilar()
     {
+        _defibrillationCount++;
         DefibrillationTriggered?.Invoke();
         EventRecording.LogCustomEventCommand.Execute("Defibrilación realizada");
     }
