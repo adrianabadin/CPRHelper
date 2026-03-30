@@ -109,6 +109,8 @@ public partial class TimerViewModel : ObservableObject
     [RelayCommand]
     private void NewCprCycle()
     {
+        // Clear pause state before resuming compressions (RESEARCH pitfall 3)
+        Timers[2].IsPaused = false;
         _timerService.ResetTimer("cpr-cycle");
         _timerService.StartTimer("cpr-cycle");
         // Compressions timer intentionally NOT reset — accumulates total compression time for FCT
@@ -140,19 +142,42 @@ public partial class TimerViewModel : ObservableObject
 
     /// <summary>
     /// Pause the compressions timer (used when checking pulse).
+    /// Sets IsPaused=true on the compressions TimerModel for UI display.
     /// </summary>
     public void PauseCompressions()
     {
         _timerService.PauseTimer("compressions");
+        Timers[2].IsPaused = true;
     }
 
     /// <summary>
     /// Resume the compressions timer (used after pulse check).
+    /// Clears IsPaused on the compressions TimerModel.
     /// </summary>
     public void ResumeCompressions()
     {
+        Timers[2].IsPaused = false;
         _timerService.StartTimer("compressions");
     }
+
+    /// <summary>
+    /// Toggle pause/resume on the compressions timer.
+    /// If paused, resumes; if running, pauses.
+    /// </summary>
+    public void ToggleCompressionsPause()
+    {
+        if (Timers[2].IsPaused)
+            ResumeCompressions();
+        else
+            PauseCompressions();
+    }
+
+    /// <summary>
+    /// RelayCommand for ToggleCompressionsPause — binds to TimerCard PauseCommand.
+    /// Generated command name: ToggleCompressionsPauseToggleCommand.
+    /// </summary>
+    [RelayCommand]
+    private void ToggleCompressionsPauseToggle() => ToggleCompressionsPause();
 
     /// <summary>
     /// Start the pulse-check timer from zero.

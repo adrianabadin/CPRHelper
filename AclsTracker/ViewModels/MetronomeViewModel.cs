@@ -12,6 +12,7 @@ namespace AclsTracker.ViewModels;
 public partial class MetronomeViewModel : ObservableObject
 {
     private readonly IMetronomeService _metronomeService;
+    private bool _pausedForPulseCheck;
 
     [ObservableProperty]
     private int _bpm = 110;
@@ -76,6 +77,34 @@ public partial class MetronomeViewModel : ObservableObject
     {
         Bpm = Math.Max(Bpm - 5, 100);
         _metronomeService.SetBpm(Bpm);
+    }
+
+    /// <summary>
+    /// Pause the metronome for a pulse check. Remembers it was paused so
+    /// ResumeAfterPulseCheck can restore it automatically.
+    /// </summary>
+    public void PauseForPulseCheck()
+    {
+        if (IsPlaying)
+        {
+            _pausedForPulseCheck = true;
+            _metronomeService.Stop();
+            IsPlaying = false;
+        }
+    }
+
+    /// <summary>
+    /// Resume the metronome after a pulse check if it was paused by PauseForPulseCheck.
+    /// </summary>
+    public void ResumeAfterPulseCheck()
+    {
+        if (_pausedForPulseCheck)
+        {
+            _pausedForPulseCheck = false;
+            _metronomeService.SetBpm(Bpm);
+            _metronomeService.Start();
+            IsPlaying = true;
+        }
     }
 
     private void HandleBeat()

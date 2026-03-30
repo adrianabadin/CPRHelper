@@ -14,6 +14,9 @@ public partial class TimerModel : ObservableObject
     [ObservableProperty]
     private bool _isRunning;
 
+    [ObservableProperty]
+    private bool _isPaused;
+
     /// <summary>
     /// Target duration for progress circle display (e.g., 2 min for CPR cycle).
     /// Null means no target (elapsed-only timer like TotalElapsed).

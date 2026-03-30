@@ -67,9 +67,11 @@
                 <!-- [1] Ciclo RCP -->
                 <controls:TimerCard Grid.Row="0" Grid.Column="1"
                                     BindingContext="{Binding Timer.Timers[1]}" />
-                <!-- [2] Compresiones -->
+                <!-- [2] Compresiones — with pause button -->
                 <controls:TimerCard Grid.Row="1" Grid.Column="0"
-                                    BindingContext="{Binding Timer.Timers[2]}" />
+                                    BindingContext="{Binding Timer.Timers[2]}"
+                                    ShowPauseButton="True"
+                                    PauseCommand="{Binding Timer.ToggleCompressionsPauseToggleCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}" />
                 <!-- [3] Adrenalina -->
                 <controls:TimerCard Grid.Row="1" Grid.Column="1"
                                     BindingContext="{Binding Timer.Timers[3]}" />

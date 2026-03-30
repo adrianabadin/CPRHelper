@@ -17,7 +17,7 @@
             </DataTrigger>
         </Frame.Triggers>
         <Grid ColumnDefinitions="*, Auto"
-              RowDefinitions="Auto, Auto, Auto"
+              RowDefinitions="Auto, Auto, Auto, Auto"
               ColumnSpacing="8"
               RowSpacing="4">
             <!-- Timer name -->
@@ -53,9 +53,31 @@
                 </Label.Triggers>
             </Label>
 
+            <!-- EN PAUSA indicator — visible when compressions are paused -->
+            <Label Grid.Row="2" Grid.Column="0"
+                   Text="EN PAUSA"
+                   FontSize="11"
+                   FontAttributes="Bold"
+                   TextColor="#FF6F00"
+                   HorizontalOptions="Start"
+                   VerticalOptions="Center"
+                   IsVisible="{Binding IsPaused}" />
+
+            <!-- Pause/Resume button — visible when ShowPauseButton=true on this control -->
+            <Button Grid.Row="2" Grid.Column="1"
+                    Text="⏸"
+                    WidthRequest="36"
+                    HeightRequest="36"
+                    FontSize="16"
+                    Padding="0"
+                    BackgroundColor="Transparent"
+                    TextColor="#FF6F00"
+                    Command="{Binding PauseCommand, Source={x:Reference TimerCardControl}}"
+                    IsVisible="{Binding ShowPauseButton, Source={x:Reference TimerCardControl}}" />
+
             <!-- Progress bar (D-05: circle substitute — linear progress for simplicity,
                  can be upgraded to circular in future) -->
-            <ProgressBar Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+            <ProgressBar Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
                          Progress="{Binding ProgressPercentage}"
                          ProgressColor="{StaticResource Primary}"
                          HeightRequest="6"
