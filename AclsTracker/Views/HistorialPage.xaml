@@ -1,33 +1,218 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:sys="clr-namespace:System;assembly=netstandard"
              xmlns:models="clr-namespace:AclsTracker.Models"
+             xmlns:vm="clr-namespace:AclsTracker.ViewModels"
              x:Class="AclsTracker.Views.HistorialPage"
+             x:DataType="vm:HistorialViewModel"
              Title="Historial">
-    <CollectionView ItemsSource="{Binding Events}" Margin="16">
-        <CollectionView.ItemTemplate>
-            <DataTemplate x:DataType="models:EventRecord">
-                <Grid ColumnDefinitions="Auto, Auto, *" Padding="0,4">
-                    <Label Grid.Column="0"
-                           Text="{Binding ElapsedSinceStart, StringFormat='{0:mm\\:ss}'}"
-                           FontSize="12" TextColor="#999999" MinimumWidthRequest="50" />
-                    <Label Grid.Column="1"
-                           Text="{Binding EventType}"
-                           FontSize="11" TextColor="#1565C0"
-                           MinimumWidthRequest="80" Margin="4,0" />
-                    <Label Grid.Column="2"
-                           Text="{Binding Description}"
-                           FontSize="13" />
-                </Grid>
-            </DataTemplate>
-        </CollectionView.ItemTemplate>
-        <CollectionView.EmptyView>
-            <Label Text="No hay eventos registrados en esta sesion."
-                   HorizontalTextAlignment="Center"
-                   VerticalTextAlignment="Center"
-                   TextColor="#999999"
-                   FontSize="14"
-                   Margin="0,40" />
-        </CollectionView.EmptyView>
-    </CollectionView>
+
+    <Grid RowDefinitions="Auto, *">
+
+        <!-- Top Toggle Bar (always visible) -->
+        <HorizontalStackLayout Grid.Row="0" Spacing="0" Margin="16,12,16,8">
+            <Button Text="Sesión Actual"
+                    Command="{Binding ShowLiveSessionCommand}"
+                    BackgroundColor="{Binding IsLiveView, Converter={StaticResource BoolToActiveColorConverter}}"
+                    TextColor="{Binding IsLiveView, Converter={StaticResource BoolToActiveTextColorConverter}}"
+                    FontSize="14"
+                    CornerRadius="8"
+                    Padding="16,10"
+                    HorizontalOptions="Start" />
+            <Button Text="Sesiones Guardadas"
+                    Command="{Binding ShowSavedSessionsCommand}"
+                    BackgroundColor="{Binding IsSavedView, Converter={StaticResource BoolToActiveColorConverter}}"
+                    TextColor="{Binding IsSavedView, Converter={StaticResource BoolToActiveTextColorConverter}}"
+                    FontSize="14"
+                    CornerRadius="8"
+                    Padding="16,10"
+                    Margin="8,0,0,0"
+                    HorizontalOptions="Start" />
+        </HorizontalStackLayout>
+
+        <!-- Section 1: Live Session Events -->
+        <ContentView Grid.Row="1" IsVisible="{Binding IsLiveView}">
+            <CollectionView ItemsSource="{Binding LiveEvents}" Margin="16,0,16,16">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:EventRecord">
+                        <Grid ColumnDefinitions="Auto, Auto, *" Padding="0,4">
+                            <Label Grid.Column="0"
+                                   Text="{Binding ElapsedSinceStart, StringFormat='{0:mm\\:ss}'}"
+                                   FontSize="12" TextColor="#999999" MinimumWidthRequest="50" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding EventType}"
+                                   FontSize="11" TextColor="#1565C0"
+                                   MinimumWidthRequest="80" Margin="4,0" />
+                            <Label Grid.Column="2"
+                                   Text="{Binding Description}"
+                                   FontSize="13" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
+                    <Label Text="No hay eventos registrados en esta sesión."
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center"
+                           TextColor="#999999"
+                           FontSize="14"
+                           Margin="0,40" />
+                </CollectionView.EmptyView>
+            </CollectionView>
+        </ContentView>
+
+        <!-- Section 2: Saved Sessions List -->
+        <ContentView Grid.Row="1" IsVisible="{Binding IsSavedView}">
+            <Grid RowDefinitions="Auto, *" Margin="16,0,16,16">
+
+                <!-- Search Bar -->
+                <VerticalStackLayout Grid.Row="0" Spacing="8" Margin="0,0,0,12">
+                    <Entry Placeholder="Buscar por nombre, apellido, DNI..."
+                           Text="{Binding SearchText}"
+                           FontSize="14"
+                           ReturnCommand="{Binding SearchSessionsCommand}" />
+                    <Grid ColumnDefinitions="*, *, Auto, Auto" ColumnSpacing="8">
+                        <DatePicker Grid.Column="0"
+                                    Format="dd/MM/yyyy"
+                                    Date="{Binding FromDate, TargetNullValue={x:Static sys:DateTime.Today}}"
+                                    FontSize="13" />
+                        <DatePicker Grid.Column="1"
+                                    Format="dd/MM/yyyy"
+                                    Date="{Binding ToDate, TargetNullValue={x:Static sys:DateTime.Today}}"
+                                    FontSize="13" />
+                        <Button Grid.Column="2"
+                                Text="Buscar"
+                                Command="{Binding SearchSessionsCommand}"
+                                BackgroundColor="#1565C0"
+                                TextColor="White"
+                                FontSize="13"
+                                CornerRadius="6"
+                                Padding="12,8" />
+                        <Button Grid.Column="3"
+                                Text="Limpiar"
+                                Command="{Binding ClearSearchCommand}"
+                                BackgroundColor="#E0E0E0"
+                                TextColor="#666666"
+                                FontSize="13"
+                                CornerRadius="6"
+                                Padding="12,8" />
+                    </Grid>
+                </VerticalStackLayout>
+
+                <!-- Sessions List -->
+                <CollectionView Grid.Row="1"
+                                ItemsSource="{Binding SavedSessions}"
+                                SelectionMode="Single"
+                                SelectedItem="{Binding SelectedSession}"
+                                SelectionChangedCommand="{Binding SelectSessionCommand}"
+                                SelectionChangedCommandParameter="{Binding SelectedSession}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Session">
+                            <Grid RowDefinitions="Auto, Auto" Padding="0,8" RowSpacing="2">
+                                <Label Grid.Row="0" LineBreakMode="TailTruncation" FontSize="14" FontAttributes="Bold">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="{Binding PatientLastName}" FontAttributes="Bold" />
+                                            <Span Text=", " />
+                                            <Span Text="{Binding PatientName}" />
+                                            <Span Text=" — DNI: " />
+                                            <Span Text="{Binding PatientDNI}" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                                <Label Grid.Row="1"
+                                       FontSize="12"
+                                       TextColor="#999999"
+                                       Text="{Binding SessionStartTime, StringFormat='{0:dd/MM/yyyy HH:mm}'}" />
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                    <CollectionView.EmptyView>
+                        <Label Text="No hay sesiones guardadas."
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center"
+                               TextColor="#999999"
+                               FontSize="14"
+                               Margin="0,40" />
+                    </CollectionView.EmptyView>
+                </CollectionView>
+            </Grid>
+        </ContentView>
+
+        <!-- Section 3: Session Detail -->
+        <ContentView Grid.Row="1" IsVisible="{Binding IsDetailView}">
+            <Grid RowDefinitions="Auto, Auto, *" Margin="16,0,16,16" RowSpacing="0">
+
+                <!-- Back Button -->
+                <Button Grid.Row="0"
+                        Text="← Volver"
+                        Command="{Binding BackToListCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="#1565C0"
+                        FontSize="14"
+                        HorizontalOptions="Start"
+                        Padding="0,8"
+                        Margin="0,0,0,8" />
+
+                <!-- Session Info Header -->
+                <Frame Grid.Row="1"
+                       BackgroundColor="#F5F5F5"
+                       BorderColor="#E0E0E0"
+                       CornerRadius="8"
+                       Padding="12"
+                       Margin="0,0,0,12">
+                    <VerticalStackLayout Spacing="4">
+                        <Label FontSize="15" FontAttributes="Bold" LineBreakMode="TailTruncation">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding SelectedSession.PatientLastName}" FontAttributes="Bold" />
+                                    <Span Text=", " />
+                                    <Span Text="{Binding SelectedSession.PatientName}" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Label FontSize="13" TextColor="#555555">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="DNI: " />
+                                    <Span Text="{Binding SelectedSession.PatientDNI}" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Label FontSize="13" TextColor="#555555"
+                               Text="{Binding SelectedSession.SessionStartTime, StringFormat='Inicio: {0:dd/MM/yyyy HH:mm}'}" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Session Events -->
+                <CollectionView Grid.Row="2" ItemsSource="{Binding SessionEvents}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:EventRecord">
+                            <Grid ColumnDefinitions="Auto, Auto, *" Padding="0,4">
+                                <Label Grid.Column="0"
+                                       Text="{Binding ElapsedSinceStart, StringFormat='{0:mm\\:ss}'}"
+                                       FontSize="12" TextColor="#999999" MinimumWidthRequest="50" />
+                                <Label Grid.Column="1"
+                                       Text="{Binding EventType}"
+                                       FontSize="11" TextColor="#1565C0"
+                                       MinimumWidthRequest="80" Margin="4,0" />
+                                <Label Grid.Column="2"
+                                       Text="{Binding Description}"
+                                       FontSize="13" />
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                    <CollectionView.EmptyView>
+                        <Label Text="No hay eventos en esta sesión."
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center"
+                               TextColor="#999999"
+                               FontSize="14"
+                               Margin="0,40" />
+                    </CollectionView.EmptyView>
+                </CollectionView>
+            </Grid>
+        </ContentView>
+
+    </Grid>
 </ContentPage>

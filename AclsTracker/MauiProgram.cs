@@ -43,6 +43,7 @@ public static class MauiProgram
         builder.Services.AddTransient<MainPage>();
         builder.Services.AddTransient<HsAndTsPage>();
         builder.Services.AddTransient<HistorialPage>();
+        builder.Services.AddTransient<PatientDataPopup>();
 
         return builder.Build();
     }

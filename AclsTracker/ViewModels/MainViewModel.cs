@@ -1,6 +1,8 @@
+using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using AclsTracker.Models;
+using AclsTracker.Services.Database;
 using AclsTracker.Views;
 
 namespace AclsTracker.ViewModels;
@@ -15,6 +17,8 @@ public partial class MainViewModel : ObservableObject
     public MetronomeViewModel Metronome { get; }
     public TimerViewModel Timer { get; }
     public EventRecordingViewModel EventRecording { get; }
+
+    private readonly ISessionRepository _sessionRepository;
 
     private const int BannerDismissSeconds = 8;
 
@@ -57,11 +61,16 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private bool _isAmiodaronaSuggested;
 
-    public MainViewModel(MetronomeViewModel metronome, TimerViewModel timer, EventRecordingViewModel eventRecording)
+    public MainViewModel(
+        MetronomeViewModel metronome,
+        TimerViewModel timer,
+        EventRecordingViewModel eventRecording,
+        ISessionRepository sessionRepository)
     {
         Metronome = metronome;
         Timer = timer;
         EventRecording = eventRecording;
+        _sessionRepository = sessionRepository;
 
         // Subscribe to rhythm changes to update Amiodarona enabled state and show protocol guidance popup
         EventRecording.PropertyChanged += (_, e) =>
@@ -161,7 +170,7 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void StopCode()
+    private async Task StopCode()
     {
         _pulseCheckTimer?.Stop();
         _pulseCheckTimer = null;
@@ -169,6 +178,33 @@ public partial class MainViewModel : ObservableObject
         _chargingWarningTimer = null;
 
         Timer.StopSessionCommand.Execute(null);
+        EventRecording.StopRecordingCommand.Execute(null);
+
+        // Capture session data BEFORE showing popup so events are not modified
+        var eventsToSave = EventRecording.Events.ToList();
+        var sessionStart = EventRecording.SessionStartTime
+            ?? (eventsToSave.Count > 0 ? eventsToSave.Min(e => e.Timestamp) : DateTime.Now);
+
+        // Show patient data popup — user must choose GUARDAR or OMITIR
+        var popup = new PatientDataPopup();
+        var result = (PatientDataPopup.PatientDataResult?)await Application.Current!.MainPage!
+            .ShowPopupAsync(popup);
+
+        if (result is not null)
+        {
+            var session = new Session
+            {
+                Id = Guid.NewGuid().ToString(),
+                PatientName = result.Nombre,
+                PatientLastName = result.Apellido,
+                PatientDNI = result.DNI,
+                SessionStartTime = sessionStart,
+                SessionEndTime = DateTime.Now,
+                CreatedAt = DateTime.Now
+            };
+            await _sessionRepository.SaveSessionAsync(session, eventsToSave);
+        }
+
         // Do NOT reset state here — user may choose CONTINUAR on next StartCode
         _hasCompletedCode = true;
     }

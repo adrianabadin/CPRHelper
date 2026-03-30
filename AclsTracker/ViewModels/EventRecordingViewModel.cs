@@ -27,6 +27,9 @@ public partial class EventRecordingViewModel : ObservableObject
 
     public ObservableCollection<EventRecord> Events => _eventLogService.Events;
 
+    public DateTime? SessionStartTime => _eventLogService.SessionStartTime;
+
+
     public ObservableCollection<HsAndTsItem> HsAndTsItems { get; } = new();
 
     public IEnumerable<HsAndTsItem> HItems => HsAndTsItems.Where(i => i.Category == "H");
