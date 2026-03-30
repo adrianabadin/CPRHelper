@@ -140,7 +140,7 @@
 
         <!-- Section 3: Session Detail -->
         <ContentView Grid.Row="1" IsVisible="{Binding IsDetailView}">
-            <Grid RowDefinitions="Auto, Auto, *" Margin="16,0,16,16" RowSpacing="0">
+            <Grid RowDefinitions="Auto, Auto, Auto, *" Margin="16,0,16,16" RowSpacing="0">
 
                 <!-- Back Button -->
                 <Button Grid.Row="0"
@@ -183,8 +183,30 @@
                     </VerticalStackLayout>
                 </Frame>
 
+                <!-- Export Buttons -->
+                <Grid Grid.Row="2" ColumnDefinitions="*, *" ColumnSpacing="12" Margin="0,0,0,12">
+                    <Button Grid.Column="0"
+                            Text="📄 EXPORTAR PDF"
+                            Command="{Binding ExportPdfCommand}"
+                            BackgroundColor="#1565C0"
+                            TextColor="White"
+                            FontSize="14"
+                            FontAttributes="Bold"
+                            CornerRadius="8"
+                            Padding="12,10" />
+                    <Button Grid.Column="1"
+                            Text="📊 EXPORTAR CSV"
+                            Command="{Binding ExportCsvCommand}"
+                            BackgroundColor="#2E7D32"
+                            TextColor="White"
+                            FontSize="14"
+                            FontAttributes="Bold"
+                            CornerRadius="8"
+                            Padding="12,10" />
+                </Grid>
+
                 <!-- Session Events -->
-                <CollectionView Grid.Row="2" ItemsSource="{Binding SessionEvents}">
+                <CollectionView Grid.Row="3" ItemsSource="{Binding SessionEvents}">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:EventRecord">
                             <Grid ColumnDefinitions="Auto, Auto, *" Padding="0,4">

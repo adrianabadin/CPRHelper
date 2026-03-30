@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using AclsTracker.Models;
 using AclsTracker.Services.Database;
 using AclsTracker.Services.EventLog;
+using AclsTracker.Services.Export;
 
 namespace AclsTracker.ViewModels;
 
@@ -11,6 +12,8 @@ public partial class HistorialViewModel : ObservableObject
 {
     private readonly IEventLogService _eventLogService;
     private readonly ISessionRepository _sessionRepository;
+    private readonly IPdfExportService _pdfExportService;
+    private readonly ICsvExportService _csvExportService;
 
     // Expose live events from EventLogService
     public ObservableCollection<EventRecord> LiveEvents => _eventLogService.Events;
@@ -40,6 +43,10 @@ public partial class HistorialViewModel : ObservableObject
     [ObservableProperty]
     private int _currentView = 0;
 
+    // Export state
+    [ObservableProperty]
+    private bool _isExporting;
+
     // Computed property for view switching
     public bool IsLiveView => CurrentView == 0;
     public bool IsSavedView => CurrentView == 1;
@@ -52,10 +59,16 @@ public partial class HistorialViewModel : ObservableObject
         OnPropertyChanged(nameof(IsDetailView));
     }
 
-    public HistorialViewModel(IEventLogService eventLogService, ISessionRepository sessionRepository)
+    public HistorialViewModel(
+        IEventLogService eventLogService,
+        ISessionRepository sessionRepository,
+        IPdfExportService pdfExportService,
+        ICsvExportService csvExportService)
     {
         _eventLogService = eventLogService;
         _sessionRepository = sessionRepository;
+        _pdfExportService = pdfExportService;
+        _csvExportService = csvExportService;
     }
 
     [RelayCommand]
@@ -115,6 +128,88 @@ public partial class HistorialViewModel : ObservableObject
         CurrentView = 1;
         SelectedSession = null;
         SessionEvents.Clear();
+    }
+
+    [RelayCommand(CanExecute = nameof(CanExport))]
+    private async Task ExportPdf()
+    {
+        if (SelectedSession is null) return;
+        IsExporting = true;
+        UpdateExportCommands();
+        try
+        {
+            var events = SessionEvents.ToList();
+            var filePath = await _pdfExportService.GeneratePdfAsync(SelectedSession, events);
+
+            // Save local copy to app data
+            var localDir = Path.Combine(FileSystem.Current.AppDataDirectory, "Exports");
+            Directory.CreateDirectory(localDir);
+            var localPath = Path.Combine(localDir, Path.GetFileName(filePath));
+            File.Copy(filePath, localPath, overwrite: true);
+
+            // Open share sheet
+            await Share.RequestAsync(new ShareFileRequest
+            {
+                Title = "Exportar PDF — ACLS Tracker",
+                File = new ShareFile(filePath),
+                PresentationSourceBounds = DeviceInfo.Platform == DevicePlatform.iOS
+                    ? new Rect(0, 0, 0, 0) : Rect.Zero
+            });
+        }
+        catch (Exception ex)
+        {
+            await Shell.Current.DisplayAlert("Error", $"No se pudo generar el PDF: {ex.Message}", "OK");
+        }
+        finally
+        {
+            IsExporting = false;
+            UpdateExportCommands();
+        }
+    }
+
+    [RelayCommand(CanExecute = nameof(CanExport))]
+    private async Task ExportCsv()
+    {
+        if (SelectedSession is null) return;
+        IsExporting = true;
+        UpdateExportCommands();
+        try
+        {
+            var events = SessionEvents.ToList();
+            var filePath = await _csvExportService.GenerateCsvAsync(SelectedSession, events);
+
+            // Save local copy
+            var localDir = Path.Combine(FileSystem.Current.AppDataDirectory, "Exports");
+            Directory.CreateDirectory(localDir);
+            var localPath = Path.Combine(localDir, Path.GetFileName(filePath));
+            File.Copy(filePath, localPath, overwrite: true);
+
+            // Open share sheet
+            await Share.RequestAsync(new ShareFileRequest
+            {
+                Title = "Exportar CSV — ACLS Tracker",
+                File = new ShareFile(filePath),
+                PresentationSourceBounds = DeviceInfo.Platform == DevicePlatform.iOS
+                    ? new Rect(0, 0, 0, 0) : Rect.Zero
+            });
+        }
+        catch (Exception ex)
+        {
+            await Shell.Current.DisplayAlert("Error", $"No se pudo generar el CSV: {ex.Message}", "OK");
+        }
+        finally
+        {
+            IsExporting = false;
+            UpdateExportCommands();
+        }
+    }
+
+    private bool CanExport() => !IsExporting && SelectedSession is not null;
+
+    private void UpdateExportCommands()
+    {
+        ExportPdfCommand.NotifyCanExecuteChanged();
+        ExportCsvCommand.NotifyCanExecuteChanged();
     }
 
     // Helper for session display
