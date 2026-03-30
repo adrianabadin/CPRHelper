@@ -120,7 +120,7 @@ Plans:
 ### Phase 4: Data Persistance
 **Goal**: Users can persist session data in local database, search past sessions by patient data and date, and view session details
 **Depends on**: Phase 3
-**Requirements**: EXPO-01, EXPO-02
+**Requirements**: PERS-01
 **Success Criteria** (what must be TRUE):
   1. User can finalize a code and save session with patient data (nombre, apellido, DNI) to SQLite
   2. All events from session are persisted and associated via SessionId

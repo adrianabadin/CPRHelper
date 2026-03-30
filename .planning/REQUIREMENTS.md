@@ -25,6 +25,10 @@ Requirements para el lanzamiento inicial. Cada uno mapea a una fase del roadmap.
 - [x] **REGI-03**: El usuario puede marcar/descartar items de la lista de H's y T's
 - [x] **REGI-04**: El sistema genera recordatorios contextuales basados en el protocolo ACLS 2020
 
+### Persistencia
+
+- [x] **PERS-01**: El usuario puede guardar y consultar sesiones ACLS completas (datos de paciente + eventos) en almacenamiento local
+
 ### Exportación
 
 - [x] **EXPO-01**: El usuario puede exportar datos de sesión en formato PDF (reporte legible)
@@ -81,12 +85,13 @@ Qué fases cubren qué requisitos. Actualizado durante la creación del roadmap.
 | REGI-02 | Phase 2 | Complete |
 | REGI-03 | Phase 2 | Complete |
 | REGI-04 | Phase 3 | Complete |
+| PERS-01 | Phase 4 | Complete |
 | EXPO-01 | Phase 5 | Complete |
 | EXPO-02 | Phase 5 | Complete |
 
 **Coverage:**
-- v1 requirements: 11 total
-- Mapped to phases: 11/11 ✓
+- v1 requirements: 12 total
+- Mapped to phases: 12/12 ✓
 - Unmapped: 0 ✓
 
 ---
