@@ -59,6 +59,11 @@ public partial class HistorialViewModel : ObservableObject
         OnPropertyChanged(nameof(IsDetailView));
     }
 
+    partial void OnSelectedSessionChanged(Session? value)
+    {
+        UpdateExportCommands();
+    }
+
     public HistorialViewModel(
         IEventLogService eventLogService,
         ISessionRepository sessionRepository,
