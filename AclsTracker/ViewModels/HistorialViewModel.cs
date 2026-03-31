@@ -5,6 +5,7 @@ using AclsTracker.Models;
 using AclsTracker.Services.Database;
 using AclsTracker.Services.EventLog;
 using AclsTracker.Services.Export;
+using AclsTracker.Services.Sync;
 
 namespace AclsTracker.ViewModels;
 
@@ -14,6 +15,7 @@ public partial class HistorialViewModel : ObservableObject
     private readonly ISessionRepository _sessionRepository;
     private readonly IPdfExportService _pdfExportService;
     private readonly ICsvExportService _csvExportService;
+    private readonly ISessionSyncService _syncService;
 
     // Expose live events from EventLogService
     public ObservableCollection<EventRecord> LiveEvents => _eventLogService.Events;
@@ -68,12 +70,26 @@ public partial class HistorialViewModel : ObservableObject
         IEventLogService eventLogService,
         ISessionRepository sessionRepository,
         IPdfExportService pdfExportService,
-        ICsvExportService csvExportService)
+        ICsvExportService csvExportService,
+        ISessionSyncService syncService)
     {
         _eventLogService = eventLogService;
         _sessionRepository = sessionRepository;
         _pdfExportService = pdfExportService;
         _csvExportService = csvExportService;
+        _syncService = syncService;
+
+        // Auto-refresh session list when sync operations complete
+        _syncService.SyncCompleted += async (_, _) =>
+        {
+            await MainThread.InvokeOnMainThreadAsync(async () =>
+            {
+                if (IsSavedView || IsDetailView)
+                {
+                    await LoadSavedSessions();
+                }
+            });
+        };
     }
 
     [RelayCommand]

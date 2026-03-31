@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using AclsTracker.Models;
 using AclsTracker.Services.Auth;
+using AclsTracker.Services.Sync;
 using Microsoft.Extensions.Logging;
 using Supabase.Gotrue.Exceptions;
 
@@ -16,6 +17,7 @@ namespace AclsTracker.ViewModels;
 public partial class AuthViewModel : ObservableObject
 {
     private readonly IAuthService _authService;
+    private readonly ISessionSyncService _syncService;
     private readonly ILogger<AuthViewModel>? _logger;
 
     // ============ Login Form Fields ============
@@ -71,9 +73,13 @@ public partial class AuthViewModel : ObservableObject
     [ObservableProperty]
     private bool _isAppleAvailable;
 
-    public AuthViewModel(IAuthService authService, ILogger<AuthViewModel>? logger = null)
+    public AuthViewModel(
+        IAuthService authService,
+        ISessionSyncService syncService,
+        ILogger<AuthViewModel>? logger = null)
     {
         _authService = authService;
+        _syncService = syncService;
         _logger = logger;
 
         // Subscribe to auth state changes
@@ -378,6 +384,21 @@ public partial class AuthViewModel : ObservableObject
 
         try
         {
+            // Delete user's local sessions BEFORE signing out (CurrentUserId will be null after)
+            var userId = _authService.CurrentUserId;
+            if (!string.IsNullOrEmpty(userId))
+            {
+                try
+                {
+                    await _syncService.DeleteLocalUserSessionsAsync(userId);
+                }
+                catch (Exception cleanupEx)
+                {
+                    _logger?.LogError(cleanupEx, "Failed to delete local sessions on logout");
+                    // Continue with logout even if cleanup fails
+                }
+            }
+
             await _authService.SignOutAsync();
             CurrentProfile = null;
             UserDisplayName = string.Empty;

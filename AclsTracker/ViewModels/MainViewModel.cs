@@ -2,7 +2,9 @@ using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using AclsTracker.Models;
+using AclsTracker.Services.Auth;
 using AclsTracker.Services.Database;
+using AclsTracker.Services.Sync;
 using AclsTracker.Views;
 
 namespace AclsTracker.ViewModels;
@@ -19,6 +21,8 @@ public partial class MainViewModel : ObservableObject
     public EventRecordingViewModel EventRecording { get; }
 
     private readonly ISessionRepository _sessionRepository;
+    private readonly ISessionSyncService _syncService;
+    private readonly IAuthService _authService;
 
     private const int BannerDismissSeconds = 8;
 
@@ -65,12 +69,16 @@ public partial class MainViewModel : ObservableObject
         MetronomeViewModel metronome,
         TimerViewModel timer,
         EventRecordingViewModel eventRecording,
-        ISessionRepository sessionRepository)
+        ISessionRepository sessionRepository,
+        ISessionSyncService syncService,
+        IAuthService authService)
     {
         Metronome = metronome;
         Timer = timer;
         EventRecording = eventRecording;
         _sessionRepository = sessionRepository;
+        _syncService = syncService;
+        _authService = authService;
 
         // Subscribe to rhythm changes to update Amiodarona enabled state and show protocol guidance popup
         EventRecording.PropertyChanged += (_, e) =>
@@ -203,6 +211,15 @@ public partial class MainViewModel : ObservableObject
                 CreatedAt = DateTime.Now
             };
             await _sessionRepository.SaveSessionAsync(session, eventsToSave);
+
+            // Upload to Supabase if user is logged in
+            if (_authService.IsLoggedIn && !string.IsNullOrEmpty(_authService.CurrentUserId))
+            {
+                session.UserId = _authService.CurrentUserId;
+                await _sessionRepository.UpdateSessionUserIdAsync(session.Id, _authService.CurrentUserId);
+                // Fire-and-forget upload — non-blocking, queued on failure by SessionSyncService
+                _ = _syncService.UploadSessionAsync(session, eventsToSave);
+            }
         }
 
         // Do NOT reset state here — user may choose CONTINUAR on next StartCode
