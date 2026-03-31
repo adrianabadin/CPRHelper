@@ -3,18 +3,18 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-31T00:46:24.000Z"
+last_updated: "2026-03-31T00:52:00.000Z"
 progress:
   total_phases: 13
   completed_phases: 10
   total_plans: 30
-  completed_plans: 28
+  completed_plans: 29
 ---
 
 # STATE: ACLS Tracker
 
 **Created:** 24/03/2026
-**Last Updated:** 31/03/2026 after completing 05.1-03 plan
+**Last Updated:** 31/03/2026 after completing 05.1-02 plan
 
 ## Project Reference
 
@@ -25,14 +25,14 @@ progress:
 ## Current Position
 
 Phase: 05.1 (autenticacion-opcional) — EXECUTING
-Plan: 3 of 4 (Plans 01, 03 complete, Plan 02 and 04 remaining)
+Plan: 4 of 4 (Plans 01, 02, 03 complete, Plan 04 remaining)
 
 ## Performance Metrics
 
 **Phase Completion:** 9/11 phases completed
 **Requirement Coverage:** 11/11 v1 requirements mapped (100%)
-**Plans Created:** 28
-**Plans Completed:** 28
+**Plans Created:** 29
+**Plans Completed:** 29
 
 ## Accumulated Context
 
@@ -48,6 +48,8 @@ Plan: 3 of 4 (Plans 01, 03 complete, Plan 02 and 04 remaining)
 | Supabase session serialization using System.Text.Json | Gotrue internal serialization not public | 05.1-01 |
 | OAuth callback uses aclstracker:// scheme | Matches Supabase OAuth redirect URI configuration | 05.1-01 |
 | AuthViewModel singleton for shared auth state | Ensures consistent auth state across modal pages | 05.1-03 |
+| UserProfile inherits from BaseModel for ORM | Required for Supabase Client.From<T>() to work | 05.1-02 |
+| OAuth SignIn returns ProviderAuthState not string | ProviderAuthState.Uri contains the OAuth URL | 05.1-02 |
 | Modal Shell navigation for auth pages | LoginPage, RegisterPage, ProfilePage via Routing.RegisterRoute | 05.1-03 |
 
 ### Roadmap Evolution
@@ -74,22 +76,15 @@ Plan: 3 of 4 (Plans 01, 03 complete, Plan 02 and 04 remaining)
 
 **Immediate (Next Actions):**
 
-- [ ] Execute Plan 02 of Phase 05.1 (fix AuthService.cs API compatibility issues)
+- [ ] Execute Plan 04 of Phase 05.1 (AuthAvatarControl in AppShell + human verification)
 
 **Upcoming:**
 
-- [ ] Phase 05.1 Plan 02: Fix AuthService.cs Supabase API issues (BLOCKER for build)
-- [ ] Phase 05.1 Plan 04: Profile management UI
+- [ ] Phase 05.1 Plan 04: AuthAvatarControl in AppShell + human verification
 
 ### Blockers
 
-**AuthService.cs API compatibility issues** (from plan 02 incomplete work):
-- `AddStateChangedListener` delegate type mismatch
-- `UserProfile` doesn't inherit from `BaseModel`
-- `Supabase.Gotrue.Options` doesn't exist
-- `SignInType` vs `Provider` enum mismatch
-- `FileOptions.Upsert` doesn't exist in storage API
-- Plan 03 code (AuthViewModel, pages) is correct but cannot build until plan 02 is fixed
+None identified.
 
 ### Known Issues
 
@@ -97,20 +92,21 @@ None identified.
 
 ## Session Continuity
 
-**Last Session:** 2026-03-31T00:46:24Z
-**Current Session:** Completed 05.1-03 AuthViewModel and auth UI pages
+**Last Session:** 2026-03-31T00:52:00Z
+**Current Session:** Completed 05.1-02 AuthService implementation and Supabase DI integration
 
 **Context Handoff:**
 
-- AuthViewModel complete with all auth commands (email, OAuth, profile, logout)
-- LoginPage, RegisterPage, ProfilePage created with proper MVVM bindings
-- Shell routes registered for modal navigation
-- AuthViewModel and pages registered in DI container
-- BLOCKER: AuthService.cs has Supabase API compatibility issues from incomplete plan 02
+- AuthService.cs fully implemented with all IAuthService methods
+- Supabase client registered as singleton with SetPersistence before InitializeAsync
+- App.xaml.cs injects Supabase.Client and calls InitializeAsync on startup (fire-and-forget)
+- Session persistence handler configured to save/load from SecureStorage
+- UserProfile model updated to inherit from BaseModel
+- Fixed pre-existing ProfilePage.xaml DataTrigger bug
 
 **Next Session Tasks:**
 
-- Fix AuthService.cs Supabase API issues (plan 02) before plan 04 can be verified
+- Execute Plan 04: AuthAvatarControl in AppShell + human verification
 
 ---
 
