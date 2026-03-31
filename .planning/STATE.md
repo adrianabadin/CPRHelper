@@ -3,29 +3,29 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-30T22:28:12.323Z"
+last_updated: "2026-03-31T00:28:00.000Z"
 progress:
   total_phases: 13
   completed_phases: 10
   total_plans: 30
-  completed_plans: 26
+  completed_plans: 27
 ---
 
 # STATE: ACLS Tracker
 
 **Created:** 24/03/2026
-**Last Updated:** 30/03/2026 after completing 05-01 plan
+**Last Updated:** 31/03/2026 after completing 05.1-01 plan
 
 ## Project Reference
 
 **Core Value:** El líder del código puede guiar y registrar todo el evento de reanimación con apoyo protocolizado en tiempo real, sin depender de memoria o cálculos manuales
 
-**Current Focus:** Phase 05 — data-export
+**Current Focus:** Phase 05.1 — autenticacion-opcional
 
 ## Current Position
 
-Phase: 05 (data-export) — EXECUTING
-Plan: 2 of 2 (Plan 01 complete, Plan 02 next)
+Phase: 05.1 (autenticacion-opcional) — EXECUTING
+Plan: 1 of 4 (Plan 01 complete, Plans 02-04 next)
 
 ## Performance Metrics
 
@@ -45,6 +45,8 @@ Plan: 2 of 2 (Plan 01 complete, Plan 02 next)
 | QuestPDF namespace aliases for MAUI compatibility | IContainer and Colors conflict with MAUI implicit usings | 05-01 |
 | QuestPDF 2026.x ColumnsDefinition API | Uses Action-based API, not chainable | 05-01 |
 | UTF-8 BOM for CSV Spanish Excel compatibility | StreamWriter with UTF8Encoding(true) | 05-01 |
+| Supabase session serialization using System.Text.Json | Gotrue internal serialization not public | 05.1-01 |
+| OAuth callback uses aclstracker:// scheme | Matches Supabase OAuth redirect URI configuration | 05.1-01 |
 
 ### Roadmap Evolution
 
@@ -54,6 +56,7 @@ Plan: 2 of 2 (Plan 01 complete, Plan 02 next)
 - Phase 3.2 inserted after Phase 3: mejoras de UI
 - Phase 03.3 inserted after Phase 3: Mejorar UI Hs y Ts
 - Phase 5 added: Data export (PDF + CSV)
+- Phase 05.1 added: Autenticacion opcional (Google, Apple, email/password con verificacion)
 
 ### Architecture Notes
 
@@ -62,17 +65,20 @@ Plan: 2 of 2 (Plan 01 complete, Plan 02 next)
 - Audio: Plugin.Maui.Audio
 - UI: XAML with CommunityToolkit.Maui for animations
 - Export: QuestPDF (PDF), StreamWriter with UTF-8 BOM (CSV)
+- Auth: Supabase (email/password, Google OAuth, Apple Sign-In)
 - Architecture: MVVM, Repository pattern, Offline-first
 
 ### Todos
 
 **Immediate (Next Actions):**
 
-- [ ] Execute Plan 02 of Phase 05 (UI integration)
+- [ ] Execute Plans 02-04 of Phase 05.1 (auth service implementation, ViewModel, UI)
 
 **Upcoming:**
 
-- [ ] Phase 05 Plan 02: Wire export services into ViewModel and UI
+- [ ] Phase 05.1 Plan 02: Supabase client init and IAuthService implementation
+- [ ] Phase 05.1 Plan 03: Auth ViewModel and login UI
+- [ ] Phase 05.1 Plan 04: Profile management UI
 
 ### Blockers
 
@@ -85,18 +91,19 @@ None identified.
 ## Session Continuity
 
 **Last Session:** 2026-03-30T19:05:45Z
-**Current Session:** Completed 05-01 export service layer
+**Current Session:** Completed 05.1-01 auth infrastructure
 
 **Context Handoff:**
 
-- Export service layer complete (PDF + CSV)
-- Both services registered in DI
-- Ready for Plan 02 (ViewModel + UI integration)
+- Auth infrastructure complete (IAuthService, SupabaseSessionHandler, platform configs)
+- Supabase NuGet installed, project builds successfully
+- OAuth callbacks configured for Android (WebAuthenticationCallbackActivity) and iOS (Info.plist URL scheme)
+- Ready for Plan 02 (Supabase client initialization and IAuthService implementation)
 
 **Next Session Tasks:**
 
-- Execute Plan 02 of Phase 05
+- Execute Plan 02 of Phase 05.1 (Supabase client init)
 
 ---
 
-*State updated: 30/03/2026*
+*State updated: 31/03/2026*

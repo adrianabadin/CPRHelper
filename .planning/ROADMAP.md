@@ -142,9 +142,9 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. User can export session data in PDF format (readable report with 6 clinical sections)
   2. User can export session data in CSV format (structured data with 6 columns, UTF-8 BOM)
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 Plans:
-- [ ] 05-01-PLAN.md — Export services: QuestPDF PDF generation + CSV generation + DI registration
+- [x] 05-01-PLAN.md — Export services: QuestPDF PDF generation + CSV generation + DI registration
 - [ ] 05-02-PLAN.md — ViewModel export commands + UI buttons + human verification
 **UI hint**: yes
 
@@ -160,17 +160,18 @@ Plans:
 | 03.2. UI improvements | 0/2 | Complete    | 2026-03-30 |
 | 4. Data Persistance | 2/3 | In Progress|  |
 | 4.1. Fix UI stuff | 0/0 | Not started | - |
-| 5. Data Export | 0/2 | Planned | - |
+| 5. Data Export | 1/2 | In Progress | - |
+| 05.1. Auth (opcional) | 1/4 | In Progress | - |
 
 ### Phase 05.1: Autenticacion opcional - Google Auth, Apple Sign-In, email+password con verificacion (INSERTED)
 
 **Goal:** Optional authentication with Google Auth, Apple Sign-In, and email+password to enable cloud backup (Phase 6). Login is optional — app works fully without it. Auth widget in top-right of app bar.
 **Requirements**: AUTH-INFRA, AUTH-EMAIL, AUTH-OAUTH, AUTH-SESSION, AUTH-PROFILE, AUTH-UI
 **Depends on:** Phase 5
-**Plans:** 2/2 plans complete
+**Plans:** 1/4 plans complete
 
 Plans:
-- [ ] 05.1-01-PLAN.md — Supabase infrastructure: NuGet, IAuthService interface, session handler, platform configs
+- [x] 05.1-01-PLAN.md — Supabase infrastructure: NuGet, IAuthService interface, session handler, platform configs
 - [ ] 05.1-02-PLAN.md — AuthService implementation + Supabase DI registration + session restore
 - [ ] 05.1-03-PLAN.md — AuthViewModel + LoginPage + RegisterPage + ProfilePage
 - [ ] 05.1-04-PLAN.md — AuthAvatarControl in AppShell + human verification
