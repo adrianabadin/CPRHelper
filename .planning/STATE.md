@@ -3,18 +3,18 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-31T00:28:00.000Z"
+last_updated: "2026-03-31T00:46:24.000Z"
 progress:
   total_phases: 13
   completed_phases: 10
   total_plans: 30
-  completed_plans: 27
+  completed_plans: 28
 ---
 
 # STATE: ACLS Tracker
 
 **Created:** 24/03/2026
-**Last Updated:** 31/03/2026 after completing 05.1-01 plan
+**Last Updated:** 31/03/2026 after completing 05.1-03 plan
 
 ## Project Reference
 
@@ -25,14 +25,14 @@ progress:
 ## Current Position
 
 Phase: 05.1 (autenticacion-opcional) — EXECUTING
-Plan: 1 of 4 (Plan 01 complete, Plans 02-04 next)
+Plan: 3 of 4 (Plans 01, 03 complete, Plan 02 and 04 remaining)
 
 ## Performance Metrics
 
 **Phase Completion:** 9/11 phases completed
 **Requirement Coverage:** 11/11 v1 requirements mapped (100%)
-**Plans Created:** 26
-**Plans Completed:** 25
+**Plans Created:** 28
+**Plans Completed:** 28
 
 ## Accumulated Context
 
@@ -47,6 +47,8 @@ Plan: 1 of 4 (Plan 01 complete, Plans 02-04 next)
 | UTF-8 BOM for CSV Spanish Excel compatibility | StreamWriter with UTF8Encoding(true) | 05-01 |
 | Supabase session serialization using System.Text.Json | Gotrue internal serialization not public | 05.1-01 |
 | OAuth callback uses aclstracker:// scheme | Matches Supabase OAuth redirect URI configuration | 05.1-01 |
+| AuthViewModel singleton for shared auth state | Ensures consistent auth state across modal pages | 05.1-03 |
+| Modal Shell navigation for auth pages | LoginPage, RegisterPage, ProfilePage via Routing.RegisterRoute | 05.1-03 |
 
 ### Roadmap Evolution
 
@@ -72,17 +74,22 @@ Plan: 1 of 4 (Plan 01 complete, Plans 02-04 next)
 
 **Immediate (Next Actions):**
 
-- [ ] Execute Plans 02-04 of Phase 05.1 (auth service implementation, ViewModel, UI)
+- [ ] Execute Plan 02 of Phase 05.1 (fix AuthService.cs API compatibility issues)
 
 **Upcoming:**
 
-- [ ] Phase 05.1 Plan 02: Supabase client init and IAuthService implementation
-- [ ] Phase 05.1 Plan 03: Auth ViewModel and login UI
+- [ ] Phase 05.1 Plan 02: Fix AuthService.cs Supabase API issues (BLOCKER for build)
 - [ ] Phase 05.1 Plan 04: Profile management UI
 
 ### Blockers
 
-None identified.
+**AuthService.cs API compatibility issues** (from plan 02 incomplete work):
+- `AddStateChangedListener` delegate type mismatch
+- `UserProfile` doesn't inherit from `BaseModel`
+- `Supabase.Gotrue.Options` doesn't exist
+- `SignInType` vs `Provider` enum mismatch
+- `FileOptions.Upsert` doesn't exist in storage API
+- Plan 03 code (AuthViewModel, pages) is correct but cannot build until plan 02 is fixed
 
 ### Known Issues
 
@@ -90,19 +97,20 @@ None identified.
 
 ## Session Continuity
 
-**Last Session:** 2026-03-30T19:05:45Z
-**Current Session:** Completed 05.1-01 auth infrastructure
+**Last Session:** 2026-03-31T00:46:24Z
+**Current Session:** Completed 05.1-03 AuthViewModel and auth UI pages
 
 **Context Handoff:**
 
-- Auth infrastructure complete (IAuthService, SupabaseSessionHandler, platform configs)
-- Supabase NuGet installed, project builds successfully
-- OAuth callbacks configured for Android (WebAuthenticationCallbackActivity) and iOS (Info.plist URL scheme)
-- Ready for Plan 02 (Supabase client initialization and IAuthService implementation)
+- AuthViewModel complete with all auth commands (email, OAuth, profile, logout)
+- LoginPage, RegisterPage, ProfilePage created with proper MVVM bindings
+- Shell routes registered for modal navigation
+- AuthViewModel and pages registered in DI container
+- BLOCKER: AuthService.cs has Supabase API compatibility issues from incomplete plan 02
 
 **Next Session Tasks:**
 
-- Execute Plan 02 of Phase 05.1 (Supabase client init)
+- Fix AuthService.cs Supabase API issues (plan 02) before plan 04 can be verified
 
 ---
 
