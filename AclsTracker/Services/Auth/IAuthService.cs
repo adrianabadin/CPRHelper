@@ -74,6 +74,11 @@ public interface IAuthService
     /// </summary>
     string? CurrentUserAvatarUrl { get; }
 
+    /// <summary>
+    /// Get current authenticated user's unique ID from Supabase, if available.
+    /// </summary>
+    string? CurrentUserId { get; }
+
     // ============ Profile Management ============
 
     /// <summary>

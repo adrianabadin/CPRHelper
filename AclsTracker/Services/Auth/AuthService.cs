@@ -65,39 +65,43 @@ public class AuthService : IAuthService
         try
         {
             Debug.WriteLine($"[AuthService] SignUpWithEmailAsync: {email}");
-            
+
             // Create auth user
             var session = await _supabase.Auth.SignUp(email, password);
-            
+
             if (session?.User == null)
             {
                 // Email verification may be required - profile data will be stored temporarily
                 Debug.WriteLine("[AuthService] SignUpWithEmailAsync: session is null, email verification may be pending");
-                
+
                 // Store profile data in Preferences for later upsert after verification
                 Preferences.Set("pending_profile_email", email);
                 Preferences.Set("pending_profile_nombre", nombre);
                 Preferences.Set("pending_profile_apellido", apellido);
                 Preferences.Set("pending_profile_telefono", telefono);
-                
+
                 return true; // Sign up initiated, verification pending
             }
 
-            // User created successfully (auto-confirm or email verification disabled)
-            var profile = new UserProfile
-            {
-                Id = session.User.Id,
-                Email = email,
-                Nombre = nombre,
-                Apellido = apellido,
-                Telefono = telefono
-            };
+            // Profile base row is auto-created by DB trigger (handle_new_user).
+            // Update with additional fields (nombre, apellido, telefono).
+            Debug.WriteLine($"[AuthService] SignUpWithEmailAsync: user created {session.User.Id}, updating profile");
+            await _supabase.From<UserProfile>()
+                .Where(x => x.Id == session.User.Id)
+                .Set(x => x.Nombre, nombre)
+                .Set(x => x.Apellido, apellido)
+                .Set(x => x.Telefono, telefono)
+                .Update();
+            Debug.WriteLine($"[AuthService] SignUpWithEmailAsync: profile updated for user {session.User.Id}");
 
-            // Upsert profile to profiles table
-            await _supabase.From<UserProfile>().Upsert(profile);
-            Debug.WriteLine($"[AuthService] SignUpWithEmailAsync: profile created for user {session.User.Id}");
-            
             return true;
+        }
+        catch (Supabase.Gotrue.Exceptions.GotrueException ex)
+        {
+            Debug.WriteLine($"[AuthService] SignUpWithEmailAsync GotrueException: code={ex.StatusCode} message={ex.Message}");
+            // Rethrow Gotrue exceptions so the ViewModel can surface specific error messages
+            // (e.g. 429 rate limit, 422 invalid email, 400 user already registered)
+            throw;
         }
         catch (Exception ex)
         {
@@ -228,11 +232,12 @@ public class AuthService : IAuthService
             Debug.WriteLine("[AuthService] SignOutAsync");
             await _supabase.Auth.SignOut();
             Debug.WriteLine("[AuthService] SignOutAsync: signed out successfully");
+            // Explicitly fire the event — Supabase's state-change listener is not reliable on SignOut.
+            AuthStateChanged?.Invoke(this, false);
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"[AuthService] SignOutAsync failed: {ex.Message}");
-            // Fire the event to update UI even if sign-out fails
             AuthStateChanged?.Invoke(this, false);
         }
     }
@@ -242,6 +247,9 @@ public class AuthService : IAuthService
 
     /// <inheritdoc />
     public string? CurrentUserEmail => _supabase.Auth.CurrentUser?.Email;
+
+    /// <inheritdoc />
+    public string? CurrentUserId => _supabase.Auth.CurrentUser?.Id;
 
     /// <inheritdoc />
     public string? CurrentUserAvatarUrl
@@ -349,12 +357,15 @@ public class AuthService : IAuthService
             var fileName = $"{userId}/avatar.jpg";
             
             var storage = _supabase.Storage.From("avatars");
-            
-            // Upload with default options
-            await storage.Upload(fileBytes, fileName);
-            
-            // Get public URL
-            var publicUrl = storage.GetPublicUrl(fileName);
+
+            // Upload with upsert=true so re-uploading overwrites the existing file instead of
+            // throwing SupabaseStorageException "The resource already exists".
+            await storage.Upload(fileBytes, fileName, new Supabase.Storage.FileOptions { Upsert = true });
+
+            // Get public URL with a cache-busting timestamp query parameter so MAUI's Image
+            // control does not display the previously-cached version after a re-upload.
+            var baseUrl = storage.GetPublicUrl(fileName);
+            var publicUrl = $"{baseUrl}?t={DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
             
             Debug.WriteLine($"[AuthService] UploadAvatarAsync: uploaded to {publicUrl}");
             
