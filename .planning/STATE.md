@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-31T22:59:29.754Z"
+last_updated: "2026-03-31T23:06:00.000Z"
 progress:
   total_phases: 14
   completed_phases: 11
   total_plans: 33
-  completed_plans: 31
+  completed_plans: 32
 ---
 
 # STATE: ACLS Tracker
@@ -25,7 +25,7 @@ progress:
 ## Current Position
 
 Phase: 05.2 (vincular-sesiones-de-supabase-al-usuario-logueado) — IN PROGRESS
-Plan: 1 of 3 (Plan 01 complete)
+Plan: 2 of 3 (Plan 02 complete)
 
 ## Performance Metrics
 
@@ -55,6 +55,8 @@ Plan: 1 of 3 (Plan 01 complete)
 | UserId nullable on Session model | Supports orphan sessions saved before user logs in | 05.2-01 |
 | GetSessionsByUserIdAsync uses raw SQL QueryAsync | sqlite-net-pcl TableQuery.OrderByDescending compatibility | 05.2-01 |
 | InsertDownloadedSessionAsync skips existing IDs | Immutable sync — no overwrite of local data | 05.2-01 |
+| Logout cleanup delegated to AuthViewModel (not OnAuthStateChanged) | CurrentUserId is null after SignOutAsync completes | 05.2-02 |
+| IDispatcherTimer for retry timer | MAUI cross-platform UI-thread-safe timer API | 05.2-02 |
 
 ### Roadmap Evolution
 
@@ -97,20 +99,21 @@ None identified.
 
 ## Session Continuity
 
-**Last Session:** 2026-03-31T23:03:00Z
-**Current Session:** Completed Phase 05.2 Plan 01 — data layer foundation for session sync
+**Last Session:** 2026-03-31T23:06:00Z
+**Current Session:** Completed Phase 05.2 Plan 02 — SessionSyncService with full orchestration
 
 **Context Handoff:**
 
-- Session model has nullable UserId for orphan session support
-- SessionSupabase and EventSupabase Postgrest models ready for sync service
-- ISessionRepository extended with 5 user-scoped methods (GetOrphan, DeleteByUser, UpdateUserId, InsertDownloaded, GetByUser)
-- IAuthService/AuthService expose CurrentUserId for sync service consumption
-- SQLite migration gracefully adds UserId column on existing installations
+- SessionSyncService singleton registered in DI, subscribes to AuthStateChanged
+- Login sync: claim orphans -> download user sessions -> drain retry queue
+- Retry queue: exponential backoff (30s->300s cap), max 5 attempts per item, IDispatcherTimer
+- Logout cleanup must be triggered from AuthViewModel (not from OnAuthStateChanged)
+- SyncCompleted event available for HistorialViewModel to refresh session list
+- UploadSessionAsync ready for EventRecordingViewModel to call after session save
 
 **Next Session Tasks:**
 
-- Proceed to Phase 05.2 Plan 02: sync service implementation.
+- Proceed to Phase 05.2 Plan 03: wire up ViewModels to SessionSyncService.
 
 ---
 
