@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using AclsTracker.Models;
 using AclsTracker.Services.Auth;
 using Microsoft.Extensions.Logging;
+using Supabase.Gotrue.Exceptions;
 
 namespace AclsTracker.ViewModels;
 
@@ -103,24 +104,39 @@ public partial class AuthViewModel : ObservableObject
         if (_authService.IsLoggedIn)
         {
             UserDisplayName = _authService.CurrentUserEmail ?? "Usuario";
-            UserAvatarUrl = _authService.CurrentUserAvatarUrl;
+            // Kick off a background load so the avatar populates once the profile is fetched.
+            // Do not await — this is called from the constructor where async is not available.
+            _ = Task.Run(async () =>
+            {
+                var profile = await _authService.GetProfileAsync();
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                {
+                    CurrentProfile = profile;
+                    UserAvatarUrl = profile?.AvatarUrl ?? _authService.CurrentUserAvatarUrl;
+                });
+            });
         }
     }
 
     private void OnAuthStateChanged(object? sender, bool isLoggedIn)
     {
-        MainThread.BeginInvokeOnMainThread(() =>
+        MainThread.BeginInvokeOnMainThread(async () =>
         {
             IsLoggedIn = isLoggedIn;
             if (isLoggedIn)
             {
                 UserDisplayName = _authService.CurrentUserEmail ?? "Usuario";
-                UserAvatarUrl = _authService.CurrentUserAvatarUrl;
+                // Populate avatar from profile; CurrentUserAvatarUrl only has data after
+                // GetProfileAsync() populates _cachedAvatarUrl (or from OAuth metadata).
+                var profile = await _authService.GetProfileAsync();
+                CurrentProfile = profile;
+                UserAvatarUrl = profile?.AvatarUrl ?? _authService.CurrentUserAvatarUrl;
             }
             else
             {
                 UserDisplayName = string.Empty;
                 UserAvatarUrl = null;
+                CurrentProfile = null;
             }
         });
     }
@@ -147,7 +163,7 @@ public partial class AuthViewModel : ObservableObject
             {
                 Email = string.Empty;
                 Password = string.Empty;
-                await Shell.Current.GoToAsync(".."); // Navigate back (modal pop)
+                await Shell.Current.GoToAsync("//MainPage");
             }
             else
             {
@@ -205,15 +221,38 @@ public partial class AuthViewModel : ObservableObject
 
             if (success)
             {
-                Toast.Make("Revisa tu email para verificar tu cuenta").Show();
-                ClearRegisterForm();
-                await Shell.Current.GoToAsync("LoginPage");
+                if (_authService.IsLoggedIn)
+                {
+                    // Auto-confirmed: user is already logged in, go to main tab
+                    Toast.Make("Registro exitoso. Bienvenido!").Show();
+                    ClearRegisterForm();
+                    await Shell.Current.GoToAsync("//MainPage");
+                }
+                else
+                {
+                    // Email verification pending
+                    Toast.Make("Revisa tu email para verificar tu cuenta").Show();
+                    ClearRegisterForm();
+                    await Shell.Current.GoToAsync("LoginPage");
+                }
             }
             else
             {
                 ErrorMessage = "Error al registrarse. Intente nuevamente.";
                 Toast.Make("Error al registrarse").Show();
             }
+        }
+        catch (GotrueException ex) when (ex.StatusCode == 429)
+        {
+            _logger?.LogWarning(ex, "SignUp rate limited by Supabase (429)");
+            ErrorMessage = "Demasiados intentos de registro. Espera unos minutos e intenta nuevamente.";
+            Toast.Make("Limite de intentos alcanzado. Espera unos minutos.").Show();
+        }
+        catch (GotrueException ex)
+        {
+            _logger?.LogError(ex, "SignUp GotrueException: {StatusCode}", ex.StatusCode);
+            ErrorMessage = "Error al registrarse. Intente nuevamente.";
+            Toast.Make("Error al registrarse").Show();
         }
         catch (Exception ex)
         {
@@ -277,7 +316,7 @@ public partial class AuthViewModel : ObservableObject
             var success = await _authService.SignInWithGoogleAsync();
             if (success)
             {
-                await Shell.Current.GoToAsync(".."); // Navigate back (modal pop)
+                await Shell.Current.GoToAsync("//MainPage");
             }
             else
             {
@@ -310,7 +349,7 @@ public partial class AuthViewModel : ObservableObject
             var success = await _authService.SignInWithAppleAsync();
             if (success)
             {
-                await Shell.Current.GoToAsync(".."); // Navigate back (modal pop)
+                await Shell.Current.GoToAsync("//MainPage");
             }
             else
             {
@@ -344,11 +383,14 @@ public partial class AuthViewModel : ObservableObject
             UserDisplayName = string.Empty;
             UserAvatarUrl = null;
             Toast.Make("Sesion cerrada").Show();
+            await Shell.Current.GoToAsync("//MainPage");
         }
         catch (Exception ex)
         {
             _logger?.LogError(ex, "SignOut failed");
             Toast.Make("Error al cerrar sesion").Show();
+            // Navigate anyway — sign-out fires AuthStateChanged(false) even on exception
+            await Shell.Current.GoToAsync("//MainPage");
         }
         finally
         {
@@ -473,6 +515,12 @@ public partial class AuthViewModel : ObservableObject
     private async Task NavigateToProfileAsync()
     {
         await Shell.Current.GoToAsync("ProfilePage");
+    }
+
+    [RelayCommand]
+    private async Task NavigateBackAsync()
+    {
+        await Shell.Current.GoToAsync("..");
     }
 
     // ============ Helper Methods ============
