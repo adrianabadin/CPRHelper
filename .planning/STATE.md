@@ -62,6 +62,7 @@ Plan: 4 of 4 (Plans 01, 02, 03, 04 complete)
 - Phase 03.3 inserted after Phase 3: Mejorar UI Hs y Ts
 - Phase 5 added: Data export (PDF + CSV)
 - Phase 05.1 added: Autenticacion opcional (Google, Apple, email/password con verificacion)
+- Phase 05.2 inserted after Phase 5: Vincular sesiones de Supabase al usuario logueado (URGENT)
 
 ### Architecture Notes
 
