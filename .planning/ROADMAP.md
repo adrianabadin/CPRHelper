@@ -162,14 +162,14 @@ Plans:
 | 4.1. Fix UI stuff | 0/0 | Not started | - |
 | 5. Data Export | 2/2 | Complete | 2026-03-30 |
 | 05.1. Auth (opcional) | 4/4 | Complete   | 2026-03-31 |
-| 05.2. Session Sync | 2/3 | In Progress|  |
+| 05.2. Session Sync | 3/3 | Complete   | 2026-03-31 |
 
 ### Phase 05.2: Vincular sesiones de Supabase al usuario logueado (INSERTED)
 
 **Goal:** Asociar sesiones de reanimación guardadas en SQLite local al usuario autenticado en Supabase, con upload al guardar, download al login, borrado local al logout, e indicador visual de respaldo en la nube
 **Requirements**: SYNC-01
 **Depends on:** Phase 05.1
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 - [ ] 05.2-01-PLAN.md — Data Layer: Models (UserId, SessionSupabase, EventSupabase), Repository extensions, Auth CurrentUserId

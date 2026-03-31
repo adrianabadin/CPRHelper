@@ -3,36 +3,36 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-31T23:06:00.000Z"
+last_updated: "2026-03-31T23:13:54.053Z"
 progress:
   total_phases: 14
-  completed_phases: 11
+  completed_phases: 12
   total_plans: 33
-  completed_plans: 32
+  completed_plans: 33
 ---
 
 # STATE: ACLS Tracker
 
 **Created:** 24/03/2026
-**Last Updated:** 31/03/2026 after completing 05.2-01 plan
+**Last Updated:** 31/03/2026 after completing 05.2-03 plan
 
 ## Project Reference
 
 **Core Value:** El líder del código puede guiar y registrar todo el evento de reanimación con apoyo protocolizado en tiempo real, sin depender de memoria o cálculos manuales
 
-**Current Focus:** Phase 05.2 — vincular-sesiones-de-supabase-al-usuario-logueado
+**Current Focus:** Phase 05.2 — vincular-sesiones-de-supabase-al-usuario-logueado — COMPLETE
 
 ## Current Position
 
-Phase: 05.2 (vincular-sesiones-de-supabase-al-usuario-logueado) — IN PROGRESS
-Plan: 2 of 3 (Plan 02 complete)
+Phase: 05.2 (vincular-sesiones-de-supabase-al-usuario-logueado) — COMPLETE
+Plan: 3 of 3 (Plan 03 complete — phase done)
 
 ## Performance Metrics
 
-**Phase Completion:** 10/11 phases completed
+**Phase Completion:** 12/14 phases completed
 **Requirement Coverage:** 11/11 v1 requirements mapped (100%)
 **Plans Created:** 33
-**Plans Completed:** 31
+**Plans Completed:** 33
 
 ## Accumulated Context
 
@@ -57,6 +57,9 @@ Plan: 2 of 3 (Plan 02 complete)
 | InsertDownloadedSessionAsync skips existing IDs | Immutable sync — no overwrite of local data | 05.2-01 |
 | Logout cleanup delegated to AuthViewModel (not OnAuthStateChanged) | CurrentUserId is null after SignOutAsync completes | 05.2-02 |
 | IDispatcherTimer for retry timer | MAUI cross-platform UI-thread-safe timer API | 05.2-02 |
+| Fire-and-forget upload in StopCode | _ = _syncService.UploadSessionAsync keeps UI non-blocking; retry queue handles failures | 05.2-03 |
+| Logout cleanup captures CurrentUserId before SignOutAsync | CurrentUserId is null after sign-out, must capture first | 05.2-03 |
+| Cloud indicator uses DataTrigger + global IsNotNullConverter | No new converter needed; IsNotNullConverter already in App.xaml | 05.2-03 |
 
 ### Roadmap Evolution
 
@@ -99,21 +102,20 @@ None identified.
 
 ## Session Continuity
 
-**Last Session:** 2026-03-31T23:06:00Z
-**Current Session:** Completed Phase 05.2 Plan 02 — SessionSyncService with full orchestration
+**Last Session:** 2026-03-31T23:13:54.039Z
+**Current Session:** Completed Phase 05.2 Plan 03 — ViewModel sync integration + cloud indicator
 
 **Context Handoff:**
 
-- SessionSyncService singleton registered in DI, subscribes to AuthStateChanged
-- Login sync: claim orphans -> download user sessions -> drain retry queue
-- Retry queue: exponential backoff (30s->300s cap), max 5 attempts per item, IDispatcherTimer
-- Logout cleanup must be triggered from AuthViewModel (not from OnAuthStateChanged)
-- SyncCompleted event available for HistorialViewModel to refresh session list
-- UploadSessionAsync ready for EventRecordingViewModel to call after session save
+- Phase 05.2 complete: all 3 plans done
+- Full sync integration: save triggers upload (fire-and-forget), logout triggers cleanup, login triggers claim+download (via SessionSyncService)
+- HistorialViewModel subscribes to SyncCompleted for auto-refresh
+- Cloud indicator (cloud emoji) shown in Historial for sessions with UserId
+- SYNC-01 requirement fulfilled
 
 **Next Session Tasks:**
 
-- Proceed to Phase 05.2 Plan 03: wire up ViewModels to SessionSyncService.
+- Proceed to next phase or milestone review.
 
 ---
 
