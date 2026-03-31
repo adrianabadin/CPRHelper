@@ -43,7 +43,7 @@
                    FontSize="13"
                    FontAttributes="Bold"
                    VerticalOptions="Center"
-                   MaxWidth="120"
+                   MaximumWidthRequest="120"
                    LineBreakMode="TailTruncation" />
         </HorizontalStackLayout>
     </Grid>
