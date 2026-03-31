@@ -21,7 +21,7 @@
                         <Image.Style>
                             <Style TargetType="Image">
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding UserAvatarUrl}" Value="{x:Null}">
+                                    <DataTrigger TargetType="Image" Binding="{Binding UserAvatarUrl}" Value="{x:Null}">
                                         <Setter Property="Source" Value="person_icon.png" />
                                     </DataTrigger>
                                 </Style.Triggers>

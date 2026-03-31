@@ -7,8 +7,10 @@ using AclsTracker.Services.EventLog;
 using AclsTracker.Services.Database;
 using AclsTracker.Services.Export;
 using AclsTracker.Services.Auth;
+using AclsTracker.Constants;
 using AclsTracker.ViewModels;
 using AclsTracker.Views;
+using Supabase;
 
 namespace AclsTracker;
 
@@ -28,6 +30,28 @@ public static class MauiProgram
 
         // Audio
         builder.Services.AddSingleton(AudioManager.Current);
+
+        // ============ Supabase Auth Setup ============
+        // Create session handler for persistence
+        var sessionHandler = new SupabaseSessionHandler();
+        
+        // Create Supabase client with session persistence
+        var supabase = new Client(SupabaseConfig.Url, SupabaseConfig.AnonKey, new SupabaseOptions
+        {
+            AutoRefreshToken = true,
+            AutoConnectRealtime = false
+        });
+        
+        // Set persistence BEFORE any initialization calls
+        // This ensures session tokens are saved/loaded from SecureStorage
+        supabase.Auth.SetPersistence(sessionHandler);
+        
+        // Register Supabase client as singleton
+        builder.Services.AddSingleton(supabase);
+        
+        // Register AuthService
+        builder.Services.AddSingleton<IAuthService, AuthService>();
+        // ===========================================
 
         // Services — implementations registered in Plans 02 and 03
         builder.Services.AddSingleton<IAudioService, AudioService>();
