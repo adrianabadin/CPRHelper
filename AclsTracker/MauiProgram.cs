@@ -6,6 +6,7 @@ using AclsTracker.Services.Audio;
 using AclsTracker.Services.EventLog;
 using AclsTracker.Services.Database;
 using AclsTracker.Services.Export;
+using AclsTracker.Services.Auth;
 using AclsTracker.ViewModels;
 using AclsTracker.Views;
 
@@ -44,6 +45,7 @@ public static class MauiProgram
         builder.Services.AddTransient<TimerViewModel>();
         builder.Services.AddSingleton<EventRecordingViewModel>();
         builder.Services.AddSingleton<HistorialViewModel>();
+        builder.Services.AddSingleton<AuthViewModel>();
 
         // Views
         builder.Services.AddTransient<MainViewModel>();
@@ -51,6 +53,9 @@ public static class MauiProgram
         builder.Services.AddTransient<HsAndTsPage>();
         builder.Services.AddTransient<HistorialPage>();
         builder.Services.AddTransient<PatientDataPopup>();
+        builder.Services.AddTransient<LoginPage>();
+        builder.Services.AddTransient<RegisterPage>();
+        builder.Services.AddTransient<ProfilePage>();
 
         // QuestPDF community license (required before generating PDFs)
         QuestPDF.Settings.License = LicenseType.Community;

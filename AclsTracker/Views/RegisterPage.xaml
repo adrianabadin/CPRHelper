@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:AclsTracker.ViewModels"
+             xmlns:converters="clr-namespace:AclsTracker.Converters"
+             x:Class="AclsTracker.Views.RegisterPage"
+             Title="Crear Cuenta"
+             BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#121212}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15" VerticalOptions="Center">
+
+            <!-- Title -->
+            <Label Text="Crear Cuenta"
+                   FontSize="28"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   Margin="0,0,0,20" />
+
+            <!-- Email Entry -->
+            <Entry Placeholder="Email"
+                   Text="{Binding RegisterEmail}"
+                   Keyboard="Email"
+                   FontSize="16"
+                   HeightRequest="50" />
+
+            <!-- Password Entry -->
+            <Entry Placeholder="Contrasena"
+                   Text="{Binding RegisterPassword}"
+                   IsPassword="true"
+                   FontSize="16"
+                   HeightRequest="50" />
+
+            <!-- Nombre Entry -->
+            <Entry Placeholder="Nombre"
+                   Text="{Binding Nombre}"
+                   FontSize="16"
+                   HeightRequest="50" />
+
+            <!-- Apellido Entry -->
+            <Entry Placeholder="Apellido"
+                   Text="{Binding Apellido}"
+                   FontSize="16"
+                   HeightRequest="50" />
+
+            <!-- Telefono Entry -->
+            <Entry Placeholder="Telefono"
+                   Text="{Binding Telefono}"
+                   Keyboard="Telephone"
+                   FontSize="16"
+                   HeightRequest="50" />
+
+            <!-- Error Message -->
+            <Label Text="{Binding ErrorMessage}"
+                   TextColor="Red"
+                   FontSize="14"
+                   IsVisible="{Binding ErrorMessage, Converter={StaticResource IsNotNullConverter}}"
+                   Margin="0,0,0,5" />
+
+            <!-- Register Button -->
+            <Button Text="Registrarse"
+                    Command="{Binding SignUpCommand}"
+                    BackgroundColor="#1976D2"
+                    TextColor="White"
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    HeightRequest="50"
+                    CornerRadius="25"
+                    HorizontalOptions="Fill" />
+
+            <!-- Login Link -->
+            <Label Text="Ya tienes cuenta? Inicia Sesion"
+                   TextColor="#1976D2"
+                   FontSize="14"
+                   HorizontalOptions="Center"
+                   Margin="0,10,0,0">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding NavigateToLoginCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
+
+            <!-- Activity Indicator -->
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}"
+                               Color="#1976D2"
+                               HorizontalOptions="Center"
+                               Margin="0,10,0,0" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

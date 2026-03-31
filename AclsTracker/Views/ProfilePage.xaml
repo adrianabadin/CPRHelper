@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:AclsTracker.ViewModels"
+             x:Class="AclsTracker.Views.ProfilePage"
+             Title="Mi Perfil"
+             BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#121212}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+
+            <!-- Avatar Section -->
+            <StackLayout HorizontalOptions="Center" Spacing="10">
+                <!-- Circular Avatar Image -->
+                <Frame WidthRequest="100" HeightRequest="100" CornerRadius="50" 
+                       HasShadow="True" HorizontalOptions="Center" Padding="0">
+                    <Image Source="{Binding UserAvatarUrl}"
+                           Aspect="AspectFill"
+                           WidthRequest="100"
+                           HeightRequest="100">
+                        <Image.Style>
+                            <Style TargetType="Image">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding UserAvatarUrl}" Value="{x:Null}">
+                                        <Setter Property="Source" Value="person_icon.png" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Image.Style>
+                    </Image>
+                </Frame>
+
+                <!-- Change Photo Button -->
+                <Button Text="Cambiar foto"
+                        Command="{Binding UploadAvatarCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="#1976D2"
+                        FontSize="14"
+                        HorizontalOptions="Center" />
+            </StackLayout>
+
+            <!-- Email Display (read-only) -->
+            <StackLayout Spacing="5">
+                <Label Text="Email"
+                       FontSize="12"
+                       TextColor="Gray" />
+                <Label Text="{Binding CurrentProfile.Email}"
+                       FontSize="16" />
+            </StackLayout>
+
+            <!-- Nombre Entry -->
+            <StackLayout Spacing="5">
+                <Label Text="Nombre"
+                       FontSize="12"
+                       TextColor="Gray" />
+                <Entry Text="{Binding CurrentProfile.Nombre}"
+                       FontSize="16"
+                       HeightRequest="44" />
+            </StackLayout>
+
+            <!-- Apellido Entry -->
+            <StackLayout Spacing="5">
+                <Label Text="Apellido"
+                       FontSize="12"
+                       TextColor="Gray" />
+                <Entry Text="{Binding CurrentProfile.Apellido}"
+                       FontSize="16"
+                       HeightRequest="44" />
+            </StackLayout>
+
+            <!-- Telefono Entry -->
+            <StackLayout Spacing="5">
+                <Label Text="Telefono"
+                       FontSize="12"
+                       TextColor="Gray" />
+                <Entry Text="{Binding CurrentProfile.Telefono}"
+                       Keyboard="Telephone"
+                       FontSize="16"
+                       HeightRequest="44" />
+            </StackLayout>
+
+            <!-- Save Button -->
+            <Button Text="Guardar Cambios"
+                    Command="{Binding SaveProfileCommand}"
+                    BackgroundColor="#1976D2"
+                    TextColor="White"
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    HeightRequest="50"
+                    CornerRadius="25"
+                    HorizontalOptions="Fill"
+                    Margin="0,10,0,0" />
+
+            <!-- Logout Button -->
+            <Button Text="Cerrar Sesion"
+                    Command="{Binding SignOutCommand}"
+                    BackgroundColor="Transparent"
+                    TextColor="#D32F2F"
+                    FontSize="16"
+                    HorizontalOptions="Center"
+                    Margin="0,20,0,0" />
+
+            <!-- Activity Indicator -->
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}"
+                               Color="#1976D2"
+                               HorizontalOptions="Center"
+                               Margin="0,10,0,0" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
