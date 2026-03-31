@@ -10,7 +10,7 @@
                FontAttributes="Bold"
                TextColor="#999999"
                HorizontalTextAlignment="Center"
-               LetterSpacing="1" />
+               CharacterSpacing="1" />
                
         <CollectionView ItemsSource="{Binding Events}" MaximumHeightRequest="250">
             <CollectionView.EmptyView>
