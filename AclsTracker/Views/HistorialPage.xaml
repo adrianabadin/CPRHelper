@@ -107,8 +107,8 @@
                                 SelectionChangedCommandParameter="{Binding SelectedSession}">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:Session">
-                            <Grid RowDefinitions="Auto, Auto" Padding="0,8" RowSpacing="2">
-                                <Label Grid.Row="0" LineBreakMode="TailTruncation" FontSize="14" FontAttributes="Bold">
+                            <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto" Padding="0,8" RowSpacing="2">
+                                <Label Grid.Row="0" Grid.Column="0" LineBreakMode="TailTruncation" FontSize="14" FontAttributes="Bold">
                                     <Label.FormattedText>
                                         <FormattedString>
                                             <Span Text="{Binding PatientLastName}" FontAttributes="Bold" />
@@ -119,7 +119,20 @@
                                         </FormattedString>
                                     </Label.FormattedText>
                                 </Label>
-                                <Label Grid.Row="1"
+                                <Label Grid.Row="0" Grid.Column="1"
+                                       Text="&#x2601;&#xFE0F;" FontSize="14"
+                                       VerticalOptions="Center"
+                                       Margin="8,0,0,0"
+                                       IsVisible="False">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label"
+                                                     Binding="{Binding UserId, Converter={StaticResource IsNotNullConverter}}"
+                                                     Value="True">
+                                            <Setter Property="IsVisible" Value="True" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                                <Label Grid.Row="1" Grid.ColumnSpan="2"
                                        FontSize="12"
                                        TextColor="#999999"
                                        Text="{Binding SessionStartTime, StringFormat='{0:dd/MM/yyyy HH:mm}'}" />
