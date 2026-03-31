@@ -5,9 +5,11 @@ namespace AclsTracker;
 public partial class App : Application
 {
     private readonly Client _supabase;
+    private readonly IServiceProvider _serviceProvider;
 
-    public App(Client supabase)
+    public App(IServiceProvider serviceProvider, Client supabase)
     {
+        _serviceProvider = serviceProvider;
         _supabase = supabase;
         
         InitializeComponent();
@@ -30,6 +32,7 @@ public partial class App : Application
 
     protected override Window CreateWindow(IActivationState? activationState)
     {
-        return new Window(new AppShell());
+        var shell = _serviceProvider.GetRequiredService<AppShell>();
+        return new Window(shell);
     }
 }

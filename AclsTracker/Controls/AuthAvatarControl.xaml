@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AclsTracker.Controls.AuthAvatarControl">
+    <Grid>
+        <!-- Logged Out View -->
+        <Label Text="Iniciar Sesión" 
+               TextColor="White"
+               FontSize="13"
+               FontAttributes="Bold"
+               VerticalOptions="Center"
+               IsVisible="True">
+            <Label.Triggers>
+                <DataTrigger TargetType="Label" Binding="{Binding IsLoggedIn}" Value="True">
+                    <Setter Property="IsVisible" Value="False" />
+                </DataTrigger>
+            </Label.Triggers>
+            <Label.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding NavigateToLoginCommand}" />
+            </Label.GestureRecognizers>
+        </Label>
+        
+        <!-- Logged In View -->
+        <HorizontalStackLayout Spacing="8" 
+                               VerticalOptions="Center"
+                               IsVisible="{Binding IsLoggedIn}">
+            <HorizontalStackLayout.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding NavigateToProfileCommand}" />
+            </HorizontalStackLayout.GestureRecognizers>
+            
+            <Border StrokeShape="RoundRectangle 16"
+                    StrokeThickness="0"
+                    WidthRequest="32"
+                    HeightRequest="32"
+                    BackgroundColor="White"
+                    VerticalOptions="Center">
+                <Image Source="{Binding UserAvatarUrl, TargetNullValue='dotnet_bot.png', FallbackValue='dotnet_bot.png'}"
+                       Aspect="AspectFill" />
+            </Border>
+            
+            <Label Text="{Binding UserDisplayName}"
+                   TextColor="White"
+                   FontSize="13"
+                   FontAttributes="Bold"
+                   VerticalOptions="Center"
+                   MaxWidth="120"
+                   LineBreakMode="TailTruncation" />
+        </HorizontalStackLayout>
+    </Grid>
+</ContentView>
