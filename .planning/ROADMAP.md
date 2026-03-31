@@ -161,14 +161,14 @@ Plans:
 | 4. Data Persistance | 2/3 | In Progress|  |
 | 4.1. Fix UI stuff | 0/0 | Not started | - |
 | 5. Data Export | 1/2 | In Progress | - |
-| 05.1. Auth (opcional) | 3/4 | In Progress | - |
+| 05.1. Auth (opcional) | 4/4 | Complete   | 2026-03-31 |
 
 ### Phase 05.1: Autenticacion opcional - Google Auth, Apple Sign-In, email+password con verificacion (INSERTED)
 
 **Goal:** Optional authentication with Google Auth, Apple Sign-In, and email+password to enable cloud backup (Phase 6). Login is optional — app works fully without it. Auth widget in top-right of app bar.
 **Requirements**: AUTH-INFRA, AUTH-EMAIL, AUTH-OAUTH, AUTH-SESSION, AUTH-PROFILE, AUTH-UI
 **Depends on:** Phase 5
-**Plans:** 3/4 plans complete
+**Plans:** 4/4 plans complete
 
 Plans:
 - [x] 05.1-01-PLAN.md — Supabase infrastructure: NuGet, IAuthService interface, session handler, platform configs
