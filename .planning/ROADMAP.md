@@ -11,7 +11,7 @@
 - [ ] **Phase 3: Protocol Guidance** - Generate context-aware reminders based on AHA ACLS 2020 protocol
 - [ ] **Phase 4: Data Persistance** - Allow User to persist sessions in local Database
 - [x] **Phase 3.1: Fix design issues** - Fix defibrillator notification, rhythm popup UX, and drug suggestions (completed 2026-03-29)
-- [ ] **Phase 5: Data Export** - Enable PDF and CSV export of session data
+- [x] **Phase 5: Data Export** - Enable PDF and CSV export of session data (completed 2026-03-30)
 
 ## Phase Details
 
@@ -145,7 +145,7 @@ Plans:
 **Plans:** 2/2 plans complete
 Plans:
 - [x] 05-01-PLAN.md — Export services: QuestPDF PDF generation + CSV generation + DI registration
-- [ ] 05-02-PLAN.md — ViewModel export commands + UI buttons + human verification
+- [x] 05-02-PLAN.md — ViewModel export commands + UI buttons + human verification
 **UI hint**: yes
 
 ## Progress
@@ -160,7 +160,7 @@ Plans:
 | 03.2. UI improvements | 0/2 | Complete    | 2026-03-30 |
 | 4. Data Persistance | 2/3 | In Progress|  |
 | 4.1. Fix UI stuff | 0/0 | Not started | - |
-| 5. Data Export | 1/2 | In Progress | - |
+| 5. Data Export | 2/2 | Complete | 2026-03-30 |
 | 05.1. Auth (opcional) | 4/4 | Complete   | 2026-03-31 |
 
 ### Phase 05.1: Autenticacion opcional - Google Auth, Apple Sign-In, email+password con verificacion (INSERTED)
@@ -174,7 +174,7 @@ Plans:
 - [x] 05.1-01-PLAN.md — Supabase infrastructure: NuGet, IAuthService interface, session handler, platform configs
 - [x] 05.1-02-PLAN.md — AuthService implementation + Supabase DI registration + session restore
 - [x] 05.1-03-PLAN.md — AuthViewModel + LoginPage + RegisterPage + ProfilePage
-- [ ] 05.1-04-PLAN.md — AuthAvatarControl in AppShell + human verification
+- [x] 05.1-04-PLAN.md — AuthAvatarControl in AppShell + human verification
 
 ### Phase 6: Cloud PostgreSQL sync - sync events to remote database on save with offline retry
 
