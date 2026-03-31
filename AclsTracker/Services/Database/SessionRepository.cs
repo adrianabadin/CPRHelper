@@ -1,5 +1,6 @@
 using AclsTracker.Models;
 using SQLite;
+using SQLiteException = SQLite.SQLiteException;
 
 namespace AclsTracker.Services.Database;
 
@@ -26,6 +27,17 @@ public class SessionRepository : ISessionRepository
 
             await _database.CreateTableAsync<Session>().ConfigureAwait(false);
             await _database.CreateTableAsync<EventRecordEntity>().ConfigureAwait(false);
+
+            // Migration: Add UserId column if not exists (graceful for existing installations)
+            try
+            {
+                await _database.ExecuteAsync("ALTER TABLE Sessions ADD COLUMN UserId TEXT NULL")
+                    .ConfigureAwait(false);
+            }
+            catch (SQLiteException)
+            {
+                // Column already exists — ignore
+            }
 
             _initialized = true;
         }
@@ -114,5 +126,71 @@ public class SessionRepository : ISessionRepository
             .ConfigureAwait(false);
 
         return entities.Select(e => e.ToModel()).ToList();
+    }
+
+    // ============ User-Scoped Operations ============
+
+    public async Task<List<Session>> GetOrphanSessionsAsync()
+    {
+        await EnsureInitializedAsync().ConfigureAwait(false);
+        return await _database.Table<Session>()
+            .Where(s => s.UserId == null)
+            .ToListAsync()
+            .ConfigureAwait(false);
+    }
+
+    public async Task DeleteByUserIdAsync(string userId)
+    {
+        await EnsureInitializedAsync().ConfigureAwait(false);
+        await _database.RunInTransactionAsync(db =>
+        {
+            // Get all session IDs for this user
+            var sessionIds = db.Table<Session>()
+                .Where(s => s.UserId == userId)
+                .Select(s => s.Id)
+                .ToList();
+
+            // Delete events for these sessions
+            foreach (var sessionId in sessionIds)
+            {
+                db.Execute("DELETE FROM EventRecords WHERE SessionId = ?", sessionId);
+            }
+
+            // Delete the sessions
+            db.Execute("DELETE FROM Sessions WHERE UserId = ?", userId);
+        }).ConfigureAwait(false);
+    }
+
+    public async Task UpdateSessionUserIdAsync(string sessionId, string userId)
+    {
+        await EnsureInitializedAsync().ConfigureAwait(false);
+        await _database.ExecuteAsync("UPDATE Sessions SET UserId = ? WHERE Id = ?", userId, sessionId)
+            .ConfigureAwait(false);
+    }
+
+    public async Task InsertDownloadedSessionAsync(Session session, List<EventRecordEntity> events)
+    {
+        await EnsureInitializedAsync().ConfigureAwait(false);
+
+        // Skip if session already exists (immutable — no overwrite)
+        var existing = await GetSessionAsync(session.Id).ConfigureAwait(false);
+        if (existing is not null) return;
+
+        await _database.RunInTransactionAsync(db =>
+        {
+            db.Insert(session);
+            foreach (var evt in events)
+            {
+                db.Insert(evt);
+            }
+        }).ConfigureAwait(false);
+    }
+
+    public async Task<List<Session>> GetSessionsByUserIdAsync(string userId)
+    {
+        await EnsureInitializedAsync().ConfigureAwait(false);
+        return await _database.QueryAsync<Session>(
+            "SELECT * FROM Sessions WHERE UserId = ? ORDER BY CreatedAt DESC", userId)
+            .ConfigureAwait(false);
     }
 }
