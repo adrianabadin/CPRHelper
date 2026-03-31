@@ -53,7 +53,7 @@ Diferidos a una release futura. Rastreados pero no en el roadmap actual.
 
 ### Funcionalidad Avanzada
 
-- [ ] **SYNC-01**: El sistema soporta sincronización opcional con la nube cuando hay conectividad
+- [x] **SYNC-01**: El sistema soporta sincronización opcional con la nube cuando hay conectividad
 - [ ] **HIST-01**: El usuario puede ver historial de sesiones anteriores con paginación
 - [ ] **ROLE-01**: La arquitectura prepara el sistema para múltiples roles (compresor, aire, registrador, etc.)
 

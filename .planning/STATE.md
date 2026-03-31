@@ -3,36 +3,36 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-31T18:51:29.222Z"
+last_updated: "2026-03-31T22:59:29.754Z"
 progress:
   total_phases: 14
   completed_phases: 11
-  total_plans: 30
-  completed_plans: 30
+  total_plans: 33
+  completed_plans: 31
 ---
 
 # STATE: ACLS Tracker
 
 **Created:** 24/03/2026
-**Last Updated:** 31/03/2026 after completing 05.1-02 plan
+**Last Updated:** 31/03/2026 after completing 05.2-01 plan
 
 ## Project Reference
 
 **Core Value:** El líder del código puede guiar y registrar todo el evento de reanimación con apoyo protocolizado en tiempo real, sin depender de memoria o cálculos manuales
 
-**Current Focus:** Phase 05.1 — autenticacion-opcional
+**Current Focus:** Phase 05.2 — vincular-sesiones-de-supabase-al-usuario-logueado
 
 ## Current Position
 
-Phase: 05.1 (autenticacion-opcional) — COMPLETED
-Plan: 4 of 4 (Plans 01, 02, 03, 04 complete)
+Phase: 05.2 (vincular-sesiones-de-supabase-al-usuario-logueado) — IN PROGRESS
+Plan: 1 of 3 (Plan 01 complete)
 
 ## Performance Metrics
 
 **Phase Completion:** 10/11 phases completed
 **Requirement Coverage:** 11/11 v1 requirements mapped (100%)
-**Plans Created:** 30
-**Plans Completed:** 30
+**Plans Created:** 33
+**Plans Completed:** 31
 
 ## Accumulated Context
 
@@ -52,6 +52,9 @@ Plan: 4 of 4 (Plans 01, 02, 03, 04 complete)
 | OAuth SignIn returns ProviderAuthState not string | ProviderAuthState.Uri contains the OAuth URL | 05.1-02 |
 | Modal Shell navigation for auth pages | LoginPage, RegisterPage, ProfilePage via Routing.RegisterRoute | 05.1-03 |
 | Phase 05.1-autenticacion-opcional-google-auth-apple-sign-in-email-password-con-verificacion P05.1-04-PLAN.md | 15m | 2 tasks | 6 files |
+| UserId nullable on Session model | Supports orphan sessions saved before user logs in | 05.2-01 |
+| GetSessionsByUserIdAsync uses raw SQL QueryAsync | sqlite-net-pcl TableQuery.OrderByDescending compatibility | 05.2-01 |
+| InsertDownloadedSessionAsync skips existing IDs | Immutable sync — no overwrite of local data | 05.2-01 |
 
 ### Roadmap Evolution
 
@@ -94,18 +97,20 @@ None identified.
 
 ## Session Continuity
 
-**Last Session:** 2026-03-31T18:51:29.186Z
-**Current Session:** Completed Phase 05.1 Plan 04, AuthAvatarControl in AppShell + human verification
+**Last Session:** 2026-03-31T23:03:00Z
+**Current Session:** Completed Phase 05.2 Plan 01 — data layer foundation for session sync
 
 **Context Handoff:**
 
-- AuthAvatarControl implemented and added to AppShell TitleView
-- Auth flow verified visually (simulated) end-to-end
-- Phase 05.1 Autenticacion Opcional is fully complete
+- Session model has nullable UserId for orphan session support
+- SessionSupabase and EventSupabase Postgrest models ready for sync service
+- ISessionRepository extended with 5 user-scoped methods (GetOrphan, DeleteByUser, UpdateUserId, InsertDownloaded, GetByUser)
+- IAuthService/AuthService expose CurrentUserId for sync service consumption
+- SQLite migration gracefully adds UserId column on existing installations
 
 **Next Session Tasks:**
 
-- Proceed to the next phase or milestone review.
+- Proceed to Phase 05.2 Plan 02: sync service implementation.
 
 ---
 
