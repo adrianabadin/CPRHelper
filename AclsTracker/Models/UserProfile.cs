@@ -1,10 +1,12 @@
+using Supabase.Postgrest.Models;
+
 namespace AclsTracker.Models;
 
 /// <summary>
 /// User profile model matching the Supabase profiles table schema.
-/// This represents the user profile data stored in the cloud.
+/// Inherits from BaseModel to work with Supabase.Client.From&lt;TModel&gt;().
 /// </summary>
-public class UserProfile
+public class UserProfile : BaseModel
 {
     /// <summary>
     /// Unique identifier (UUID from Supabase auth.users)
