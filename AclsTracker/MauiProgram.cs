@@ -7,6 +7,7 @@ using AclsTracker.Services.EventLog;
 using AclsTracker.Services.Database;
 using AclsTracker.Services.Export;
 using AclsTracker.Services.Auth;
+using AclsTracker.Services.Sync;
 using AclsTracker.Constants;
 using AclsTracker.ViewModels;
 using AclsTracker.Views;
@@ -64,6 +65,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<ITimerService, TimerService>();
         builder.Services.AddSingleton<IEventLogService, EventLogService>();
         builder.Services.AddSingleton<ISessionRepository, SessionRepository>();
+        builder.Services.AddSingleton<ISessionSyncService, SessionSyncService>();
 
         // Export services
         builder.Services.AddSingleton<IPdfExportService, PdfExportService>();
