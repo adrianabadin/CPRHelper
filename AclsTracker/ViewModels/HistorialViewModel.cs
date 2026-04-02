@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using AclsTracker.Models;
@@ -45,6 +46,24 @@ public partial class HistorialViewModel : ObservableObject
     [ObservableProperty]
     private int _currentView = 0;
 
+    // Sync state indicator
+    [ObservableProperty]
+    private SyncState _currentSyncState = SyncState.Offline;
+
+    /// <summary>Human-readable sync state text for indicator.</summary>
+    public string SyncStateDisplay => CurrentSyncState switch
+    {
+        SyncState.Synced => "☁️",       // Green cloud
+        SyncState.Syncing => "☁️",      // Yellow cloud (color handled in XAML DataTrigger)
+        SyncState.Offline => "☁️",      // Gray cloud
+        _ => "☁️"
+    };
+
+    partial void OnCurrentSyncStateChanged(SyncState value)
+    {
+        OnPropertyChanged(nameof(SyncStateDisplay));
+    }
+
     // Export state
     [ObservableProperty]
     private bool _isExporting;
@@ -88,6 +107,26 @@ public partial class HistorialViewModel : ObservableObject
                 {
                     await LoadSavedSessions();
                 }
+            });
+        };
+
+        // Track sync state for UI indicator
+        _syncService.SyncStateChanged += (_, state) =>
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                CurrentSyncState = state;
+            });
+        };
+
+        // Show toast when sessions downloaded from another device
+        _syncService.SessionsDownloaded += (_, count) =>
+        {
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                var text = $"{count} sesi{(count == 1 ? "ón" : "ones")} sincronizada{(count == 1 ? "" : "s")}";
+                var snackbar = Snackbar.Make(text, duration: TimeSpan.FromSeconds(3));
+                await snackbar.Show(CancellationToken.None);
             });
         };
     }
