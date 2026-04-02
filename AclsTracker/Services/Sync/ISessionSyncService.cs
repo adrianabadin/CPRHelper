@@ -16,4 +16,21 @@ public interface ISessionSyncService
 
     /// <summary>Event fired when sync operations complete (for UI refresh).</summary>
     event EventHandler? SyncCompleted;
+
+    // ============ Realtime Sync ============
+
+    /// <summary>Start Supabase Realtime subscription for session changes by the current user. Call after login.</summary>
+    Task StartRealtimeSyncAsync(string userId);
+
+    /// <summary>Stop Realtime subscription. Call before logout.</summary>
+    void StopRealtimeSync();
+
+    /// <summary>Current sync state (Synced, Syncing, Offline). Bindable for UI indicators.</summary>
+    SyncState CurrentSyncState { get; }
+
+    /// <summary>Event fired when sync state changes (for UI indicator updates).</summary>
+    event EventHandler<SyncState>? SyncStateChanged;
+
+    /// <summary>Event fired when sessions are downloaded from another device (for toast notifications).</summary>
+    event EventHandler<int>? SessionsDownloaded;
 }

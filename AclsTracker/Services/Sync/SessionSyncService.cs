@@ -15,6 +15,11 @@ public class SessionSyncService : ISessionSyncService
     private readonly ISessionRepository _sessionRepo;
     private readonly Supabase.Client _supabase;
 
+    // Serializes concurrent login sync attempts (Supabase SDK may fire AuthStateChanged
+    // multiple times for a single login event; the semaphore ensures only one
+    // HandleLoginSyncAsync runs at a time, eliminating TOCTOU races in the download path).
+    private readonly SemaphoreSlim _loginSyncLock = new(1, 1);
+
     // Retry queue for failed uploads
     private readonly Queue<(Func<Task> Operation, int AttemptCount)> _uploadQueue = new();
     private IDispatcherTimer? _retryTimer;
@@ -23,6 +28,10 @@ public class SessionSyncService : ISessionSyncService
     private const int MaxRetryIntervalSeconds = 300; // 5 minutes
 
     public event EventHandler? SyncCompleted;
+    public event EventHandler<SyncState>? SyncStateChanged;
+    public event EventHandler<int>? SessionsDownloaded;
+
+    public SyncState CurrentSyncState { get; private set; } = SyncState.Offline;
 
     public SessionSyncService(
         IAuthService authService,
@@ -66,6 +75,18 @@ public class SessionSyncService : ISessionSyncService
         }
     }
 
+    // ============ Realtime Sync (Stubs — Plan 02 implements) ============
+
+    public Task StartRealtimeSyncAsync(string userId)
+    {
+        throw new NotImplementedException("Realtime sync will be implemented in Plan 02.");
+    }
+
+    public void StopRealtimeSync()
+    {
+        throw new NotImplementedException("Realtime sync will be implemented in Plan 02.");
+    }
+
     // ============ Auth State Handler ============
 
     private async void OnAuthStateChanged(object? sender, bool isLoggedIn)
@@ -87,6 +108,15 @@ public class SessionSyncService : ISessionSyncService
 
     private async Task HandleLoginSyncAsync(string userId)
     {
+        // Prevent concurrent login syncs (Supabase SDK can fire AuthStateChanged
+        // multiple times for a single login). If a sync is already running, skip
+        // the duplicate — the in-flight sync will handle everything.
+        if (!await _loginSyncLock.WaitAsync(0).ConfigureAwait(false))
+        {
+            Debug.WriteLine($"[SessionSyncService] Login sync already in progress for user {userId}, skipping duplicate trigger.");
+            return;
+        }
+
         try
         {
             // Step 1: Claim all orphan sessions (mark UserId + upload)
@@ -104,6 +134,10 @@ public class SessionSyncService : ISessionSyncService
         catch (Exception ex)
         {
             Debug.WriteLine($"[SessionSyncService] Login sync failed: {ex.Message}");
+        }
+        finally
+        {
+            _loginSyncLock.Release();
         }
     }
 
@@ -154,15 +188,10 @@ public class SessionSyncService : ISessionSyncService
             {
                 try
                 {
-                    // Skip if session already exists locally (immutable — no overwrite)
-                    var existing = await _sessionRepo.GetSessionAsync(remote.Id).ConfigureAwait(false);
-                    if (existing != null)
-                    {
-                        Debug.WriteLine($"[SessionSyncService] Session {remote.Id} already exists locally, skipping.");
-                        continue;
-                    }
-
                     // Map SessionSupabase → Session (SQLite model)
+                    // Note: the existence check is intentionally removed here.
+                    // InsertDownloadedSessionAsync uses InsertOrIgnore atomically,
+                    // so a pre-check here would only re-introduce the TOCTOU race.
                     var session = new Session
                     {
                         Id = remote.Id,
