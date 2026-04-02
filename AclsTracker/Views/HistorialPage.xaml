@@ -28,6 +28,33 @@
                     Padding="16,10"
                     Margin="8,0,0,0"
                     HorizontalOptions="Start" />
+
+            <!-- Sync State Indicator (global) -->
+            <Label Text="{Binding SyncStateDisplay}"
+                   FontSize="16"
+                   VerticalOptions="Center"
+                   Margin="12,0,0,0">
+                <Label.Triggers>
+                    <!-- Green when Synced -->
+                    <DataTrigger TargetType="Label"
+                                 Binding="{Binding CurrentSyncState}"
+                                 Value="Synced">
+                        <Setter Property="TextColor" Value="#4CAF50" />
+                    </DataTrigger>
+                    <!-- Yellow/Orange when Syncing -->
+                    <DataTrigger TargetType="Label"
+                                 Binding="{Binding CurrentSyncState}"
+                                 Value="Syncing">
+                        <Setter Property="TextColor" Value="#FF9800" />
+                    </DataTrigger>
+                    <!-- Gray when Offline -->
+                    <DataTrigger TargetType="Label"
+                                 Binding="{Binding CurrentSyncState}"
+                                 Value="Offline">
+                        <Setter Property="TextColor" Value="#9E9E9E" />
+                    </DataTrigger>
+                </Label.Triggers>
+            </Label>
         </HorizontalStackLayout>
 
         <!-- Section 1: Live Session Events -->
@@ -120,9 +147,10 @@
                                     </Label.FormattedText>
                                 </Label>
                                 <Label Grid.Row="0" Grid.Column="1"
-                                       Text="&#x2601;&#xFE0F;" FontSize="14"
+                                       Text="☁️" FontSize="14"
                                        VerticalOptions="Center"
                                        Margin="8,0,0,0"
+                                       TextColor="#4CAF50"
                                        IsVisible="False">
                                     <Label.Triggers>
                                         <DataTrigger TargetType="Label"
