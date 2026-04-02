@@ -169,7 +169,10 @@ public partial class AuthViewModel : ObservableObject
             {
                 Email = string.Empty;
                 Password = string.Empty;
-                await Shell.Current.GoToAsync("//MainPage");
+                // Pop LoginPage from the navigation stack so it doesn't linger
+                // on the originating tab (e.g. Historial). Using ".." returns the
+                // user to whichever tab they were on before opening LoginPage.
+                await Shell.Current.GoToAsync("..");
             }
             else
             {
@@ -229,17 +232,17 @@ public partial class AuthViewModel : ObservableObject
             {
                 if (_authService.IsLoggedIn)
                 {
-                    // Auto-confirmed: user is already logged in, go to main tab
+                    // Auto-confirmed: user is already logged in, pop back to originating tab
                     Toast.Make("Registro exitoso. Bienvenido!").Show();
                     ClearRegisterForm();
-                    await Shell.Current.GoToAsync("//MainPage");
+                    await Shell.Current.GoToAsync("../..");
                 }
                 else
                 {
-                    // Email verification pending
+                    // Email verification pending — pop back to LoginPage
                     Toast.Make("Revisa tu email para verificar tu cuenta").Show();
                     ClearRegisterForm();
-                    await Shell.Current.GoToAsync("LoginPage");
+                    await Shell.Current.GoToAsync("..");
                 }
             }
             else
@@ -322,7 +325,9 @@ public partial class AuthViewModel : ObservableObject
             var success = await _authService.SignInWithGoogleAsync();
             if (success)
             {
-                await Shell.Current.GoToAsync("//MainPage");
+                // Pop LoginPage from the navigation stack instead of switching
+                // tabs, preventing a stale LoginPage on the originating tab.
+                await Shell.Current.GoToAsync("..");
             }
             else
             {
@@ -355,7 +360,9 @@ public partial class AuthViewModel : ObservableObject
             var success = await _authService.SignInWithAppleAsync();
             if (success)
             {
-                await Shell.Current.GoToAsync("//MainPage");
+                // Pop LoginPage from the navigation stack instead of switching
+                // tabs, preventing a stale LoginPage on the originating tab.
+                await Shell.Current.GoToAsync("..");
             }
             else
             {
@@ -384,6 +391,9 @@ public partial class AuthViewModel : ObservableObject
 
         try
         {
+            // Stop realtime subscription first (unsubscribes WebSocket)
+            _syncService.StopRealtimeSync();
+
             // Delete user's local sessions BEFORE signing out (CurrentUserId will be null after)
             var userId = _authService.CurrentUserId;
             if (!string.IsNullOrEmpty(userId))
