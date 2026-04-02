@@ -27,6 +27,7 @@ public class SessionRepository : ISessionRepository
 
             await _database.CreateTableAsync<Session>().ConfigureAwait(false);
             await _database.CreateTableAsync<EventRecordEntity>().ConfigureAwait(false);
+            await _database.CreateTableAsync<SyncQueueItem>().ConfigureAwait(false);
 
             // Migration: Add UserId column if not exists (graceful for existing installations)
             try
@@ -172,16 +173,25 @@ public class SessionRepository : ISessionRepository
     {
         await EnsureInitializedAsync().ConfigureAwait(false);
 
-        // Skip if session already exists (immutable — no overwrite)
-        var existing = await GetSessionAsync(session.Id).ConfigureAwait(false);
-        if (existing is not null) return;
-
         await _database.RunInTransactionAsync(db =>
         {
-            db.Insert(session);
+            // INSERT OR IGNORE is the atomic guard against duplicate IDs.
+            // A plain Insert + pre-check has a TOCTOU race when two concurrent
+            // sync tasks both pass the existence check before either has committed.
+            var inserted = db.Execute(
+                "INSERT OR IGNORE INTO Sessions (Id, UserId, PatientName, PatientLastName, PatientDNI, SessionStartTime, SessionEndTime, CreatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                session.Id, session.UserId, session.PatientName, session.PatientLastName, session.PatientDNI, session.SessionStartTime, session.SessionEndTime, session.CreatedAt);
+            if (inserted == 0)
+            {
+                // Session already exists locally — skip events too (immutable sync).
+                return;
+            }
+
             foreach (var evt in events)
             {
-                db.Insert(evt);
+                db.Execute(
+                    "INSERT OR IGNORE INTO EventRecords (Id, SessionId, Timestamp, ElapsedTicks, EventType, Description, Details) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                    evt.Id, evt.SessionId, evt.Timestamp, evt.ElapsedTicks, evt.EventType, evt.Description, evt.Details);
             }
         }).ConfigureAwait(false);
     }
@@ -192,5 +202,28 @@ public class SessionRepository : ISessionRepository
         return await _database.QueryAsync<Session>(
             "SELECT * FROM Sessions WHERE UserId = ? ORDER BY CreatedAt DESC", userId)
             .ConfigureAwait(false);
+    }
+
+    // ============ SyncQueue Operations ============
+
+    public async Task<List<SyncQueueItem>> GetPendingSyncItemsAsync()
+    {
+        await EnsureInitializedAsync().ConfigureAwait(false);
+        return await _database.QueryAsync<SyncQueueItem>(
+            "SELECT * FROM SyncQueue WHERE NextRetryAt <= ? ORDER BY CreatedAt",
+            DateTime.UtcNow)
+            .ConfigureAwait(false);
+    }
+
+    public async Task EnqueueSyncItemAsync(SyncQueueItem item)
+    {
+        await EnsureInitializedAsync().ConfigureAwait(false);
+        await _database.InsertOrReplaceAsync(item).ConfigureAwait(false);
+    }
+
+    public async Task RemoveSyncItemAsync(string id)
+    {
+        await EnsureInitializedAsync().ConfigureAwait(false);
+        await _database.DeleteAsync<SyncQueueItem>(id).ConfigureAwait(false);
     }
 }

@@ -26,4 +26,15 @@ public interface ISessionRepository
 
     /// <summary>Get all sessions that belong to a specific user.</summary>
     Task<List<Session>> GetSessionsByUserIdAsync(string userId);
+
+    // ============ SyncQueue Operations ============
+
+    /// <summary>Get pending sync items ready for retry (NextRetryAt &lt;= now), ordered by CreatedAt.</summary>
+    Task<List<SyncQueueItem>> GetPendingSyncItemsAsync();
+
+    /// <summary>Insert or replace a queue item for retry.</summary>
+    Task EnqueueSyncItemAsync(SyncQueueItem item);
+
+    /// <summary>Delete a queue item by its GUID.</summary>
+    Task RemoveSyncItemAsync(string id);
 }
