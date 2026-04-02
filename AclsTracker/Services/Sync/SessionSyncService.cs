@@ -1,13 +1,18 @@
 using System.Diagnostics;
+using System.Text.Json;
 using AclsTracker.Models;
 using AclsTracker.Services.Auth;
 using AclsTracker.Services.Database;
+using Microsoft.Maui.Networking;
+using Supabase.Realtime;
+using Supabase.Realtime.PostgresChanges;
 
 namespace AclsTracker.Services.Sync;
 
 /// <summary>
-/// Core orchestration layer that coordinates upload, download, claim, and cleanup
-/// between local SQLite and Supabase. Subscribes to auth state changes for automatic triggers.
+/// Core orchestration layer that coordinates upload, download, claim, cleanup,
+/// realtime subscriptions, persistent retry queue, and connectivity-aware fallback
+/// between local SQLite and Supabase.
 /// </summary>
 public class SessionSyncService : ISessionSyncService
 {
@@ -20,18 +25,21 @@ public class SessionSyncService : ISessionSyncService
     // HandleLoginSyncAsync runs at a time, eliminating TOCTOU races in the download path).
     private readonly SemaphoreSlim _loginSyncLock = new(1, 1);
 
-    // Retry queue for failed uploads
-    private readonly Queue<(Func<Task> Operation, int AttemptCount)> _uploadQueue = new();
-    private IDispatcherTimer? _retryTimer;
-    private int _retryIntervalSeconds = 30;
+    // Retry constants
     private const int MaxRetryAttempts = 5;
     private const int MaxRetryIntervalSeconds = 300; // 5 minutes
+
+    // Realtime subscription
+    private RealtimeChannel? _sessionChannel;
+    private SyncState _currentSyncState = SyncState.Offline;
+    private bool _isConnectivitySubscribed = false;
+    private string? _fallbackUserId;
 
     public event EventHandler? SyncCompleted;
     public event EventHandler<SyncState>? SyncStateChanged;
     public event EventHandler<int>? SessionsDownloaded;
 
-    public SyncState CurrentSyncState { get; private set; } = SyncState.Offline;
+    public SyncState CurrentSyncState => _currentSyncState;
 
     public SessionSyncService(
         IAuthService authService,
@@ -57,8 +65,8 @@ public class SessionSyncService : ISessionSyncService
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"[SessionSyncService] Upload failed for session {session.Id}: {ex.Message}. Queuing for retry.");
-            EnqueueRetry(async () => await UploadSessionInternalAsync(session, events).ConfigureAwait(false));
+            Debug.WriteLine($"[SessionSyncService] Upload failed for session {session.Id}: {ex.Message}. Persisting to retry queue.");
+            await PersistToQueueAsync(session, events).ConfigureAwait(false);
         }
     }
 
@@ -75,16 +83,68 @@ public class SessionSyncService : ISessionSyncService
         }
     }
 
-    // ============ Realtime Sync (Stubs — Plan 02 implements) ============
+    // ============ Realtime Sync ============
 
-    public Task StartRealtimeSyncAsync(string userId)
+    public async Task StartRealtimeSyncAsync(string userId)
     {
-        throw new NotImplementedException("Realtime sync will be implemented in Plan 02.");
+        try
+        {
+            // Don't double-subscribe
+            if (_sessionChannel != null) return;
+
+            // Connect WebSocket if not already connected
+            if (_supabase.Realtime.Socket == null || !_supabase.Realtime.Socket.IsConnected)
+            {
+                await _supabase.Realtime.ConnectAsync().ConfigureAwait(false);
+            }
+
+            // Create unique channel per user (prevents collision - see RESEARCH Pitfall 3)
+            var channelName = $"sessions-sync-{userId}";
+            _sessionChannel = _supabase.Realtime.Channel(channelName);
+
+            // Register for INSERT events filtered by user_id
+            _sessionChannel.Register(new PostgresChangesOptions(
+                schema: "public",
+                table: "sessions",
+                eventType: PostgresChangesOptions.ListenType.Inserts,
+                filter: $"user_id=eq.{userId}"
+            ));
+
+            // Add handler for INSERT events from other devices
+            _sessionChannel.AddPostgresChangeHandler(
+                PostgresChangesOptions.ListenType.Inserts,
+                OnRemoteSessionInserted
+            );
+
+            await _sessionChannel.Subscribe().ConfigureAwait(false);
+
+            UpdateSyncState(SyncState.Synced);
+            Debug.WriteLine($"[SessionSyncService] Realtime subscription active for user {userId}");
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[SessionSyncService] Realtime start failed: {ex.Message}. Will rely on connectivity fallback.");
+            UpdateSyncState(SyncState.Offline);
+
+            // Subscribe to connectivity changes for fallback
+            SubscribeToConnectivityChanges(userId);
+        }
     }
 
     public void StopRealtimeSync()
     {
-        throw new NotImplementedException("Realtime sync will be implemented in Plan 02.");
+        try
+        {
+            _sessionChannel?.Unsubscribe();
+            _sessionChannel = null;
+            UnsubscribeFromConnectivityChanges();
+            UpdateSyncState(SyncState.Offline);
+            Debug.WriteLine("[SessionSyncService] Realtime subscription stopped");
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[SessionSyncService] Error stopping realtime: {ex.Message}");
+        }
     }
 
     // ============ Auth State Handler ============
@@ -99,9 +159,11 @@ public class SessionSyncService : ISessionSyncService
                 await HandleLoginSyncAsync(userId).ConfigureAwait(false);
             }
         }
-        // Note: logout cleanup (DeleteLocalUserSessionsAsync) is triggered from AuthViewModel
-        // which retains the userId before signing out. This handler does NOT handle cleanup
-        // because userId is gone after logout completes.
+        else
+        {
+            // Stop realtime subscription before cleanup
+            StopRealtimeSync();
+        }
     }
 
     // ============ Login Sync Orchestration ============
@@ -125,11 +187,14 @@ public class SessionSyncService : ISessionSyncService
             // Step 2: Download ALL user sessions from Supabase
             await DownloadUserSessionsAsync(userId).ConfigureAwait(false);
 
-            // Step 3: Retry any previously failed uploads
-            await ProcessRetryQueueAsync().ConfigureAwait(false);
+            // Step 3: Retry any previously failed uploads from persistent queue
+            await ProcessPersistedQueueAsync().ConfigureAwait(false);
 
             // Notify UI to refresh
             SyncCompleted?.Invoke(this, EventArgs.Empty);
+
+            // Step 4: Start realtime subscription for ongoing sync
+            await StartRealtimeSyncAsync(userId).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -243,8 +308,27 @@ public class SessionSyncService : ISessionSyncService
 
     private async Task UploadSessionInternalAsync(Session session, List<EventRecord> events)
     {
-        // Map Session → SessionSupabase
-        var sessionModel = new SessionSupabase
+        var sessionModel = MapSessionToSupabase(session);
+
+        // Insert session into Supabase
+        await _supabase.From<SessionSupabase>().Insert(sessionModel).ConfigureAwait(false);
+
+        // Map List<EventRecord> → List<EventSupabase> and insert in batches of 100
+        var eventModels = events.Select(evt => MapEventToSupabase(evt, session.Id)).ToList();
+
+        const int batchSize = 100;
+        for (int i = 0; i < eventModels.Count; i += batchSize)
+        {
+            var batch = eventModels.Skip(i).Take(batchSize).ToList();
+            await _supabase.From<EventSupabase>().Insert(batch).ConfigureAwait(false);
+        }
+    }
+
+    // ============ Mapping Helpers ============
+
+    private static SessionSupabase MapSessionToSupabase(Session session)
+    {
+        return new SessionSupabase
         {
             Id = session.Id,
             UserId = session.UserId,
@@ -255,107 +339,225 @@ public class SessionSyncService : ISessionSyncService
             SessionEndTime = session.SessionEndTime,
             CreatedAt = session.CreatedAt
         };
+    }
 
-        // Insert session into Supabase
-        await _supabase.From<SessionSupabase>().Insert(sessionModel).ConfigureAwait(false);
-
-        // Map List<EventRecord> → List<EventSupabase> and insert in batches of 100
-        var eventModels = events.Select(evt => new EventSupabase
+    private static EventSupabase MapEventToSupabase(EventRecord evt, string sessionId)
+    {
+        return new EventSupabase
         {
             Id = evt.Id,
-            SessionId = session.Id,
+            SessionId = sessionId,
             Timestamp = evt.Timestamp,
             ElapsedTicks = evt.ElapsedSinceStart.Ticks,
             EventType = evt.EventType,
             Description = evt.Description,
             Details = evt.Details
-        }).ToList();
-
-        const int batchSize = 100;
-        for (int i = 0; i < eventModels.Count; i += batchSize)
-        {
-            var batch = eventModels.Skip(i).Take(batchSize).ToList();
-            await _supabase.From<EventSupabase>().Insert(batch).ConfigureAwait(false);
-        }
-    }
-
-    // ============ Retry Queue ============
-
-    private void EnqueueRetry(Func<Task> operation)
-    {
-        _uploadQueue.Enqueue((operation, 0));
-        StartRetryTimerIfNeeded();
-    }
-
-    private void StartRetryTimerIfNeeded()
-    {
-        if (_retryTimer != null && _retryTimer.IsRunning)
-            return;
-
-        _retryTimer = Application.Current?.Dispatcher.CreateTimer();
-        if (_retryTimer == null)
-            return;
-
-        _retryTimer.Interval = TimeSpan.FromSeconds(_retryIntervalSeconds);
-        _retryTimer.IsRepeating = false;
-        _retryTimer.Tick += async (sender, args) =>
-        {
-            await ProcessRetryQueueAsync().ConfigureAwait(false);
         };
-        _retryTimer.Start();
     }
 
-    private async Task ProcessRetryQueueAsync()
+    // ============ Persistent Retry Queue ============
+
+    private async Task PersistToQueueAsync(Session session, List<EventRecord> events)
     {
-        if (_uploadQueue.Count == 0)
-            return;
+        var sessionModel = MapSessionToSupabase(session);
+        var eventModels = events.Select(evt => MapEventToSupabase(evt, session.Id)).ToList();
 
-        Debug.WriteLine($"[SessionSyncService] Processing retry queue ({_uploadQueue.Count} item(s))");
-
-        var itemsToProcess = _uploadQueue.Count;
-        var failedItems = new List<(Func<Task> Operation, int AttemptCount)>();
-
-        for (int i = 0; i < itemsToProcess; i++)
+        var item = new SyncQueueItem
         {
-            if (_uploadQueue.Count == 0)
-                break;
+            Id = Guid.NewGuid().ToString(),
+            SessionId = session.Id,
+            SessionData = JsonSerializer.Serialize(sessionModel),
+            EventsData = JsonSerializer.Serialize(eventModels),
+            AttemptCount = 0,
+            CreatedAt = DateTime.UtcNow,
+            NextRetryAt = DateTime.UtcNow.AddSeconds(30) // first retry in 30s
+        };
 
-            var item = _uploadQueue.Dequeue();
+        await _sessionRepo.EnqueueSyncItemAsync(item).ConfigureAwait(false);
+        Debug.WriteLine($"[SessionSyncService] Persisted upload for session {session.Id} to retry queue");
+    }
 
+    private async Task ProcessPersistedQueueAsync()
+    {
+        var pending = await _sessionRepo.GetPendingSyncItemsAsync().ConfigureAwait(false);
+        if (pending.Count == 0) return;
+
+        UpdateSyncState(SyncState.Syncing);
+        Debug.WriteLine($"[SessionSyncService] Processing {pending.Count} persisted queue item(s)");
+
+        foreach (var item in pending)
+        {
             if (item.AttemptCount >= MaxRetryAttempts)
             {
-                Debug.WriteLine($"[SessionSyncService] Dropping upload after {item.AttemptCount} failed attempts.");
+                await _sessionRepo.RemoveSyncItemAsync(item.Id).ConfigureAwait(false);
+                Debug.WriteLine($"[SessionSyncService] Dropping queue item after {item.AttemptCount} attempts");
                 continue;
             }
 
             try
             {
-                await item.Operation().ConfigureAwait(false);
-                Debug.WriteLine($"[SessionSyncService] Retry succeeded on attempt {item.AttemptCount + 1}");
+                var sessionModel = JsonSerializer.Deserialize<SessionSupabase>(item.SessionData);
+                var eventModels = JsonSerializer.Deserialize<List<EventSupabase>>(item.EventsData);
+                if (sessionModel == null || eventModels == null) continue;
+
+                // Re-upload session
+                await _supabase.From<SessionSupabase>().Insert(sessionModel).ConfigureAwait(false);
+
+                // Re-upload events in batches
+                const int batchSize = 100;
+                for (int i = 0; i < eventModels.Count; i += batchSize)
+                {
+                    var batch = eventModels.Skip(i).Take(batchSize).ToList();
+                    await _supabase.From<EventSupabase>().Insert(batch).ConfigureAwait(false);
+                }
+
+                await _sessionRepo.RemoveSyncItemAsync(item.Id).ConfigureAwait(false);
+                Debug.WriteLine($"[SessionSyncService] Queue retry succeeded for {item.SessionId}");
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"[SessionSyncService] Retry attempt {item.AttemptCount + 1} failed: {ex.Message}");
-                failedItems.Add((item.Operation, item.AttemptCount + 1));
+                item.AttemptCount++;
+                var delay = Math.Min(30 * Math.Pow(2, item.AttemptCount), MaxRetryIntervalSeconds);
+                item.NextRetryAt = DateTime.UtcNow.AddSeconds(delay);
+                await _sessionRepo.EnqueueSyncItemAsync(item).ConfigureAwait(false);
+                Debug.WriteLine($"[SessionSyncService] Queue retry failed (attempt {item.AttemptCount}): {ex.Message}");
             }
         }
 
-        // Re-enqueue failed items
-        foreach (var failed in failedItems)
+        UpdateSyncState(SyncState.Synced);
+        SyncCompleted?.Invoke(this, EventArgs.Empty);
+    }
+
+    // ============ Realtime Handlers ============
+
+    private async void OnRemoteSessionInserted(object sender, PostgresChangesResponse change)
+    {
+        try
         {
-            _uploadQueue.Enqueue(failed);
+            var sessionModel = change.Model<SessionSupabase>();
+            if (sessionModel == null) return;
+
+            // Download single session (reuses existing dedup + insert logic)
+            await DownloadSingleSessionAsync(sessionModel).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[SessionSyncService] Realtime handler error: {ex.Message}");
+        }
+    }
+
+    private async Task DownloadSingleSessionAsync(SessionSupabase remote)
+    {
+        // Dedup check
+        var existing = await _sessionRepo.GetSessionAsync(remote.Id).ConfigureAwait(false);
+        if (existing != null)
+        {
+            Debug.WriteLine($"[SessionSyncService] Session {remote.Id} already exists locally, skipping realtime download.");
+            return;
         }
 
-        // If there are still items, schedule next retry with exponential backoff
-        if (_uploadQueue.Count > 0)
+        // Map to local model
+        var session = new Session
         {
-            _retryIntervalSeconds = Math.Min(_retryIntervalSeconds * 2, MaxRetryIntervalSeconds);
-            Debug.WriteLine($"[SessionSyncService] Scheduling next retry in {_retryIntervalSeconds}s");
-            StartRetryTimerIfNeeded();
-        }
-        else
+            Id = remote.Id,
+            UserId = remote.UserId,
+            PatientName = remote.PatientName,
+            PatientLastName = remote.PatientLastName,
+            PatientDNI = remote.PatientDNI,
+            SessionStartTime = remote.SessionStartTime,
+            SessionEndTime = remote.SessionEndTime,
+            CreatedAt = remote.CreatedAt
+        };
+
+        // Download events for this session
+        // Add small delay to avoid race condition (RESEARCH Pitfall 4: events may not be committed yet)
+        await Task.Delay(500).ConfigureAwait(false);
+
+        var eventsResult = await _supabase
+            .From<EventSupabase>()
+            .Where(x => x.SessionId == remote.Id)
+            .Get()
+            .ConfigureAwait(false);
+
+        var eventEntities = eventsResult.Models.Select(e => new EventRecordEntity
         {
-            _retryIntervalSeconds = 30; // Reset backoff on full success
+            Id = e.Id,
+            SessionId = e.SessionId,
+            Timestamp = e.Timestamp,
+            ElapsedTicks = e.ElapsedTicks,
+            EventType = e.EventType,
+            Description = e.Description,
+            Details = e.Details
+        }).ToList();
+
+        await _sessionRepo.InsertDownloadedSessionAsync(session, eventEntities).ConfigureAwait(false);
+
+        // Notify UI
+        SyncCompleted?.Invoke(this, EventArgs.Empty);
+        SessionsDownloaded?.Invoke(this, 1);
+
+        Debug.WriteLine($"[SessionSyncService] Downloaded realtime session {remote.Id} with {eventEntities.Count} event(s)");
+    }
+
+    // ============ Connectivity Fallback ============
+
+    private void SubscribeToConnectivityChanges(string userId)
+    {
+        if (_isConnectivitySubscribed) return;
+        _isConnectivitySubscribed = true;
+        Connectivity.Current.ConnectivityChanged += OnConnectivityChanged;
+        // Store userId for reconnect
+        _fallbackUserId = userId;
+    }
+
+    private void UnsubscribeFromConnectivityChanges()
+    {
+        if (!_isConnectivitySubscribed) return;
+        _isConnectivitySubscribed = false;
+        Connectivity.Current.ConnectivityChanged -= OnConnectivityChanged;
+        _fallbackUserId = null;
+    }
+
+    private async void OnConnectivityChanged(object? sender, ConnectivityChangedEventArgs e)
+    {
+        if (e.NetworkAccess != NetworkAccess.Internet) return;
+
+        Debug.WriteLine("[SessionSyncService] Connectivity restored");
+
+        var userId = _fallbackUserId ?? _authService.CurrentUserId;
+        if (string.IsNullOrEmpty(userId)) return;
+
+        // Try to re-establish realtime if not connected
+        if (_sessionChannel == null)
+        {
+            try
+            {
+                await StartRealtimeSyncAsync(userId).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[SessionSyncService] Realtime reconnect failed: {ex.Message}");
+            }
         }
+
+        // Always process retry queue when connectivity returns
+        try
+        {
+            await ProcessPersistedQueueAsync().ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[SessionSyncService] Queue processing after reconnect failed: {ex.Message}");
+        }
+    }
+
+    // ============ Sync State ============
+
+    private void UpdateSyncState(SyncState newState)
+    {
+        if (_currentSyncState == newState) return;
+        _currentSyncState = newState;
+        SyncStateChanged?.Invoke(this, newState);
+        Debug.WriteLine($"[SessionSyncService] Sync state changed to {newState}");
     }
 }
