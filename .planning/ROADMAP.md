@@ -195,12 +195,12 @@ Plans:
 **Goal:** Persistent retry queue with offline support, realtime sync via Supabase Realtime, and UI sync indicator
 **Requirements**: SYNC-01
 **Depends on:** Phase 05.2
-**Plans:** 1/3 plans complete
+**Plans:** 3/3 plans complete
 
 Plans:
 - [x] 06-01-PLAN.md — Data Layer Contracts: SyncQueueItem model, SyncState enum, extended interfaces
-- [ ] 06-02-PLAN.md — SessionSyncService implementation: persistent retry queue, realtime sync
-- [ ] 06-03-PLAN.md — UI sync indicator and retry queue visualization
+- [x] 06-02-PLAN.md — SessionSyncService implementation: persistent retry queue, realtime sync
+- [x] 06-03-PLAN.md — UI sync indicator and retry queue visualization
 
 ---
 

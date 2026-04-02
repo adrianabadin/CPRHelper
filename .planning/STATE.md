@@ -3,18 +3,18 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-04-02T02:16:17.913Z"
+last_updated: "2026-04-02T15:19:59.675Z"
 progress:
   total_phases: 14
-  completed_phases: 12
+  completed_phases: 13
   total_plans: 36
-  completed_plans: 35
+  completed_plans: 36
 ---
 
 # STATE: ACLS Tracker
 
 **Created:** 24/03/2026
-**Last Updated:** 02/04/2026 after completing 06-01 plan
+**Last Updated:** 02/04/2026 after completing 06-03 plan
 
 ## Project Reference
 
@@ -25,14 +25,14 @@ progress:
 ## Current Position
 
 Phase: 06 (cloud-postgresql-sync-sync-events-to-remote-database-on-save-with-offline-retry)
-Plan: 1 of 3 (Plan 01 complete)
+Plan: 3 of 3 (All plans complete — checkpoint Task 4 pending human verify)
 
 ## Performance Metrics
 
 **Phase Completion:** 12/14 phases completed
 **Requirement Coverage:** 11/11 v1 requirements mapped (100%)
 **Plans Created:** 36
-**Plans Completed:** 34
+**Plans Completed:** 36
 
 ## Accumulated Context
 
@@ -63,6 +63,10 @@ Plan: 1 of 3 (Plan 01 complete)
 | GetPendingSyncItemsAsync uses raw SQL QueryAsync | sqlite-net-pcl TableQuery OrderBy compatibility | 06-01 |
 | SessionSyncService stubs throw NotImplementedException | Plan 02 will provide real implementations | 06-01 |
 | SyncQueueItem plain POCO no base class | sqlite-net-pcl incompatible with CommunityToolkit source generators | 06-01 |
+| Global sync indicator in toggle bar, per-session cloud stays green | Separates global connection state from per-session backup state | 06-03 |
+| Toast uses Snackbar.Make with 3-second duration on MainThread | Auto-dismisses without blocking user, unlike DisplayAlert | 06-03 |
+| StopRealtimeSync called first in logout before cleanup | Unsubscribes WebSocket before session deletion prevents race | 06-03 |
+| Phase 06 P03 | 4min | 3 tasks | 3 files |
 
 ### Roadmap Evolution
 
@@ -105,20 +109,19 @@ None identified.
 
 ## Session Continuity
 
-**Last Session:** 2026-04-02T00:39:05.277Z
-**Current Session:** Completed Phase 06 Plan 01 — Data layer contracts (SyncQueueItem, SyncState, extended interfaces)
+**Last Session:** 2026-04-02T15:19:59.662Z
+**Current Session:** Completed Phase 06 Plan 03 — Sync UI indicator, toast notifications, realtime lifecycle on logout
 
 **Context Handoff:**
 
-- Phase 06 Plan 01 complete: SyncQueueItem model, SyncState enum, extended ISessionRepository + ISessionSyncService
-- SyncQueue table auto-created in SessionRepository.InitializeAsync
-- SessionSyncService has NotImplementedException stubs for new interface members
-- No breaking changes to existing consumers
+- Phase 06 Plan 03 complete (auto tasks): HistorialViewModel sync state + toast, HistorialPage multi-color indicator, AuthViewModel StopRealtimeSync
+- Checkpoint Task 4 pending: human verification of realtime sync on device
+- All 3 plans in Phase 06 have SUMMARYs — phase structurally complete
 
 **Next Session Tasks:**
 
-- Execute Plan 02: SessionSyncService implementation (persistent retry queue, realtime sync)
-- Execute Plan 03: UI sync indicator and retry queue visualization
+- Human verify Task 4 (checkpoint:human-verify) for Phase 06 Plan 03
+- After approval: Phase 06 complete, proceed to Phase 07 or milestone review
 
 ---
 
