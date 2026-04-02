@@ -163,6 +163,7 @@ Plans:
 | 5. Data Export | 2/2 | Complete | 2026-03-30 |
 | 05.1. Auth (opcional) | 4/4 | Complete   | 2026-03-31 |
 | 05.2. Session Sync | 3/3 | Complete   | 2026-03-31 |
+| 06. Cloud PostgreSQL Sync | 1/3 | In Progress |  |
 
 ### Phase 05.2: Vincular sesiones de Supabase al usuario logueado (INSERTED)
 
@@ -189,15 +190,17 @@ Plans:
 - [x] 05.1-03-PLAN.md — AuthViewModel + LoginPage + RegisterPage + ProfilePage
 - [x] 05.1-04-PLAN.md — AuthAvatarControl in AppShell + human verification
 
-### Phase 6: Cloud PostgreSQL sync - sync events to remote database on save with offline retry
+### Phase 06: Cloud PostgreSQL sync - sync events to remote database on save with offline retry
 
-**Goal:** [To be planned]
-**Requirements**: TBD
-**Depends on:** Phase 5
-**Plans:** 0 plans
+**Goal:** Persistent retry queue with offline support, realtime sync via Supabase Realtime, and UI sync indicator
+**Requirements**: SYNC-01
+**Depends on:** Phase 05.2
+**Plans:** 1/3 plans complete
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 6 to break down)
+- [x] 06-01-PLAN.md — Data Layer Contracts: SyncQueueItem model, SyncState enum, extended interfaces
+- [ ] 06-02-PLAN.md — SessionSyncService implementation: persistent retry queue, realtime sync
+- [ ] 06-03-PLAN.md — UI sync indicator and retry queue visualization
 
 ---
 

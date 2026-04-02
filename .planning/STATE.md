@@ -3,36 +3,36 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-31T23:13:54.053Z"
+last_updated: "2026-04-02T00:39:05.277Z"
 progress:
   total_phases: 14
   completed_phases: 12
-  total_plans: 33
-  completed_plans: 33
+  total_plans: 36
+  completed_plans: 34
 ---
 
 # STATE: ACLS Tracker
 
 **Created:** 24/03/2026
-**Last Updated:** 31/03/2026 after completing 05.2-03 plan
+**Last Updated:** 02/04/2026 after completing 06-01 plan
 
 ## Project Reference
 
 **Core Value:** El líder del código puede guiar y registrar todo el evento de reanimación con apoyo protocolizado en tiempo real, sin depender de memoria o cálculos manuales
 
-**Current Focus:** Phase 05.2 — vincular-sesiones-de-supabase-al-usuario-logueado — COMPLETE
+**Current Focus:** Phase 06 — cloud-postgresql-sync-sync-events-to-remote-database-on-save-with-offline-retry
 
 ## Current Position
 
-Phase: 05.2 (vincular-sesiones-de-supabase-al-usuario-logueado) — COMPLETE
-Plan: 3 of 3 (Plan 03 complete — phase done)
+Phase: 06 (cloud-postgresql-sync-sync-events-to-remote-database-on-save-with-offline-retry)
+Plan: 1 of 3 (Plan 01 complete)
 
 ## Performance Metrics
 
 **Phase Completion:** 12/14 phases completed
 **Requirement Coverage:** 11/11 v1 requirements mapped (100%)
-**Plans Created:** 33
-**Plans Completed:** 33
+**Plans Created:** 36
+**Plans Completed:** 34
 
 ## Accumulated Context
 
@@ -60,6 +60,9 @@ Plan: 3 of 3 (Plan 03 complete — phase done)
 | Fire-and-forget upload in StopCode | _ = _syncService.UploadSessionAsync keeps UI non-blocking; retry queue handles failures | 05.2-03 |
 | Logout cleanup captures CurrentUserId before SignOutAsync | CurrentUserId is null after sign-out, must capture first | 05.2-03 |
 | Cloud indicator uses DataTrigger + global IsNotNullConverter | No new converter needed; IsNotNullConverter already in App.xaml | 05.2-03 |
+| GetPendingSyncItemsAsync uses raw SQL QueryAsync | sqlite-net-pcl TableQuery OrderBy compatibility | 06-01 |
+| SessionSyncService stubs throw NotImplementedException | Plan 02 will provide real implementations | 06-01 |
+| SyncQueueItem plain POCO no base class | sqlite-net-pcl incompatible with CommunityToolkit source generators | 06-01 |
 
 ### Roadmap Evolution
 
@@ -102,21 +105,21 @@ None identified.
 
 ## Session Continuity
 
-**Last Session:** 2026-03-31T23:13:54.039Z
-**Current Session:** Completed Phase 05.2 Plan 03 — ViewModel sync integration + cloud indicator
+**Last Session:** 2026-04-02T00:39:05.277Z
+**Current Session:** Completed Phase 06 Plan 01 — Data layer contracts (SyncQueueItem, SyncState, extended interfaces)
 
 **Context Handoff:**
 
-- Phase 05.2 complete: all 3 plans done
-- Full sync integration: save triggers upload (fire-and-forget), logout triggers cleanup, login triggers claim+download (via SessionSyncService)
-- HistorialViewModel subscribes to SyncCompleted for auto-refresh
-- Cloud indicator (cloud emoji) shown in Historial for sessions with UserId
-- SYNC-01 requirement fulfilled
+- Phase 06 Plan 01 complete: SyncQueueItem model, SyncState enum, extended ISessionRepository + ISessionSyncService
+- SyncQueue table auto-created in SessionRepository.InitializeAsync
+- SessionSyncService has NotImplementedException stubs for new interface members
+- No breaking changes to existing consumers
 
 **Next Session Tasks:**
 
-- Proceed to next phase or milestone review.
+- Execute Plan 02: SessionSyncService implementation (persistent retry queue, realtime sync)
+- Execute Plan 03: UI sync indicator and retry queue visualization
 
 ---
 
-*State updated: 31/03/2026*
+*State updated: 02/04/2026*
