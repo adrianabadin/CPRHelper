@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-04-02T15:19:59.675Z"
+last_updated: "2026-04-04T09:23:24.024Z"
 progress:
-  total_phases: 14
+  total_phases: 15
   completed_phases: 13
   total_plans: 36
   completed_plans: 36
@@ -78,6 +78,7 @@ Plan: 3 of 3 (All plans complete — checkpoint Task 4 pending human verify)
 - Phase 5 added: Data export (PDF + CSV)
 - Phase 05.1 added: Autenticacion opcional (Google, Apple, email/password con verificacion)
 - Phase 05.2 inserted after Phase 5: Vincular sesiones de Supabase al usuario logueado (URGENT)
+- Phase 07 added: modificar frontend para mostrar botones adrenalina y amiodarona en primera vista con layout optimizado
 
 ### Architecture Notes
 
@@ -115,7 +116,7 @@ None identified.
 
 ## Session Continuity
 
-**Last Session:** 2026-04-02T15:19:59.662Z
+**Last Session:** 2026-04-04T09:23:23.982Z
 **Current Session:** Completed Phase 06 Plan 03 — Sync UI indicator, toast notifications, realtime lifecycle on logout
 
 **Context Handoff:**
