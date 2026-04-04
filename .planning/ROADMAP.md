@@ -202,6 +202,16 @@ Plans:
 - [x] 06-02-PLAN.md — SessionSyncService implementation: persistent retry queue, realtime sync
 - [x] 06-03-PLAN.md — UI sync indicator and retry queue visualization
 
+### Phase 7: modificar frontend para mostrar botones adrenalina y amiodarona en primera vista con layout optimizado
+
+**Goal:** Compress MainPage vertical layout so ADRENALINA and AMIODARONA drug buttons are visible without scrolling on standard Android screens, by collapsing rhythm selector to single row, merging action buttons into 2x2 grid, and reducing control sizes
+**Requirements**: UI-LAYOUT-01
+**Depends on:** Phase 6
+**Plans:** 1 plan
+
+Plans:
+- [ ] 07-01-PLAN.md — Compress 4 XAML controls: RhythmSelector single-row Grid, MainPage 2x2 action grid, MetronomePulse circle reduction, TimerCard padding reduction
+
 ---
 
 *Roadmap created: 24/03/2026*
