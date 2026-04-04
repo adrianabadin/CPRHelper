@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net9.0-android36.0;net9.0-ios;net9.0-maccatalyst</TargetFrameworks>
-    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net9.0-windows10.0.19041.0</TargetFrameworks>
+    <TargetFrameworks>net10.0-android;net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <RootNamespace>AclsTracker</RootNamespace>
     <UseMaui>true</UseMaui>
@@ -19,20 +19,49 @@
     <WindowsPackageType>None</WindowsPackageType>
   </PropertyGroup>
 
-  <ItemGroup>
-    <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+  <!-- Release mode: prevent aggressive trimming from stripping reflection-heavy types -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <ManagedLinkMode>SdkOnly</ManagedLinkMode>
+    <TrimMode>partial</TrimMode>
+    <RunAOTCompilation>false</RunAOTCompilation>
+    <PublishTrimmed>true</PublishTrimmed>
+  </PropertyGroup>
+
+  <!-- Preserve assemblies that rely on reflection (Supabase, JSON, SQLite) -->
+  <ItemGroup Condition="'$(Configuration)' == 'Release'">
+    <TrimmerRootAssembly Include="Supabase" RootMode="all" />
+    <TrimmerRootAssembly Include="Supabase.Gotrue" RootMode="all" />
+    <TrimmerRootAssembly Include="Supabase.Realtime" RootMode="all" />
+    <TrimmerRootAssembly Include="Supabase.Postgrest" RootMode="all" />
+    <TrimmerRootAssembly Include="Supabase.Storage" RootMode="all" />
+    <TrimmerRootAssembly Include="Supabase.Functions" RootMode="all" />
+    <TrimmerRootAssembly Include="Supabase.Core" RootMode="all" />
+    <TrimmerRootAssembly Include="System.Text.Json" RootMode="all" />
+    <TrimmerRootAssembly Include="SQLite-net" RootMode="all" />
+    <TrimmerRootAssembly Include="SQLitePCLRaw.core" RootMode="all" />
+    <TrimmerRootAssembly Include="Newtonsoft.Json" RootMode="all" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.120" />
-    <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.120" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.0" />
+    <MauiIcon Include="Resources\AppIcon\appicon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+    <EmbeddedResource Include="appsettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.10" />
+    <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="10.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.0" />
     <PackageReference Include="CommunityToolkit.Maui" Version="9.0.0" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
     <PackageReference Include="Plugin.Maui.Audio" Version="3.0.0" />
-    <PackageReference Include="QuestPDF" Version="2026.2.4" />
+    <PackageReference Include="QuestPDF" Version="2026.2.4" Condition="!$(TargetFramework.Contains('-android'))" />
     <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
     <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3.android" Version="2.1.11" Condition="$(TargetFramework.Contains('-android'))" />
     <PackageReference Include="Supabase" Version="1.1.1" />
