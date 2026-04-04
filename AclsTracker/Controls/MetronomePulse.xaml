@@ -7,7 +7,7 @@
         <!-- Compact pulse circle 45px (~5dp savings) -->
         <Grid WidthRequest="45" HeightRequest="45">
             <Ellipse x:Name="PulseCircle"
-                     WidthRequest="40" HeightRequest="40"
+                     WidthRequest="42" HeightRequest="42"
                      Fill="{StaticResource Primary}"
                      Opacity="0.8"
                      HorizontalOptions="Center"

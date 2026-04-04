@@ -35,18 +35,31 @@ public partial class MetronomePulse : ContentView
     }
 
     /// <summary>
-    /// Quick scale pulse: expand to 1.15x then back to 1.0x.
-    /// Total duration ~200ms for snappy visual feedback at up to 120 BPM (500ms interval).
-    /// Uses Easing.CubicOut for natural deceleration feel.
+    /// Heartbeat double-pump animation: lub (systole) → partial relax → dub (diastole) → full relax.
+    /// Total duration ~330ms, fits within 500ms interval at 120 BPM.
+    /// Scale and opacity run in parallel for maximum visual impact.
     /// </summary>
     private async Task AnimatePulse()
     {
-        // Cancel any running animation
+        // Cancel any in-progress animation before starting a new beat
         PulseCircle.CancelAnimations();
 
-        // Expand
-        await PulseCircle.ScaleTo(1.15, 80, Easing.CubicOut);
-        // Contract back
-        await PulseCircle.ScaleTo(1.0, 120, Easing.CubicIn);
+        // First pump — systole "lub": scale to 1.35, opacity to 1.0
+        await Task.WhenAll(
+            PulseCircle.ScaleTo(1.35, 80, Easing.CubicOut),
+            PulseCircle.FadeTo(1.0, 80)
+        );
+
+        // Quick partial relax between pumps
+        await PulseCircle.ScaleTo(1.1, 60, Easing.CubicIn);
+
+        // Second pump — diastole "dub": scale to 1.25, keep full opacity
+        await PulseCircle.ScaleTo(1.25, 70, Easing.CubicOut);
+
+        // Full relax back to resting state: scale to 1.0, fade back to 0.8
+        await Task.WhenAll(
+            PulseCircle.ScaleTo(1.0, 120, Easing.CubicIn),
+            PulseCircle.FadeTo(0.8, 120)
+        );
     }
 }
