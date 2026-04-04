@@ -4,10 +4,10 @@
              x:Class="AclsTracker.Controls.MetronomePulse"
              x:Name="PulseControl">
     <HorizontalStackLayout Spacing="12" VerticalOptions="Center" HorizontalOptions="Center" Padding="8,4">
-        <!-- Compact pulse circle 50px -->
-        <Grid WidthRequest="50" HeightRequest="50">
+        <!-- Compact pulse circle 45px (~5dp savings) -->
+        <Grid WidthRequest="45" HeightRequest="45">
             <Ellipse x:Name="PulseCircle"
-                     WidthRequest="44" HeightRequest="44"
+                     WidthRequest="40" HeightRequest="40"
                      Fill="{StaticResource Primary}"
                      Opacity="0.8"
                      HorizontalOptions="Center"

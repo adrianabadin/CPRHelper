@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="AclsTracker.Controls.TimerCard"
              x:Name="TimerCardControl">
-    <Frame Padding="8"
+    <Frame Padding="4"
            CornerRadius="12"
            BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#1E1E1E}"
            BorderColor="{AppThemeBinding Light=#E0E0E0, Dark=#333333}"
@@ -39,7 +39,7 @@
             <!-- Digital elapsed display (D-05: format 00:00) -->
             <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                    Text="{Binding Elapsed, StringFormat='{0:mm\\:ss}'}"
-                   FontSize="24"
+                   FontSize="20"
                    FontAttributes="Bold"
                    FontFamily="OpenSansRegular"
                    HorizontalTextAlignment="Start"

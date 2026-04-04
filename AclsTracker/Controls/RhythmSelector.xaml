@@ -4,7 +4,7 @@
              xmlns:models="clr-namespace:AclsTracker.Models"
              x:Class="AclsTracker.Controls.RhythmSelector">
 
-    <VerticalStackLayout Spacing="8">
+    <VerticalStackLayout Spacing="6">
 
         <!-- Section header -->
         <Label Text="RITMO CARDÍACO"
@@ -21,52 +21,55 @@
                HorizontalTextAlignment="Center"
                TextColor="#333333" />
 
-        <!-- Rhythm buttons — FlexLayout wraps on small screens -->
-        <FlexLayout Wrap="Wrap"
-                    JustifyContent="Center"
-                    AlignItems="Center">
+        <!-- Rhythm buttons — Grid single row (~60dp savings) -->
+        <Grid ColumnDefinitions="*, *, *, *, *" ColumnSpacing="4">
 
             <!-- RCE (Retorno de Circulacion Espontanea) — green -->
-            <Button Text="RCE"
+            <Button Grid.Column="0"
+                    Text="RCE"
                     Command="{Binding SelectRhythmCommand}"
                     CommandParameter="{x:Static models:CardiacRhythm.RCE}"
                     BackgroundColor="#2E7D32"
-                    TextColor="White" FontSize="14" FontAttributes="Bold"
-                    MinimumWidthRequest="80" HeightRequest="44" CornerRadius="8" Margin="4" />
+                    TextColor="White" FontSize="11" FontAttributes="Bold"
+                    HeightRequest="36" CornerRadius="8" Padding="2,0" />
 
             <!-- AESP (Actividad Electrica Sin Pulso) — non-shockable, orange -->
-            <Button Text="AESP"
+            <Button Grid.Column="1"
+                    Text="AESP"
                     Command="{Binding SelectRhythmCommand}"
                     CommandParameter="{x:Static models:CardiacRhythm.AESP}"
                     BackgroundColor="#E65100"
-                    TextColor="White" FontSize="14" FontAttributes="Bold"
-                    MinimumWidthRequest="80" HeightRequest="44" CornerRadius="8" Margin="4" />
+                    TextColor="White" FontSize="11" FontAttributes="Bold"
+                    HeightRequest="36" CornerRadius="8" Padding="2,0" />
 
             <!-- ASISTOLIA — non-shockable, orange -->
-            <Button Text="ASISTOLIA"
+            <Button Grid.Column="2"
+                    Text="ASISTOLIA"
                     Command="{Binding SelectRhythmCommand}"
                     CommandParameter="{x:Static models:CardiacRhythm.Asistolia}"
                     BackgroundColor="#E65100"
-                    TextColor="White" FontSize="14" FontAttributes="Bold"
-                    MinimumWidthRequest="80" HeightRequest="44" CornerRadius="8" Margin="4" />
+                    TextColor="White" FontSize="11" FontAttributes="Bold"
+                    HeightRequest="36" CornerRadius="8" Padding="2,0" />
 
             <!-- TV (Taquicardia Ventricular sin pulso) — shockable, red -->
-            <Button Text="TV"
+            <Button Grid.Column="3"
+                    Text="TV"
                     Command="{Binding SelectRhythmCommand}"
                     CommandParameter="{x:Static models:CardiacRhythm.TV}"
                     BackgroundColor="#D32F2F"
-                    TextColor="White" FontSize="14" FontAttributes="Bold"
-                    MinimumWidthRequest="80" HeightRequest="44" CornerRadius="8" Margin="4" />
+                    TextColor="White" FontSize="11" FontAttributes="Bold"
+                    HeightRequest="36" CornerRadius="8" Padding="2,0" />
 
             <!-- FV (Fibrilacion Ventricular) — shockable, red -->
-            <Button Text="FV"
+            <Button Grid.Column="4"
+                    Text="FV"
                     Command="{Binding SelectRhythmCommand}"
                     CommandParameter="{x:Static models:CardiacRhythm.FV}"
                     BackgroundColor="#D32F2F"
-                    TextColor="White" FontSize="14" FontAttributes="Bold"
-                    MinimumWidthRequest="80" HeightRequest="44" CornerRadius="8" Margin="4" />
+                    TextColor="White" FontSize="11" FontAttributes="Bold"
+                    HeightRequest="36" CornerRadius="8" Padding="2,0" />
 
-        </FlexLayout>
+        </Grid>
     </VerticalStackLayout>
 
 </ContentView>
