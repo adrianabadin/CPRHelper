@@ -17,9 +17,20 @@ public partial class EventRecordingViewModel : ObservableObject
 
     public string CurrentRhythmDisplay => GetRhythmDisplayName(CurrentRhythm);
 
+    public bool IsRhythmRCE => CurrentRhythm == CardiacRhythm.RCE;
+    public bool IsRhythmAESP => CurrentRhythm == CardiacRhythm.AESP;
+    public bool IsRhythmAsistolia => CurrentRhythm == CardiacRhythm.Asistolia;
+    public bool IsRhythmTV => CurrentRhythm == CardiacRhythm.TV;
+    public bool IsRhythmFV => CurrentRhythm == CardiacRhythm.FV;
+
     partial void OnCurrentRhythmChanged(CardiacRhythm value)
     {
         OnPropertyChanged(nameof(CurrentRhythmDisplay));
+        OnPropertyChanged(nameof(IsRhythmRCE));
+        OnPropertyChanged(nameof(IsRhythmAESP));
+        OnPropertyChanged(nameof(IsRhythmAsistolia));
+        OnPropertyChanged(nameof(IsRhythmTV));
+        OnPropertyChanged(nameof(IsRhythmFV));
     }
 
     [ObservableProperty]

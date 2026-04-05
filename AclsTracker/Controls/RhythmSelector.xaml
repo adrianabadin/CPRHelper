@@ -6,14 +6,6 @@
 
     <VerticalStackLayout Spacing="6">
 
-        <!-- Section header -->
-        <Label Text="RITMO CARDÍACO"
-               FontSize="12"
-               FontAttributes="Bold"
-               TextColor="#999999"
-               HorizontalTextAlignment="Center"
-               CharacterSpacing="1" />
-
         <!-- Current rhythm display -->
         <Label Text="{Binding CurrentRhythmDisplay, StringFormat='Ritmo actual: {0}'}"
                FontSize="14"
@@ -31,7 +23,17 @@
                     CommandParameter="{x:Static models:CardiacRhythm.RCE}"
                     BackgroundColor="#2E7D32"
                     TextColor="White" FontSize="11" FontAttributes="Bold"
-                    HeightRequest="36" CornerRadius="8" Padding="2,0" />
+                    HeightRequest="36" CornerRadius="8" Padding="2,0"
+                    BorderWidth="0" BorderColor="Transparent">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button"
+                                 Binding="{Binding IsRhythmRCE}"
+                                 Value="True">
+                        <Setter Property="BorderColor" Value="White" />
+                        <Setter Property="BorderWidth" Value="2" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
 
             <!-- AESP (Actividad Electrica Sin Pulso) — non-shockable, orange -->
             <Button Grid.Column="1"
@@ -40,7 +42,17 @@
                     CommandParameter="{x:Static models:CardiacRhythm.AESP}"
                     BackgroundColor="#E65100"
                     TextColor="White" FontSize="11" FontAttributes="Bold"
-                    HeightRequest="36" CornerRadius="8" Padding="2,0" />
+                    HeightRequest="36" CornerRadius="8" Padding="2,0"
+                    BorderWidth="0" BorderColor="Transparent">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button"
+                                 Binding="{Binding IsRhythmAESP}"
+                                 Value="True">
+                        <Setter Property="BorderColor" Value="White" />
+                        <Setter Property="BorderWidth" Value="2" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
 
             <!-- ASISTOLIA — non-shockable, orange -->
             <Button Grid.Column="2"
@@ -49,7 +61,17 @@
                     CommandParameter="{x:Static models:CardiacRhythm.Asistolia}"
                     BackgroundColor="#E65100"
                     TextColor="White" FontSize="11" FontAttributes="Bold"
-                    HeightRequest="36" CornerRadius="8" Padding="2,0" />
+                    HeightRequest="36" CornerRadius="8" Padding="2,0"
+                    BorderWidth="0" BorderColor="Transparent">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button"
+                                 Binding="{Binding IsRhythmAsistolia}"
+                                 Value="True">
+                        <Setter Property="BorderColor" Value="White" />
+                        <Setter Property="BorderWidth" Value="2" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
 
             <!-- TV (Taquicardia Ventricular sin pulso) — shockable, red -->
             <Button Grid.Column="3"
@@ -58,7 +80,17 @@
                     CommandParameter="{x:Static models:CardiacRhythm.TV}"
                     BackgroundColor="#D32F2F"
                     TextColor="White" FontSize="11" FontAttributes="Bold"
-                    HeightRequest="36" CornerRadius="8" Padding="2,0" />
+                    HeightRequest="36" CornerRadius="8" Padding="2,0"
+                    BorderWidth="0" BorderColor="Transparent">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button"
+                                 Binding="{Binding IsRhythmTV}"
+                                 Value="True">
+                        <Setter Property="BorderColor" Value="White" />
+                        <Setter Property="BorderWidth" Value="2" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
 
             <!-- FV (Fibrilacion Ventricular) — shockable, red -->
             <Button Grid.Column="4"
@@ -67,7 +99,17 @@
                     CommandParameter="{x:Static models:CardiacRhythm.FV}"
                     BackgroundColor="#D32F2F"
                     TextColor="White" FontSize="11" FontAttributes="Bold"
-                    HeightRequest="36" CornerRadius="8" Padding="2,0" />
+                    HeightRequest="36" CornerRadius="8" Padding="2,0"
+                    BorderWidth="0" BorderColor="Transparent">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button"
+                                 Binding="{Binding IsRhythmFV}"
+                                 Value="True">
+                        <Setter Property="BorderColor" Value="White" />
+                        <Setter Property="BorderWidth" Value="2" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
 
         </Grid>
     </VerticalStackLayout>
