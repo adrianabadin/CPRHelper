@@ -212,6 +212,16 @@ Plans:
 Plans:
 - [ ] 07-01-PLAN.md — Compress 4 XAML controls: RhythmSelector single-row Grid, MainPage 2x2 action grid, MetronomePulse circle reduction, TimerCard padding reduction
 
+### Phase 8: Fix main UI layout issues - overlay defibrillation banner, compress timer cards, remove cardiac rhythm label
+
+**Goal:** Recover vertical space on MainPage by making the defibrillation banner overlay content, compressing TimerCard to uniform 3-row layout with T.Comp rename, and removing RITMO CARDIACO header with active rhythm button white border highlight
+**Requirements**: UI-08-A, UI-08-B, UI-08-C, UI-08-D, UI-08-E
+**Depends on:** Phase 7
+**Plans:** 1 plan
+
+Plans:
+- [ ] 08-01-PLAN.md — Banner overlay, TimerCard 3-row compression, rhythm selector cleanup with active highlight
+
 ---
 
 *Roadmap created: 24/03/2026*
