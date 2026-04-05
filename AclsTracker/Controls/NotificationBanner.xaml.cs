@@ -38,11 +38,22 @@ public partial class NotificationBanner : ContentView, INotifyPropertyChanged
 
     /// <summary>
     /// Show the banner with a message that auto-dismisses after the specified duration.
+    /// Slides down from top with fade-in animation.
     /// </summary>
-    public void Show(string message, int autoDismissSeconds = 5)
+    public async void Show(string message, int autoDismissSeconds = 5)
     {
         BannerMessage = message;
+
+        // Set initial state: above visible area and transparent
+        BannerGrid.TranslationY = -60;
+        BannerGrid.Opacity = 0;
         IsBannerVisible = true;
+
+        // Animate slide-down and fade-in simultaneously
+        await Task.WhenAll(
+            BannerGrid.TranslateTo(0, 0, 200, Easing.SinOut),
+            BannerGrid.FadeTo(1.0, 150)
+        );
 
         _dismissTimer?.Stop();
         _dismissTimer = Application.Current!.Dispatcher.CreateTimer();
@@ -57,10 +68,16 @@ public partial class NotificationBanner : ContentView, INotifyPropertyChanged
     }
 
     /// <summary>
-    /// Hide the banner immediately.
+    /// Hide the banner with reverse animation (slide-up and fade-out).
     /// </summary>
-    public void HideBanner()
+    public async void HideBanner()
     {
+        // Animate slide-up and fade-out simultaneously
+        await Task.WhenAll(
+            BannerGrid.TranslateTo(0, -60, 180, Easing.SinIn),
+            BannerGrid.FadeTo(0, 150)
+        );
+
         IsBannerVisible = false;
         _dismissTimer?.Stop();
     }

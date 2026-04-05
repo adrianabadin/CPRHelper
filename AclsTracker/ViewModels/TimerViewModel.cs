@@ -44,7 +44,7 @@ public partial class TimerViewModel : ObservableObject
     {
         _timerService.AddTimer("total-elapsed",  "Tiempo Total",  TimerType.TotalElapsed,  null);
         _timerService.AddTimer("cpr-cycle",      "Ciclo RCP",     TimerType.CprCycle,      TimeSpan.FromMinutes(2));
-        _timerService.AddTimer("compressions",   "Compresiones",  TimerType.Compressions,  null);
+        _timerService.AddTimer("compressions",   "T.Comp",        TimerType.Compressions,  null);
         _timerService.AddTimer("epinephrine",    "Adrenalina",    TimerType.Medication,    TimeSpan.FromMinutes(4));
         _timerService.AddTimer("amiodarona",     "Amiodarona",    TimerType.Amiodarona,    TimeSpan.FromMinutes(4));
         _timerService.AddTimer("pulse-check",    "T. Pulsos",     TimerType.PulseCheck,    null);

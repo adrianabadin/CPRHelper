@@ -18,15 +18,9 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="Auto,*">
+    <Grid>
 
-        <!-- Notification banner (top, overlays content) -->
-        <controls:NotificationBanner x:Name="BannerControl"
-                                     Grid.Row="0"
-                                     VerticalOptions="End"
-                                     ZIndex="10" />
-
-        <ScrollView Grid.Row="1">
+        <ScrollView>
             <VerticalStackLayout Padding="10" Spacing="6">
 
             <!-- BLOCK 1: INICIAR / FINALIZAR CODIGO -->
@@ -52,7 +46,7 @@
             </Grid>
 
             <!-- BLOCK 2: Metronomo compacto horizontal -->
-            <controls:MetronomePulse IsPulsing="{Binding Metronome.BeatPulse}"
+            <controls:MetronomePulse IsPulsing="{Binding BeatPulse}"
                                      BindingContext="{Binding Metronome}" />
 
             <!-- BLOCK 3: Selector de ritmo -->
@@ -139,5 +133,10 @@
 
         </VerticalStackLayout>
         </ScrollView>
+
+        <!-- Notification banner (top, overlays content) -->
+        <controls:NotificationBanner x:Name="BannerControl"
+                                     VerticalOptions="Start"
+                                     ZIndex="10" />
     </Grid>
 </ContentPage>
