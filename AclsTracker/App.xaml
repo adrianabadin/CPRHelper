@@ -18,6 +18,7 @@
             <converters:PauseIconConverter x:Key="PauseIconConverter" />
             <converters:BoolToActiveColorConverter x:Key="BoolToActiveColorConverter" />
             <converters:BoolToActiveTextColorConverter x:Key="BoolToActiveTextColorConverter" />
+            <converters:BoolToOnOffConverter x:Key="BoolToOnOffConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>
