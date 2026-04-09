@@ -222,6 +222,18 @@ Plans:
 Plans:
 - [ ] 08-01-PLAN.md — Banner overlay, TimerCard 3-row compression, rhythm selector cleanup with active highlight
 
+### Phase 9: Fix UI issues and authentication: Google auth redirect loop, persistent login, button sizing and colors (on/off toggle, metronome +/-, start/end code button, non-defib rhythms color)
+
+**Goal:** Fix 6 discrete bugs: Google OAuth redirect loop, session persistence across restarts, metronome ON/OFF toggle label, metronome button sizing, INICIAR/FINALIZAR button color/height, and non-defibrillable rhythm button colors
+**Requirements**: P09-AUTH-01, P09-AUTH-02, P09-UI-01, P09-UI-02, P09-UI-03, P09-UI-04
+**Depends on:** Phase 8
+**Plans:** 3 plans
+
+Plans:
+- [ ] 09-01-PLAN.md — Fix Google OAuth PKCE flow + session persistence (2 human checkpoints)
+- [ ] 09-02-PLAN.md — Fix metronome toggle ON/OFF label + reduce +/- button sizing
+- [ ] 09-03-PLAN.md — Fix INICIAR/FINALIZAR color+height + AESP/ASISTOLIA yellow buttons
+
 ---
 
 *Roadmap created: 24/03/2026*
