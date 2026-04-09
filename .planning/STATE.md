@@ -3,18 +3,18 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-04-09T18:28:44.044Z"
+last_updated: "2026-04-09T18:35:13.045Z"
 progress:
   total_phases: 17
-  completed_phases: 15
+  completed_phases: 16
   total_plans: 41
-  completed_plans: 40
+  completed_plans: 41
 ---
 
 # STATE: ACLS Tracker
 
 **Created:** 24/03/2026
-**Last Updated:** 09/04/2026 after completing 09-02 plan
+**Last Updated:** 09/04/2026 after completing all Phase 09 plans
 
 ## Project Reference
 
@@ -25,14 +25,15 @@ progress:
 ## Current Position
 
 Phase: 09 (fix-ui-issues-and-authentication)
-Plan: 2 of 3 complete — metronome toggle ON/OFF + compact button sizing done
+Plan: 3 of 3 complete — all plans done (auth PKCE fix, metronome ON/OFF, button colors)
+Verification: human_needed — device testing required for OAuth + session persistence
 
 ## Performance Metrics
 
-**Phase Completion:** 15/17 phases completed
-**Requirement Coverage:** 11/11 v1 requirements mapped (100%)
+**Phase Completion:** 16/17 phases completed
+**Requirement Coverage:** 17/17 phase 09 requirements mapped (100%)
 **Plans Created:** 41
-**Plans Completed:** 40
+**Plans Completed:** 41
 
 ## Accumulated Context
 
@@ -72,6 +73,12 @@ Plan: 2 of 3 complete — metronome toggle ON/OFF + compact button sizing done
 | Phase 09-fix-ui-issues-and-authentication P01 | 3min | 3 tasks | 3 files |
 | Phase 09-fix-ui-issues-and-authentication P02 | 5min | 2 tasks | 3 files |
 | Phase 09-fix-ui-issues-and-authentication P02 | 5min | 2 tasks | 3 files |
+| Phase 09 P09-02 | 5min | 2 tasks | 3 files |
+| Phase 09 P09-03 | 3min | 2 tasks | 2 files |
+| PKCE OAuth requires explicit SignInOptions with FlowType=PKCE and RedirectTo | Prevents localhost:3000 fallback redirect | 09-01 |
+| LoadSession() + RetrieveSessionAsync startup chain after SetPersistence | SetPersistence registers handler but never reads from storage | 09-01 |
+| BoolToOnOffConverter for toggle labels instead of StringFormat | StringFormat '{0}' outputs True/False, not ON/OFF | 09-02 |
+| Non-shockable rhythms use yellow #FBC02D with dark text | Visual grouping distinct from shockable (red) and normal (green); WCAG AA ~10:1 | 09-03 |
 
 ### Roadmap Evolution
 
@@ -101,7 +108,8 @@ Plan: 2 of 3 complete — metronome toggle ON/OFF + compact button sizing done
 
 **Immediate (Next Actions):**
 
-- [ ] Proceed to next phase or milestone review
+- [ ] Device verification: Google OAuth login + session persistence (Phase 09 Plan 01 checkpoints)
+- [ ] Device verification: UI changes on emulator (metronome ON/OFF, button colors/sizes)
 
 **Upcoming:**
 
@@ -124,19 +132,23 @@ None identified.
 
 ## Session Continuity
 
-**Last Session:** 2026-04-09T18:28:44.025Z
-**Current Session:** Completed Phase 09 Plan 02 — BoolToOnOffConverter + compact metronome button row
+**Last Session:** 2026-04-09T18:36:00Z
+**Current Session:** Completed all Phase 09 plans — auth fixes, metronome UI, button colors
 
 **Context Handoff:**
 
-- Phase 09 Plan 02 complete: BoolToOnOffConverter registered globally, MetronomePulse.xaml toggle uses converter (ON/OFF not True/False), +/- buttons 36x36, toggle 56x36
-- Phase 09 Plan 01 also complete (Google OAuth PKCE fix + session persistence)
-- Next: Phase 09 Plan 03 (remaining UI fixes)
+- Phase 09 Plan 01 complete: Google OAuth PKCE flow (SignInOptions + ExchangeCodeForSession), session persistence (LoadSession + RetrieveSessionAsync)
+- Phase 09 Plan 02 complete: BoolToOnOffConverter registered globally, MetronomePulse toggle uses ON/OFF, buttons 36x36
+- Phase 09 Plan 03 complete: INICIAR CODIGO → orange (#E65100) at height 40, AESP/ASISTOLIA → yellow (#FBC02D) with dark text
+- Verification status: human_needed — device testing for auth (OAuth browser flow + session persistence across restart)
+- All 3 plans have SUMMARY.md with Self-Check: PASSED
 
 **Next Session Tasks:**
 
-- Execute Phase 09 Plan 03 (non-defibrillation rhythm colors, code start/end button)
+- Deploy to device and verify Google OAuth login + session persistence
+- Verify UI changes on emulator (metronome ON/OFF, button colors/sizes)
+- After approval: Phase 09 complete, proceed to milestone review or next phase
 
 ---
 
-*State updated: 2026-04-09 - Completed Phase 09 Plan 02: BoolToOnOffConverter + compact metronome buttons*
+*State updated: 2026-04-09 - Completed all Phase 09 plans: auth PKCE fix, metronome ON/OFF, button colors*
