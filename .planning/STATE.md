@@ -3,29 +3,29 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-04-06T00:03:27.075Z"
+last_updated: "2026-04-09T18:26:01.402Z"
 progress:
-  total_phases: 16
+  total_phases: 17
   completed_phases: 15
-  total_plans: 38
-  completed_plans: 38
+  total_plans: 41
+  completed_plans: 40
 ---
 
 # STATE: ACLS Tracker
 
 **Created:** 24/03/2026
-**Last Updated:** 02/04/2026 after completing 06-03 plan
+**Last Updated:** 09/04/2026 after completing 09-02 plan
 
 ## Project Reference
 
 **Core Value:** El líder del código puede guiar y registrar todo el evento de reanimación con apoyo protocolizado en tiempo real, sin depender de memoria o cálculos manuales
 
-**Current Focus:** Phase 06 — cloud-postgresql-sync-sync-events-to-remote-database-on-save-with-offline-retry
+**Current Focus:** Phase 09 — fix-ui-issues-and-authentication
 
 ## Current Position
 
-Phase: 06 (cloud-postgresql-sync-sync-events-to-remote-database-on-save-with-offline-retry)
-Plan: 3 of 3 (All plans complete — checkpoint Task 4 pending human verify)
+Phase: 09 (fix-ui-issues-and-authentication)
+Plan: 2 of 3 complete — metronome toggle ON/OFF + compact button sizing done
 
 ## Performance Metrics
 
@@ -69,6 +69,7 @@ Plan: 3 of 3 (All plans complete — checkpoint Task 4 pending human verify)
 | Phase 06 P03 | 4min | 3 tasks | 3 files |
 | Phase 07 P01 | 2min | 3 tasks | 4 files |
 | Phase 08 P01 | 12min | 3 tasks | 7 files |
+| Phase 09-fix-ui-issues-and-authentication P01 | 3min | 3 tasks | 3 files |
 
 ### Roadmap Evolution
 
@@ -82,6 +83,7 @@ Plan: 3 of 3 (All plans complete — checkpoint Task 4 pending human verify)
 - Phase 05.2 inserted after Phase 5: Vincular sesiones de Supabase al usuario logueado (URGENT)
 - Phase 07 added: modificar frontend para mostrar botones adrenalina y amiodarona en primera vista con layout optimizado
 - Phase 8 added: Fix main UI layout issues - overlay defibrillation banner, compress timer cards, remove cardiac rhythm label
+- Phase 9 added: Fix UI issues and authentication (Google auth redirect loop, persistent login, button sizing/colors)
 
 ### Architecture Notes
 
@@ -120,7 +122,7 @@ None identified.
 
 ## Session Continuity
 
-**Last Session:** 2026-04-05T23:51:10.916Z
+**Last Session:** 2026-04-09T18:25:33.235Z
 **Current Session:** Completed Phase 06 Plan 03 — Sync UI indicator, toast notifications, realtime lifecycle on logout
 
 **Context Handoff:**
