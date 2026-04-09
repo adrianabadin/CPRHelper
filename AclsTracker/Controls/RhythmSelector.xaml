@@ -35,13 +35,13 @@
                 </Button.Triggers>
             </Button>
 
-            <!-- AESP (Actividad Electrica Sin Pulso) — non-shockable, orange -->
+            <!-- AESP (Actividad Electrica Sin Pulso) — non-shockable, yellow -->
             <Button Grid.Column="1"
                     Text="AESP"
                     Command="{Binding SelectRhythmCommand}"
                     CommandParameter="{x:Static models:CardiacRhythm.AESP}"
-                    BackgroundColor="#E65100"
-                    TextColor="White" FontSize="11" FontAttributes="Bold"
+                    BackgroundColor="#FBC02D"
+                    TextColor="#333333" FontSize="11" FontAttributes="Bold"
                     HeightRequest="36" CornerRadius="8" Padding="2,0"
                     BorderWidth="0" BorderColor="Transparent">
                 <Button.Triggers>
@@ -54,13 +54,13 @@
                 </Button.Triggers>
             </Button>
 
-            <!-- ASISTOLIA — non-shockable, orange -->
+            <!-- ASISTOLIA — non-shockable, yellow -->
             <Button Grid.Column="2"
                     Text="ASISTOLIA"
                     Command="{Binding SelectRhythmCommand}"
                     CommandParameter="{x:Static models:CardiacRhythm.Asistolia}"
-                    BackgroundColor="#E65100"
-                    TextColor="White" FontSize="11" FontAttributes="Bold"
+                    BackgroundColor="#FBC02D"
+                    TextColor="#333333" FontSize="11" FontAttributes="Bold"
                     HeightRequest="36" CornerRadius="8" Padding="2,0"
                     BorderWidth="0" BorderColor="Transparent">
                 <Button.Triggers>
