@@ -1,6 +1,8 @@
 using CommunityToolkit.Maui;
 using Plugin.Maui.Audio;
+#if !ANDROID && !IOS
 using QuestPDF.Infrastructure;
+#endif
 using AclsTracker.Services.Timer;
 using AclsTracker.Services.Audio;
 using AclsTracker.Services.EventLog;
@@ -31,9 +33,18 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
-        // ============ Configuration (User Secrets + Env Vars) ============
-        var config = new ConfigurationBuilder()
-            .AddUserSecrets(Assembly.GetExecutingAssembly(), optional: true)
+        // ============ Configuration ============
+        // User Secrets only work on Windows desktop. For Android/iOS, config is
+        // embedded as a resource at build time (appsettings.json, gitignored).
+        var assembly = Assembly.GetExecutingAssembly();
+        var stream = assembly.GetManifestResourceStream("AclsTracker.appsettings.json");
+
+        var configBuilder = new ConfigurationBuilder();
+        if (stream != null)
+            configBuilder.AddJsonStream(stream);
+
+        var config = configBuilder
+            .AddUserSecrets(assembly, optional: true)
             .AddEnvironmentVariables()
             .Build();
         
@@ -53,7 +64,8 @@ public static class MauiProgram
         });
         
         supabase.Auth.SetPersistence(sessionHandler);
-        
+        supabase.Auth.LoadSession();
+
         builder.Services.AddSingleton(supabase);
         
         builder.Services.AddSingleton<IAuthService, AuthService>();
@@ -89,8 +101,10 @@ public static class MauiProgram
         builder.Services.AddTransient<RegisterPage>();
         builder.Services.AddTransient<ProfilePage>();
 
-        // QuestPDF community license
+        // QuestPDF community license (desktop only - not supported on Android/iOS)
+#if !ANDROID && !IOS
         QuestPDF.Settings.License = LicenseType.Community;
+#endif
 
         return builder.Build();
     }

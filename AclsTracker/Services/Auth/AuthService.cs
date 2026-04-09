@@ -134,7 +134,6 @@ public class AuthService : IAuthService
     {
         try
         {
-            // WebAuthenticator is not supported on Windows
             if (DeviceInfo.Platform == DevicePlatform.WinUI)
             {
                 Debug.WriteLine("[AuthService] SignInWithGoogleAsync: not supported on Windows");
@@ -142,26 +141,38 @@ public class AuthService : IAuthService
             }
 
             Debug.WriteLine("[AuthService] SignInWithGoogleAsync: initiating OAuth PKCE flow");
-            
-            // Get the OAuth sign-in state containing the URL
-            var authState = await _supabase.Auth.SignIn(Supabase.Gotrue.Constants.Provider.Google);
-            
-            // Extract the URL from the ProviderAuthState
-            var signInUrl = authState.Uri.ToString();
-            
-            Debug.WriteLine($"[AuthService] SignInWithGoogleAsync: opening browser");
-            
-            // Open system browser for authentication
-            var result = await WebAuthenticator.Default.AuthenticateAsync(
-                new Uri(signInUrl),
+
+            // 1. Initiate PKCE flow with explicit RedirectTo — prevents localhost:3000 redirect
+            var authState = await _supabase.Auth.SignIn(
+                Supabase.Gotrue.Constants.Provider.Google,
+                new Supabase.Gotrue.SignInOptions
+                {
+                    FlowType = Supabase.Gotrue.Constants.OAuthFlowType.PKCE,
+                    RedirectTo = SupabaseConfig.RedirectUri
+                });
+
+            Debug.WriteLine("[AuthService] SignInWithGoogleAsync: opening browser");
+
+            // 2. Open system browser; WebAuthenticator waits for deep-link callback
+            var callback = await WebAuthenticator.Default.AuthenticateAsync(
+                authState.Uri,
                 new Uri(SupabaseConfig.RedirectUri));
-            
+
             Debug.WriteLine("[AuthService] SignInWithGoogleAsync: OAuth callback received");
-            
-            // After callback, the Supabase client should have processed the session
-            var hasSession = _supabase.Auth.CurrentSession != null;
+
+            // 3. Extract ?code= from the callback query parameters
+            if (!callback.Properties.TryGetValue("code", out var code) || string.IsNullOrEmpty(code))
+            {
+                Debug.WriteLine("[AuthService] SignInWithGoogleAsync: callback missing 'code' parameter");
+                return false;
+            }
+
+            // 4. Exchange code + PKCE verifier for a real session
+            var session = await _supabase.Auth.ExchangeCodeForSession(authState.PKCEVerifier, code);
+
+            var hasSession = session != null;
             Debug.WriteLine($"[AuthService] SignInWithGoogleAsync: session established={hasSession}");
-            
+
             return hasSession;
         }
         catch (Exception ex)

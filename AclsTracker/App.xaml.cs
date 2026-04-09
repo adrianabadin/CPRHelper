@@ -21,6 +21,7 @@ public partial class App : Application
             try
             {
                 await _supabase.InitializeAsync();
+                await _supabase.Auth.RetrieveSessionAsync();
                 System.Diagnostics.Debug.WriteLine("[App] Supabase session restored");
             }
             catch (Exception ex)
