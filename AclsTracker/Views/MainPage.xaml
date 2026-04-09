@@ -27,10 +27,10 @@
             <Grid HorizontalOptions="Fill">
                 <Button Text="INICIAR CODIGO"
                         Command="{Binding StartCodeCommand}"
-                        BackgroundColor="#D32F2F"
+                        BackgroundColor="#E65100"
                         TextColor="White"
                         FontSize="16" FontAttributes="Bold"
-                        HeightRequest="48"
+                        HeightRequest="40"
                         CornerRadius="8"
                         HorizontalOptions="Fill"
                         IsVisible="{Binding Timer.IsSessionActive, Converter={StaticResource InvertBoolConverter}}" />
@@ -39,7 +39,7 @@
                         BackgroundColor="#757575"
                         TextColor="White"
                         FontSize="16" FontAttributes="Bold"
-                        HeightRequest="48"
+                        HeightRequest="40"
                         CornerRadius="8"
                         HorizontalOptions="Fill"
                         IsVisible="{Binding Timer.IsSessionActive}" />
