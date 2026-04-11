@@ -28,6 +28,7 @@ public partial class MainViewModel : ObservableObject
 
     private IDispatcherTimer? _pulseCheckTimer;
     private IDispatcherTimer? _chargingWarningTimer;
+    private int _adrenalinaDoseCount;
     private int _amiodaronaDoseCount;
     private int _cycleCount;
     private bool _isPopupShowing;
@@ -114,6 +115,23 @@ public partial class MainViewModel : ObservableObject
                 ShowNotification("💊 Hora de Amiodarona", BannerDismissSeconds);
             }
         };
+
+        // FCT calculation: update when total elapsed changes or compressions start/stop
+        Timer.Timers[0].PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(TimerModel.Elapsed))
+            {
+                UpdateCompressionFraction();
+            }
+        };
+
+        Timer.Timers[2].PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(TimerModel.IsRunning))
+            {
+                UpdateCompressionFraction();
+            }
+        };
     }
 
     [RelayCommand]
@@ -163,6 +181,7 @@ public partial class MainViewModel : ObservableObject
     private void ResetCodeState()
     {
         _cycleCount = 0;
+        _adrenalinaDoseCount = 0;
         _amiodaronaDoseCount = 0;
         _defibrillationCount = 0;
         _lastAdrenalinaTime = null;
@@ -173,6 +192,14 @@ public partial class MainViewModel : ObservableObject
         _amiodaronaBannerFired = false;
         IsAmiodaronaEnabled = false;
         Timer.ResetAllCommand.Execute(null);
+
+        // Clear ExtraInfo on all timers
+        foreach (var timer in Timer.Timers)
+        {
+            timer.ExtraInfo = string.Empty;
+            timer.IsExtraInfoVisible = false;
+        }
+
         EventRecording.StopRecordingCommand.Execute(null);
         EventRecording.StartRecordingCommand.Execute(null); // fresh recording
     }
@@ -348,10 +375,42 @@ public partial class MainViewModel : ObservableObject
         IsAmiodaronaSuggested = suggestion?.Drug == "Amiodarona";
     }
 
+    /// <summary>
+    /// Calculates compression fraction (FCT) = compression time / total time * 100.
+    /// Displays as integer percentage (e.g., "67%") on the T.Comp timer card.
+    /// Visible only when compressions timer is running.
+    /// </summary>
+    private void UpdateCompressionFraction()
+    {
+        var totalElapsed = Timer.Timers[0].Elapsed;
+        var compElapsed = Timer.Timers[2].Elapsed;
+
+        if (Timer.Timers[2].IsRunning)
+        {
+            if (totalElapsed.TotalSeconds > 0)
+            {
+                double fct = (compElapsed.TotalSeconds / totalElapsed.TotalSeconds) * 100;
+                Timer.Timers[2].ExtraInfo = $"{fct:F0}%";
+            }
+            else
+            {
+                Timer.Timers[2].ExtraInfo = "0%";
+            }
+            Timer.Timers[2].IsExtraInfoVisible = true;
+        }
+        else
+        {
+            Timer.Timers[2].ExtraInfo = string.Empty;
+            Timer.Timers[2].IsExtraInfoVisible = false;
+        }
+    }
+
     [RelayCommand]
     private void NewCycle()
     {
         _cycleCount++;
+        Timer.Timers[1].ExtraInfo = _cycleCount.ToString();
+        Timer.Timers[1].IsExtraInfoVisible = true;
         Timer.NewCprCycleCommand.Execute(null);
         EventRecording.LogCustomEventCommand.Execute("Nuevo ciclo RCP");
         ResumeAfterPulseCheck(); // Resume metronome if paused during pulse check
@@ -452,6 +511,9 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     private void Adrenalina()
     {
+        _adrenalinaDoseCount++;
+        Timer.Timers[3].ExtraInfo = _adrenalinaDoseCount.ToString();
+        Timer.Timers[3].IsExtraInfoVisible = true;
         _lastAdrenalinaTime = DateTime.Now;
         Timer.MarkMedicationGivenCommand.Execute(null);
         EventRecording.LogCustomEventCommand.Execute("Adrenalina administrada");
@@ -463,6 +525,8 @@ public partial class MainViewModel : ObservableObject
     private void Amiodarona()
     {
         _amiodaronaDoseCount++;
+        Timer.Timers[4].ExtraInfo = _amiodaronaDoseCount.ToString();
+        Timer.Timers[4].IsExtraInfoVisible = true;
         _lastAmiodaronaTime = DateTime.Now;
         Timer.MarkAmiodaronaGivenCommand.Execute(null);
         EventRecording.LogCustomEventCommand.Execute("Amiodarona administrada");
