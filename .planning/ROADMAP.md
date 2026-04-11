@@ -234,6 +234,16 @@ Plans:
 - [ ] 09-02-PLAN.md — Fix metronome toggle ON/OFF label + reduce +/- button sizing
 - [ ] 09-03-PLAN.md — Fix INICIAR/FINALIZAR color+height + AESP/ASISTOLIA yellow buttons
 
+### Phase 10: Agregar datos extra en timecards: numero de ciclo, fraccion de compresion en T.Comp, numero de dosis en adrenalina y amiodarona
+
+**Goal:** Display secondary protocol metrics (cycle number, FCT%, dose counts) on existing TimerCard controls in subtle style without increasing card height
+**Requirements**: ENH-10
+**Depends on:** Phase 9
+**Plans:** 1 plan
+
+Plans:
+- [ ] 10-01-PLAN.md — ExtraInfo property on TimerModel, subtle Label on TimerCard, MainViewModel integration (cycle/FCT/dose counters)
+
 ---
 
 *Roadmap created: 24/03/2026*
