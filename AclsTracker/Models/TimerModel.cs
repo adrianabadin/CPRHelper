@@ -18,6 +18,19 @@ public partial class TimerModel : ObservableObject
     private bool _isPaused;
 
     /// <summary>
+    /// Secondary informational text displayed subtly next to elapsed time.
+    /// e.g., cycle number, FCT%, dose count. Empty string = not shown.
+    /// </summary>
+    [ObservableProperty]
+    private string _extraInfo = string.Empty;
+
+    /// <summary>
+    /// Controls visibility of the ExtraInfo label. False hides the label.
+    /// </summary>
+    [ObservableProperty]
+    private bool _isExtraInfoVisible;
+
+    /// <summary>
     /// Target duration for progress circle display (e.g., 2 min for CPR cycle).
     /// Null means no target (elapsed-only timer like TotalElapsed).
     /// </summary>

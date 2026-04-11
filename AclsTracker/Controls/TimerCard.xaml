@@ -36,22 +36,35 @@
                    VerticalOptions="Center"
                    IsVisible="{Binding IsRunning}" />
 
-            <!-- Digital elapsed display (D-05: format 00:00) -->
-            <Label Grid.Row="1" Grid.Column="0"
-                    Text="{Binding Elapsed, StringFormat='{0:mm\\:ss}'}"
-                    FontSize="20"
-                    FontAttributes="Bold"
-                    FontFamily="OpenSansRegular"
-                    HorizontalTextAlignment="Start"
-                    TextColor="{AppThemeBinding Light=#111111, Dark=#FFFFFF}">
-                <Label.Triggers>
-                    <DataTrigger TargetType="Label"
-                                 Binding="{Binding IsOverThreshold}"
-                                 Value="True">
-                        <Setter Property="TextColor" Value="#D32F2F" />
-                    </DataTrigger>
-                </Label.Triggers>
-            </Label>
+            <!-- Row 1: Elapsed time + extra info (horizontal) -->
+            <HorizontalStackLayout Grid.Row="1" Grid.Column="0"
+                                   HorizontalOptions="FillAndExpand"
+                                   VerticalOptions="Center"
+                                   Spacing="8">
+                <!-- Digital elapsed display (D-05: format 00:00) -->
+                <Label Text="{Binding Elapsed, StringFormat='{0:mm\\:ss}'}"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       FontFamily="OpenSansRegular"
+                       HorizontalTextAlignment="Start"
+                       TextColor="{AppThemeBinding Light=#111111, Dark=#FFFFFF}">
+                    <Label.Triggers>
+                        <DataTrigger TargetType="Label"
+                                     Binding="{Binding IsOverThreshold}"
+                                     Value="True">
+                            <Setter Property="TextColor" Value="#D32F2F" />
+                        </DataTrigger>
+                    </Label.Triggers>
+                </Label>
+
+                <!-- Extra info label (subtle, secondary data) -->
+                <Label Text="{Binding ExtraInfo}"
+                       FontSize="12"
+                       FontAttributes="Normal"
+                       TextColor="#999999"
+                       VerticalOptions="Center"
+                       IsVisible="{Binding IsExtraInfoVisible}" />
+            </HorizontalStackLayout>
 
             <!-- Pause/Resume button — visible when ShowPauseButton=true on this control -->
             <Button Grid.Row="1" Grid.Column="1"
