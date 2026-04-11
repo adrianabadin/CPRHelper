@@ -3,37 +3,37 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-04-11T21:06:20.745Z"
+last_updated: "2026-04-11T21:20:00.000Z"
 progress:
   total_phases: 18
   completed_phases: 16
-  total_plans: 41
-  completed_plans: 41
+  total_plans: 42
+  completed_plans: 42
 ---
 
 # STATE: ACLS Tracker
 
 **Created:** 24/03/2026
-**Last Updated:** 09/04/2026 after completing all Phase 09 plans
+**Last Updated:** 11/04/2026 after completing Phase 10 Plan 01 (extra info on timer cards)
 
 ## Project Reference
 
 **Core Value:** El líder del código puede guiar y registrar todo el evento de reanimación con apoyo protocolizado en tiempo real, sin depender de memoria o cálculos manuales
 
-**Current Focus:** Phase 09 — fix-ui-issues-and-authentication
+**Current Focus:** Phase 10 — agregar-datos-extra-en-timecards
 
 ## Current Position
 
-Phase: 09 (fix-ui-issues-and-authentication)
-Plan: 3 of 3 complete — all plans done (auth PKCE fix, metronome ON/OFF, button colors)
-Verification: human_needed — device testing required for OAuth + session persistence
+Phase: 10 (agregar-datos-extra-en-timecards-numero-de-ciclo-fraccion-de-compresion-en-t-comp-numero-de-dosis-en-adrenalina-y-amiodarona)
+Plan: 1 of 1 complete — extra info on timer cards (cycle number, FCT%, dose counts)
+Verification: build passed, device testing recommended
 
 ## Performance Metrics
 
-**Phase Completion:** 16/18 phases completed
+**Phase Completion:** 17/18 phases completed
 **Requirement Coverage:** 17/17 phase 09 requirements mapped (100%)
-**Plans Created:** 41
-**Plans Completed:** 41
+**Plans Created:** 42
+**Plans Completed:** 42
 
 ## Accumulated Context
 
@@ -79,6 +79,9 @@ Verification: human_needed — device testing required for OAuth + session persi
 | LoadSession() + RetrieveSessionAsync startup chain after SetPersistence | SetPersistence registers handler but never reads from storage | 09-01 |
 | BoolToOnOffConverter for toggle labels instead of StringFormat | StringFormat '{0}' outputs True/False, not ON/OFF | 09-02 |
 | Non-shockable rhythms use yellow #FBC02D with dark text | Visual grouping distinct from shockable (red) and normal (green); WCAG AA ~10:1 | 09-03 |
+| ExtraInfo as ObservableProperty on TimerModel | Enables direct XAML binding without converters | 10-01 |
+| FCT calculated via PropertyChanged subscriptions (not TimerService) | Keeps service decoupled from VM logic | 10-01 |
+| Phase 10 P10-01 | 5min | 2 tasks | 3 files |
 
 ### Roadmap Evolution
 
@@ -133,23 +136,25 @@ None identified.
 
 ## Session Continuity
 
-**Last Session:** 2026-04-11T21:06:20.727Z
-**Current Session:** Completed all Phase 09 plans — auth fixes, metronome UI, button colors
+**Last Session:** 2026-04-11T21:20:00.000Z
+**Current Session:** Completed Phase 10 Plan 01 — extra info on timer cards (cycle number, FCT%, dose counts)
 
 **Context Handoff:**
 
-- Phase 09 Plan 01 complete: Google OAuth PKCE flow (SignInOptions + ExchangeCodeForSession), session persistence (LoadSession + RetrieveSessionAsync)
-- Phase 09 Plan 02 complete: BoolToOnOffConverter registered globally, MetronomePulse toggle uses ON/OFF, buttons 36x36
-- Phase 09 Plan 03 complete: INICIAR CODIGO → orange (#E65100) at height 40, AESP/ASISTOLIA → yellow (#FBC02D) with dark text
-- Verification status: human_needed — device testing for auth (OAuth browser flow + session persistence across restart)
-- All 3 plans have SUMMARY.md with Self-Check: PASSED
+- Phase 10 Plan 01 complete: ExtraInfo infrastructure on TimerModel with cycle number, FCT%, and dose counts
+- TimerModel has ExtraInfo (string) and IsExtraInfoVisible (bool) ObservableProperty fields
+- TimerCard.xaml shows subtle 12pt #999999 Label to the right of elapsed time via HorizontalStackLayout
+- MainViewModel wires: NewCycle→Timers[1] cycle number, Adrenalina→Timers[3] dose count, Amiodarona→Timers[4] dose count, FCT→Timers[2] via PropertyChanged
+- ResetCodeState clears all ExtraInfo and resets _adrenalinaDoseCount
+- Both tasks have SUMMARY.md with Self-Check: PASSED
 
 **Next Session Tasks:**
 
-- Deploy to device and verify Google OAuth login + session persistence
-- Verify UI changes on emulator (metronome ON/OFF, button colors/sizes)
-- After approval: Phase 09 complete, proceed to milestone review or next phase
+- Device testing: verify ExtraInfo labels visible and styled correctly on emulator
+- Verify FCT% updates in real-time during compressions
+- Verify all extra data clears on NUEVO CODIGO, persists on CONTINUAR
+- Phase 10 complete, proceed to milestone review or next phase
 
 ---
 
-*State updated: 2026-04-09 - Completed all Phase 09 plans: auth PKCE fix, metronome ON/OFF, button colors*
+*State updated: 2026-04-11 - Completed Phase 10 Plan 01: extra info on timer cards (cycle number, FCT%, dose counts)*
