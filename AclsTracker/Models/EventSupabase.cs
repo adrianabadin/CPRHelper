@@ -11,7 +11,7 @@ namespace AclsTracker.Models;
 public class EventSupabase : BaseModel
 {
     /// <summary>Unique event identifier (UUID).</summary>
-    [PrimaryKey("id", false)]
+    [PrimaryKey("id", true)]
     public string Id { get; set; } = string.Empty;
 
     /// <summary>ID of the session this event belongs to.</summary>

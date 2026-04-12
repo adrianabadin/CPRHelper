@@ -6,6 +6,10 @@
              Title="Mi Perfil"
              BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#121212}">
 
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Cerrar" Command="{Binding NavigateBackCommand}" Order="Primary" Priority="0" />
+    </ContentPage.ToolbarItems>
+
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="15">
 

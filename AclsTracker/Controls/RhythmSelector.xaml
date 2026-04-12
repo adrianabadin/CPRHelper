@@ -4,14 +4,7 @@
              xmlns:models="clr-namespace:AclsTracker.Models"
              x:Class="AclsTracker.Controls.RhythmSelector">
 
-    <VerticalStackLayout Spacing="6">
-
-        <!-- Current rhythm display -->
-        <Label Text="{Binding CurrentRhythmDisplay, StringFormat='Ritmo actual: {0}'}"
-               FontSize="14"
-               FontAttributes="Bold"
-               HorizontalTextAlignment="Center"
-               TextColor="#333333" />
+    <VerticalStackLayout Spacing="0">
 
         <!-- Rhythm buttons — Grid single row (~60dp savings) -->
         <Grid ColumnDefinitions="*, *, *, *, *" ColumnSpacing="4">
@@ -29,8 +22,8 @@
                     <DataTrigger TargetType="Button"
                                  Binding="{Binding IsRhythmRCE}"
                                  Value="True">
-                        <Setter Property="BorderColor" Value="White" />
-                        <Setter Property="BorderWidth" Value="2" />
+                        <Setter Property="BorderColor" Value="Black" />
+                        <Setter Property="BorderWidth" Value="3" />
                     </DataTrigger>
                 </Button.Triggers>
             </Button>
@@ -48,8 +41,8 @@
                     <DataTrigger TargetType="Button"
                                  Binding="{Binding IsRhythmAESP}"
                                  Value="True">
-                        <Setter Property="BorderColor" Value="White" />
-                        <Setter Property="BorderWidth" Value="2" />
+                        <Setter Property="BorderColor" Value="Black" />
+                        <Setter Property="BorderWidth" Value="3" />
                     </DataTrigger>
                 </Button.Triggers>
             </Button>
@@ -67,8 +60,8 @@
                     <DataTrigger TargetType="Button"
                                  Binding="{Binding IsRhythmAsistolia}"
                                  Value="True">
-                        <Setter Property="BorderColor" Value="White" />
-                        <Setter Property="BorderWidth" Value="2" />
+                        <Setter Property="BorderColor" Value="Black" />
+                        <Setter Property="BorderWidth" Value="3" />
                     </DataTrigger>
                 </Button.Triggers>
             </Button>
@@ -86,8 +79,8 @@
                     <DataTrigger TargetType="Button"
                                  Binding="{Binding IsRhythmTV}"
                                  Value="True">
-                        <Setter Property="BorderColor" Value="White" />
-                        <Setter Property="BorderWidth" Value="2" />
+                        <Setter Property="BorderColor" Value="Black" />
+                        <Setter Property="BorderWidth" Value="3" />
                     </DataTrigger>
                 </Button.Triggers>
             </Button>
@@ -105,8 +98,8 @@
                     <DataTrigger TargetType="Button"
                                  Binding="{Binding IsRhythmFV}"
                                  Value="True">
-                        <Setter Property="BorderColor" Value="White" />
-                        <Setter Property="BorderWidth" Value="2" />
+                        <Setter Property="BorderColor" Value="Black" />
+                        <Setter Property="BorderWidth" Value="3" />
                     </DataTrigger>
                 </Button.Triggers>
             </Button>

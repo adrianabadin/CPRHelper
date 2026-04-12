@@ -24,25 +24,26 @@ public class SupabaseSessionHandler : IGotrueSessionPersistence<Session>
 
     /// <summary>
     /// Save session to secure storage.
-    /// Uses MainThread for async fire-and-forget to ensure UI thread safety.
+    /// Blocks synchronously to ensure the session is durably written before the app
+    /// can close. SecureStorage is thread-safe and does not require the main thread.
     /// </summary>
     public void SaveSession(Session session)
     {
         if (session == null) return;
 
         var json = JsonSerializer.Serialize(session, JsonOptions);
-        
-        MainThread.BeginInvokeOnMainThread(async () =>
+
+        try
         {
-            try
-            {
-                await SecureStorage.Default.SetAsync(SessionKey, json);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"[SupabaseSessionHandler] Failed to save session: {ex.Message}");
-            }
-        });
+            // Block synchronously — SaveSession is called by Supabase after auth events;
+            // fire-and-forget risks losing the session if the app closes before the
+            // main thread processes the dispatch queue.
+            SecureStorage.Default.SetAsync(SessionKey, json).GetAwaiter().GetResult();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[SupabaseSessionHandler] Failed to save session: {ex.Message}");
+        }
     }
 
     /// <summary>
@@ -74,10 +75,7 @@ public class SupabaseSessionHandler : IGotrueSessionPersistence<Session>
     {
         try
         {
-            MainThread.BeginInvokeOnMainThread(async () =>
-            {
-                SecureStorage.Default.Remove(SessionKey);
-            });
+            SecureStorage.Default.Remove(SessionKey);
         }
         catch (Exception ex)
         {

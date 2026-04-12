@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
 
@@ -61,5 +62,6 @@ public class UserProfile : BaseModel
     /// <summary>
     /// Computed full name combining Nombre and Apellido
     /// </summary>
+    [JsonIgnore]
     public string FullName => $"{Nombre} {Apellido}".Trim();
 }

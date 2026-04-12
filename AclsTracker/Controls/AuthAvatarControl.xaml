@@ -14,6 +14,9 @@
                 <DataTrigger TargetType="Label" Binding="{Binding IsLoggedIn}" Value="True">
                     <Setter Property="IsVisible" Value="False" />
                 </DataTrigger>
+                <DataTrigger TargetType="Label" Binding="{Binding IsLoggedIn}" Value="False">
+                    <Setter Property="IsVisible" Value="True" />
+                </DataTrigger>
             </Label.Triggers>
             <Label.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding NavigateToLoginCommand}" />

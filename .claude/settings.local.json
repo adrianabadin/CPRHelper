@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet workload:*)",
+      "Bash(1 echo:*)",
+      "Bash(dotnet build:*)",
+      "Skill(gsd:plan-phase)",
+      "Bash(xargs grep:*)",
+      "Bash(dotnet restore:*)",
+      "Skill(gsd:execute-phase)",
+      "Bash(dotnet package:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(cat \".planning/phases/06-cloud-postgresql-sync-sync-events-to-remote-database-on-save-with-offline-retry/\"*CONTEXT*)",
+      "mcp__supabase__list_projects",
+      "mcp__supabase__get_logs",
+      "mcp__supabase__execute_sql",
+      "mcp__supabase__apply_migration",
+      "mcp__supabase__list_tables",
+      "Skill(gsd:debug)",
+      "Bash(dotnet --version)",
+      "Bash(dotnet publish:*)",
+      "Bash(echo \"Exit: $?\")",
+      "Bash(python -c \"import graphify\")",
+      "Bash(echo \"exit=$?\")",
+      "Bash(python -c \"import sys; open\\('.graphify_python','w'\\).write\\(sys.executable\\)\")",
+      "Bash(python -c ':*)",
+      "Bash(python:*)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__query-docs"
+    ]
+  }
+}

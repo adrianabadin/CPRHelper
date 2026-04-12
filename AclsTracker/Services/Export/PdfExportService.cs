@@ -1,21 +1,52 @@
 using AclsTracker.Models;
+#if !ANDROID && !IOS
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using QContainer = QuestPDF.Infrastructure.IContainer;
 using QColors = QuestPDF.Helpers.Colors;
+#endif
 
 namespace AclsTracker.Services.Export;
 
 /// <summary>
 /// QuestPDF-based PDF generation for ACLS clinical reports.
 /// Produces a structured PDF with 6 clinical sections per AHA ACLS 2020 protocol.
+/// On mobile platforms (Android/iOS), QuestPDF is not supported — returns a placeholder message.
 /// </summary>
 public class PdfExportService : IPdfExportService
 {
     /// <inheritdoc/>
     public async Task<string> GeneratePdfAsync(Session session, List<EventRecord> events)
     {
+#if ANDROID || IOS
+        // QuestPDF does not support Android/iOS runtimes.
+        // Generate a simple text-based report as fallback.
+        var fileName = $"ACLS_{session.PatientLastName}_{session.SessionStartTime:yyyyMMdd_HHmm}.txt";
+        var filePath = Path.Combine(FileSystem.Current.CacheDirectory, fileName);
+
+        var duration = session.SessionEndTime - session.SessionStartTime;
+        var lines = new List<string>
+        {
+            "=== Resumen de Resucitacion ACLS ===",
+            $"Paciente: {session.PatientLastName}, {session.PatientName}",
+            $"DNI: {session.PatientDNI}",
+            $"Fecha/Hora: {session.SessionStartTime:dd/MM/yyyy HH:mm}",
+            $"Duracion: {(int)duration.TotalMinutes}m {duration.Seconds}s",
+            "",
+        };
+
+        foreach (var evt in events.OrderBy(e => e.ElapsedSinceStart))
+        {
+            lines.Add($"[{(int)evt.ElapsedSinceStart.TotalMinutes:D2}:{evt.ElapsedSinceStart.Seconds:D2}] {evt.EventType}: {evt.Description}");
+        }
+
+        lines.Add("");
+        lines.Add("Documento generado por ACLS Tracker - Protocolo AHA 2020");
+
+        await File.WriteAllLinesAsync(filePath, lines);
+        return filePath;
+#else
         var fileName = $"ACLS_{session.PatientLastName}_{session.SessionStartTime:yyyyMMdd_HHmm}.pdf";
         var filePath = Path.Combine(FileSystem.Current.CacheDirectory, fileName);
 
@@ -25,8 +56,10 @@ public class PdfExportService : IPdfExportService
         await File.WriteAllBytesAsync(filePath, bytes);
 
         return filePath;
+#endif
     }
 
+#if !ANDROID && !IOS
     private byte[] GeneratePdfBytes(Session session, List<EventRecord> events)
     {
         var duration = session.SessionEndTime - session.SessionStartTime;
@@ -48,27 +81,27 @@ public class PdfExportService : IPdfExportService
 
                 page.Content().Column(column =>
                 {
-                    // Section 1 — Header
+                    // Section 1 -- Header
                     column.Item().Element(compose => ComposeHeader(compose, session, durationText));
                     column.Item().PaddingVertical(8);
 
-                    // Section 2 — Rhythm Summary
+                    // Section 2 -- Rhythm Summary
                     column.Item().Element(compose => ComposeRhythmSection(compose, rhythmEvents));
                     column.Item().PaddingVertical(6);
 
-                    // Section 3 — Medications
+                    // Section 3 -- Medications
                     column.Item().Element(compose => ComposeMedicationsSection(compose, medicationEvents));
                     column.Item().PaddingVertical(6);
 
-                    // Section 4 — Reversible Causes (H's and T's)
+                    // Section 4 -- Reversible Causes (H's and T's)
                     column.Item().Element(compose => ComposeHsTsSection(compose, hsTsEvents));
                     column.Item().PaddingVertical(6);
 
-                    // Section 5 — Compressions and Defibrillation
+                    // Section 5 -- Compressions and Defibrillation
                     column.Item().Element(compose => ComposeCprSection(compose, cprCycleEvents, defibrillationEvents));
                     column.Item().PaddingVertical(6);
 
-                    // Section 6 — Footer
+                    // Section 6 -- Footer
                     column.Item().Element(ComposeFooter);
                 });
             });
@@ -83,7 +116,7 @@ public class PdfExportService : IPdfExportService
     {
         container.Column(column =>
         {
-            column.Item().Text("Resumen de Resucitación ACLS")
+            column.Item().Text("Resumen de Resucitacion ACLS")
                 .FontSize(16).Bold().FontColor(QColors.Blue.Darken2);
 
             column.Item().PaddingVertical(4);
@@ -95,7 +128,7 @@ public class PdfExportService : IPdfExportService
                     info.Item().Text($"Paciente: {session.PatientLastName}, {session.PatientName}");
                     info.Item().Text($"DNI: {session.PatientDNI}");
                     info.Item().Text($"Fecha/Hora: {session.SessionStartTime:dd/MM/yyyy HH:mm}");
-                    info.Item().Text($"Duración: {durationText}");
+                    info.Item().Text($"Duracion: {durationText}");
                 });
             });
         });
@@ -141,7 +174,7 @@ public class PdfExportService : IPdfExportService
                 return;
             }
 
-            column.Item().Element(compose => ComposeEventTable(compose, medicationEvents, "Medicación", "Tiempo"));
+            column.Item().Element(compose => ComposeEventTable(compose, medicationEvents, "Medicacion", "Tiempo"));
         });
     }
 
@@ -189,7 +222,7 @@ public class PdfExportService : IPdfExportService
 
     private void ComposeFooter(QContainer container)
     {
-        container.AlignCenter().Text("Documento generado por ACLS Tracker — Protocolo AHA 2020")
+        container.AlignCenter().Text("Documento generado por ACLS Tracker - Protocolo AHA 2020")
             .FontSize(8).FontColor(QColors.Grey.Medium);
     }
 
@@ -234,4 +267,5 @@ public class PdfExportService : IPdfExportService
     }
 
     #endregion
+#endif
 }

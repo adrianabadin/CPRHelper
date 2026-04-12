@@ -1,12 +1,14 @@
 namespace AclsTracker.Controls;
 
 /// <summary>
-/// Visual metronome pulse circle (per D-03).
-/// Animates scale 1.0 → 1.15 → 1.0 on each beat for visual feedback.
-/// Uses CommunityToolkit.Maui animations targeting 60fps (AUDI-02).
+/// Visual metronome pulse circle.
+/// Flashes bright on each beat synchronized with the audio click.
 /// </summary>
 public partial class MetronomePulse : ContentView
 {
+    private static readonly Color RestColor = Color.FromArgb("#D32F2F");
+    private static readonly Color FlashColor = Color.FromArgb("#FF6659");
+
     public static readonly BindableProperty IsPulsingProperty =
         BindableProperty.Create(
             nameof(IsPulsing),
@@ -26,40 +28,35 @@ public partial class MetronomePulse : ContentView
         InitializeComponent();
     }
 
-    private static async void OnIsPulsingChanged(BindableObject bindable, object oldValue, object newValue)
+    private static void OnIsPulsingChanged(BindableObject bindable, object oldValue, object newValue)
     {
         if (bindable is MetronomePulse control)
         {
-            await control.AnimatePulse();
+            control.AnimatePulse();
         }
     }
 
     /// <summary>
-    /// Heartbeat double-pump animation: lub (systole) → partial relax → dub (diastole) → full relax.
-    /// Total duration ~330ms, fits within 500ms interval at 120 BPM.
-    /// Scale and opacity run in parallel for maximum visual impact.
+    /// Color flash animation: instantly flash bright, then animate back to rest color.
+    /// Uses Animation API which is the most reliable animation method in MAUI.
     /// </summary>
-    private async Task AnimatePulse()
+    private void AnimatePulse()
     {
-        // Cancel any in-progress animation before starting a new beat
-        PulseCircle.CancelAnimations();
+        // Cancel any running animation
+        this.AbortAnimation("HeartbeatPulse");
 
-        // First pump — systole "lub": scale to 1.35, opacity to 1.0
-        await Task.WhenAll(
-            PulseCircle.ScaleTo(1.35, 80, Easing.CubicOut),
-            PulseCircle.FadeTo(1.0, 80)
-        );
+        // Instant flash to bright color
+        PulseCircle.Color = FlashColor;
 
-        // Quick partial relax between pumps
-        await PulseCircle.ScaleTo(1.1, 60, Easing.CubicIn);
+        // Animate from flash back to rest over 300ms
+        var animation = new Animation(v =>
+        {
+            float r = (float)(FlashColor.Red + (RestColor.Red - FlashColor.Red) * v);
+            float g = (float)(FlashColor.Green + (RestColor.Green - FlashColor.Green) * v);
+            float b = (float)(FlashColor.Blue + (RestColor.Blue - FlashColor.Blue) * v);
+            PulseCircle.Color = new Color(r, g, b);
+        }, 0, 1, Easing.CubicIn);
 
-        // Second pump — diastole "dub": scale to 1.25, keep full opacity
-        await PulseCircle.ScaleTo(1.25, 70, Easing.CubicOut);
-
-        // Full relax back to resting state: scale to 1.0, fade back to 0.8
-        await Task.WhenAll(
-            PulseCircle.ScaleTo(1.0, 120, Easing.CubicIn),
-            PulseCircle.FadeTo(0.8, 120)
-        );
+        animation.Commit(this, "HeartbeatPulse", length: 300);
     }
 }

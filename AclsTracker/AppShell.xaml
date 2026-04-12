@@ -8,8 +8,16 @@
     Shell.FlyoutBehavior="Disabled">
 
     <Shell.TitleView>
-        <Grid HorizontalOptions="End" Padding="0,0,10,0">
-            <controls:AuthAvatarControl x:Name="authAvatar" />
+        <Grid ColumnDefinitions="*,Auto" Padding="10,0">
+            <Label Grid.Column="0"
+                   Text="CPR Assistant"
+                   TextColor="White"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   VerticalOptions="Center" />
+            <controls:AuthAvatarControl Grid.Column="1"
+                                        x:Name="authAvatar"
+                                        VerticalOptions="Center" />
         </Grid>
     </Shell.TitleView>
 

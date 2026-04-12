@@ -65,6 +65,7 @@ public static class MauiProgram
         
         supabase.Auth.SetPersistence(sessionHandler);
         supabase.Auth.LoadSession();
+        System.Diagnostics.Debug.WriteLine($"[MauiProgram] LoadSession complete, CurrentSession is {(supabase.Auth.CurrentSession != null ? "present" : "null")}");
 
         builder.Services.AddSingleton(supabase);
         

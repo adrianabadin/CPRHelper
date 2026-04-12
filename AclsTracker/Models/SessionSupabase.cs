@@ -11,7 +11,7 @@ namespace AclsTracker.Models;
 public class SessionSupabase : BaseModel
 {
     /// <summary>Unique session identifier (UUID).</summary>
-    [PrimaryKey("id", false)]
+    [PrimaryKey("id", true)]
     public string Id { get; set; } = string.Empty;
 
     /// <summary>ID of the authenticated user who owns this session.</summary>

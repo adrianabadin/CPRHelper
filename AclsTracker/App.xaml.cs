@@ -11,24 +11,29 @@ public partial class App : Application
     {
         _serviceProvider = serviceProvider;
         _supabase = supabase;
-        
+
         InitializeComponent();
-        
-        // Restore session on startup using fire-and-forget to avoid deadlock risk
-        // SetPersistence was already called in MauiProgram before InitializeAsync
-        Task.Run(async () =>
+
+        // LoadSession() already hydrated the session in MauiProgram.
+        // Refresh token in background — blocking the UI thread with GetAwaiter().GetResult()
+        // causes a deadlock on Android because HTTP callbacks need the UI thread.
+        _ = RefreshSessionAsync();
+    }
+
+    private async Task RefreshSessionAsync()
+    {
+        try
         {
-            try
-            {
-                await _supabase.InitializeAsync();
-                await _supabase.Auth.RetrieveSessionAsync();
-                System.Diagnostics.Debug.WriteLine("[App] Supabase session restored");
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"[App] Failed to restore Supabase session: {ex.Message}");
-            }
-        });
+            System.Diagnostics.Debug.WriteLine($"[App] Before InitializeAsync, CurrentSession: {_supabase.Auth.CurrentSession != null}");
+            await _supabase.InitializeAsync();
+            System.Diagnostics.Debug.WriteLine($"[App] After InitializeAsync, CurrentSession: {_supabase.Auth.CurrentSession != null}");
+            await _supabase.Auth.RetrieveSessionAsync();
+            System.Diagnostics.Debug.WriteLine($"[App] After RetrieveSessionAsync, CurrentSession: {_supabase.Auth.CurrentSession != null}");
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[App] Session restore failed: {ex.Message}");
+        }
     }
 
     protected override Window CreateWindow(IActivationState? activationState)

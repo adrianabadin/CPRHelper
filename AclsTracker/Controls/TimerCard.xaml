@@ -60,7 +60,6 @@
                 <!-- Extra info label (subtle, secondary data) -->
                 <Label Text="{Binding ExtraInfo}"
                        FontSize="12"
-                       FontAttributes="Normal"
                        TextColor="#999999"
                        VerticalOptions="Center"
                        IsVisible="{Binding IsExtraInfoVisible}" />
