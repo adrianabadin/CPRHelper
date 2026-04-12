@@ -244,6 +244,18 @@ Plans:
 Plans:
 - [x] 10-01-PLAN.md — ExtraInfo property on TimerModel, subtle Label on TimerCard, MainViewModel integration (cycle/FCT/dose counters)
 
+### Phase 11: UI/UX redesign - new color palette, tooltips, and improved navigability without changing layout dimensions
+
+**Goal:** Centralize clinical color palette in semantic resources, remove EventLogPanel from MainPage, add collapsible tab bar, and implement tooltip system with protocol info icons
+**Requirements**: UX-11-PALETTE, UX-11-COLORS, UX-11-NAV-EVENTLOG, UX-11-NAV-TABBAR, UX-11-TOOLTIPS
+**Depends on:** Phase 10
+**Plans:** 3 plans
+
+Plans:
+- [ ] 11-01-PLAN.md — Centralize color palette in Colors.xaml, replace all inline hex with semantic resources
+- [ ] 11-02-PLAN.md — Remove EventLogPanel from MainPage, add collapsible tab bar with floating toggle
+- [ ] 11-03-PLAN.md — TooltipOverlay control + info icons on timers, rhythm, action buttons
+
 ---
 
 *Roadmap created: 24/03/2026*
