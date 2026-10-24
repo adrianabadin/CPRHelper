@@ -15,3 +15,7 @@ AclsTracker/appsettings.json
 Thumbs.db
 nul
 ------
+
+# Local environment files (may contain DATABASE_URL and other secrets)
+.env
+.env.*
